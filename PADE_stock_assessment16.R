@@ -19,17 +19,17 @@ colnames(N) <- data$N_at_Age[1,]
 rownames(N) <- data$N_at_Age[-1,1]
 N <- N[,-1]*1000 # N is in 000's, so multiplying by 1000, to add 000 to each value
 
-F <- data$F_at_Age[-1,]
+F <- data$F_at_Age[-1,] # estimated fishing mortality at age
 colnames(F) <- data$F_at_Age[1,]
 rownames(F) <- data$F_at_Age[-1,1]
 F[,-1] <- round(F[,-1],3)
 
-M <- data$M_at_Age[-1,]
+M <- data$M_at_Age[-1,] # input fishing mortality at age
 colnames(M) <- data$M_at_Age[1,]
 rownames(M) <- data$M_at_Age[-1,1]
 M[,-1] <- round(M[,-1],3)
 
-prop <- data$Prop_Mat_at_Age[-1,] # Proportion mature at age in November of a given year
+prop <- data$Prop_Mat_at_Age[-1,] # Proportion mature at age in November (peak spawning) of a given year
 colnames(prop) <- data$Prop_Mat_at_Age[1,]
 rownames(prop) <- data$Prop_Mat_at_Age[-1,1]
 prop <- prop[,-1]
@@ -45,5 +45,38 @@ for (i in 1:length(unlist(N))){
   N_atmonth[i] <- unlist(N)[i]*(exp(1))^(-(p/12)*unlist(Z)[i])
 }
 
+N_atmonth_matrix <- matrix(N_atmonth, nrow = 34, ncol = 8)
+N_atmonth_matrix_year <- rowSums(N_atmonth_matrix)
+
 # Now calculate proportion mature for a given age in November based on N
-prop_Nov <- N_atmonth * unlist(prop)
+prop_Nov <- as.vector(N_atmonth * unlist(prop))
+
+# Convert this to matrix of appropriate dimensions
+N_spawners <- matrix(prop_Nov, nrow = 34, ncol = 8)
+colnames(N_spawners) <- colnames(N)
+rownames(N_spawners) <- rownames(N)
+
+# Check to make sure calculations are correct
+check <- vector()
+for (c in 1:length(unlist(N_spawners))) {
+  check[c] <- N_atmonth[c] * unlist(prop)[c] == unlist(N_spawners)[c]
+  }
+
+check.matrix <- matrix(check, nrow = 34, ncol = 8) # should be all TRUE
+
+# Sum number of spawners across all age classes
+N_spawners_allages <- as.vector(rowSums(N_spawners))
+year <- as.vector(rownames(N_spawners))
+N_spawners_allages <- as.data.frame(cbind(as.integer(year), as.integer(N_spawners_allages)))
+
+plot(year, N_atmonth_matrix_year, xlab = 'Year', ylab = 'Abundance at peak spawning (Nov)', pch = 19)
+lw1 <- loess(N_atmonth_matrix_year ~ year)
+lines(predict(lw1), x = N_spawners_allages$V1, col = 'black') # plots loess line for number of fish at peak spawning
+points(N_spawners_allages$V1, N_spawners_allages$V2, col = "blue", pch = 19)
+lw2 <- loess(N_spawners_allages$V2 ~ N_spawners_allages$V1)
+lines(predict(lw2), x = N_spawners_allages$V1, col = 'blue') # plots loess line for mature fish
+
+legend("bottomright",
+       legend = c('Estimated abundance', 'Estimated mature'),
+       pch=19,
+       col = c('black', 'blue'))
