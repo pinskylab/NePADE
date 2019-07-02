@@ -88,12 +88,68 @@ legend(25, -25,
        bty = "n",
        y.intersp = 1)
 
+# Examine PC loadings. Which loci contribute most to PCs?
+s.arrow(pca1$c1)
+loadingplot(pca1$c1^2)
+
+pc_names <- names(which(rowSums(pca1$c1^2) > .005)) # these are the names of the alleles that contribute the most to PCs
+
+plot(ne_data@tab[,"SNP_32.110"]) # lots of the 98 larvae are clearly different from rest
+plot(ne_data@tab[,"SNP_1575.100"])
+
+for (i in 1:length(pc_names)){
+  plot(ne_data@tab[, paste0(pc_names[i])])
+}
 
 
 #######################################################################
 #### Diversity metrics ####
+# genotype accumulation curve
+genotype_curve(ne_data, sample = 100, quiet = TRUE)
+
+# diversity table using poppr
+poppr(ne_data) # He uses Nei's gene diversity
+
+# expected heterozygosity
+Hs(ne_data) # pretty similar between 3 time periods, but slightly different than using poppr function above
+Hs(ne_data, ne_data@strata$X1)
+
 div <- summary(ne_data)
 
 plot(div$Hobs, xlab = 'Loci number', ylab = 'Observed Heterozygosity', main = 'Observed heterozygosity per locus')
 plot(div$Hobs,div$Hexp, xlab="Hobs", ylab="Hexp", main="Expected heterozygosity as a function of observed heterozygosity per locus")
 bartlett.test(list(div$Hexp, div$Hobs))
+
+# FST
+ne_data
+larvs <- read.table("structure_input_Jan9_2019_293_1904_9pops.txt", sep="\t", header = TRUE)
+
+even_indexes<-seq(2,586,2)
+odd_indexes<-seq(1,585,2)
+
+odds <- data.frame(larvs[odd_indexes,]) # 293 x 1906
+odds2 <- odds[,-c(1:2)] # 293 x 1904
+evens <- data.frame(larvs[even_indexes,]) # 293 x 1906
+evens2 <- evens[,-c(1:2)] # 293 x 1904
+
+s <- 1:length(colnames(evens2))
+combo <- data.frame(matrix(nrow = 293, ncol = 1904))
+for (i in s){
+  combo[,i] <-paste(odds2[,i], evens2[,i], sep = '')
+}
+
+dim(combo) # 293 x 1904
+
+combo[] <- lapply(combo, function(x) as.numeric(as.character(x)))# Convert to numeric, gives warning because replaces character 'NANA' with NA
+
+pop.names <- as.numeric(as.character(evens$Pop))
+
+# Combine the population numbers with the allele data
+combo2 <- cbind(pop.names, combo)
+dim(combo2) # 293 x 1905
+
+pairwise.WCfst(combo2,diploid=TRUE) 
+genet.dist(combo2, method = 'WC84')
+
+options("scipen"=100, "digits"=4) # forces output to not be in scientific notation
+
