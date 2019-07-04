@@ -88,6 +88,21 @@ legend(25, -25,
        bty = "n",
        y.intersp = 1)
 
+# Plot PCA by capture Location
+col <- brewer.pal(6, "Paired")
+s.class(pca1$li, ne_data@strata$X2, xax=1,yax=2, col = transp(col,0.7), axesell=TRUE, cellipse=1.5, cstar=1,cpoint=1.75, grid=FALSE, addaxes = FALSE, clabel = 0, xlim = c(-20,45), ylim = c(-45,11))
+axis(1, at=seq(-10,40, by=10), labels=seq(-10,40, by= 10), line = 0.5)
+axis(2, at=seq(-50,10, by = 10), labels=seq(-50,10, by= 10), line = 0, las = 2)
+mtext("PC1 (2.29%)", side = 1, line = 3.5)
+mtext("PC2 (0.78%)", side = 2, line = 3)
+
+legend(15, -25,
+       legend=c('Little Egg Inlet, NJ', 'Beaufort, NC'),
+       pch=19,
+       col = col,
+       bty = "n",
+       y.intersp = 1)
+
 # Examine PC loadings. Which loci contribute most to PCs?
 s.arrow(pca1$c1)
 loadingplot(pca1$c1^2)
@@ -100,6 +115,45 @@ plot(ne_data@tab[,"SNP_1575.100"])
 for (i in 1:length(pc_names)){
   plot(ne_data@tab[, paste0(pc_names[i])])
 }
+
+#### If I take out the loci that contribute the most to the PCs, what does PCA look like? ####
+ne_data.subloci <- as.genind(ne_data@tab[,!colnames(ne_data@tab) %in% pc_names])
+ordered_meta_sub2$PinskyID == rownames(ne_data.subloci@tab) # Double check names are the same
+pop_strata <- data.frame(cbind(ordered_meta_sub2$Year, ordered_meta_sub2$Place)) # Same as for PCA using all loci
+strata(ne_data.subloci) <- pop_strata # Add strata into genind object
+
+# Redo PCA & plot #
+sum(is.na(ne_data.subloci@tab)) #10131 
+Y <- scaleGen(ne_data.subloci, NA.method = "mean")
+dim(Y)
+class (Y)
+
+# make PCA
+pca2 <- dudi.pca(Y,cent=FALSE,scale=FALSE,scannf=FALSE,nf=3)
+barplot(pca2$eig[1:50],main="PCA eigenvalues", col=heat.colors(50))
+
+pca2
+
+# Plot PCA based on years
+col <- wes_palette("Darjeeling1", 5, type = "discrete")
+palette(col)
+s.class(pca2$li, ne_data.subloci@strata$X1, xax=1,yax=2, col = transp(col,0.7), axesell=TRUE, cellipse=1.5, cstar=1,cpoint=1.75, grid=FALSE, addaxes = FALSE, clabel = 0, xlim = c(-60,20), ylim = c(-35,11))
+axis(1, at=seq(-50,10, by=10), labels=seq(-50,10, by= 10), line = 0.5)
+axis(2, at=seq(-50,20, by = 10), labels=seq(-50,20, by= 10), line = 0, las = 2)
+mtext("PC1 (0.80%)", side = 1, line = 3.5)
+mtext("PC2 (0.72%)", side = 2, line = 3)
+
+legend(-30, -20,
+       legend=levels(ne_data.subloci@strata$X1),
+       pch=19,
+       col = col,
+       bty = "n",
+       y.intersp = 1)
+
+eig_percent <- round((pca2$eig/(sum(pca2$eig)))*100,2)
+eig_percent [1:3]
+
+# If I take out the individuals from other SEQ runs, what does the PCA look like?
 
 
 #######################################################################
