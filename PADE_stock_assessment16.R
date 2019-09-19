@@ -35,9 +35,9 @@ rownames(prop) <- data$Prop_Mat_at_Age[-1,1]
 prop <- prop[,-1]
 
 # Calculate N for a given age/month
-# Nt+1 = Nt*e^-pZ where p = month and Z = M*F
-# p = month/12; Z = M*F
-Z <- F[,-1]*M[,-1]
+# Nt+1 = Nt*e^-pZ where p = month and Z = M+F
+# p = month/12; Z = M+F
+Z <- F[,-1]+M[,-1]
 p <- 10 # for example, October
 
 N_atmonth <- vector()
