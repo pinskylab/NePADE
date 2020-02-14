@@ -82,6 +82,7 @@ data_sub@pop <- as.factor(pops[,1])
 
 writeGenPop(data_sub, "~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/Ne_PADE_1256loci_complete.gen", comment = '1256 loci with no missing data across 285 PADE, no MAF')
 
+#### Opportunities to read in and visualize single, pairwise or multiSFSs ####
 # Read in multiSFS file
 library(data.table)
 
@@ -96,6 +97,51 @@ sum(nomaf.msfs[1,])
 table(t(nomaf.msfs))
 which(nomaf.msfs == 40) # maf = 0.0070
 which(nomaf.msfs == 53) # maf = 0.0508
+
+# Read in single population SFSs
+pop08 <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/stable_fixing_nomaf2.res/stable_fixing_nomaf2_MAFpop0.obs', skip = 1, header = TRUE)
+pop97 <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/stable_fixing_nomaf2.res/stable_fixing_nomaf2_MAFpop1.obs', skip = 1, header = TRUE)
+pop94 <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/stable_fixing_nomaf2.res/stable_fixing_nomaf2_MAFpop2.obs', skip = 1, header = TRUE)
+
+hist(as.numeric(pop08))
+hist(as.numeric(pop97))
+hist(as.numeric(pop94))
+
+# All the populations are different sizes, so need to convert to proportion of SNPs & then add zeros so that all cohorts have same number of columns
+pop08.prop <- t(pop08/sum(pop08)) # sum of all these is 1256, the number of SNPs
+pop97.prop <- t(pop97/sum(pop97))
+pop94.prop <- t(pop94/sum(pop94))
+
+n <- max(length(pop08), length(pop97), length(pop94)) # determines max vector length (317) and then makes all shorter vectors 317
+pop08.prop <- as.numeric(pop08.prop)
+length(pop97.prop) <- n # adds NAs to the end of the vector
+length(pop94.prop) <- n # adds NAs to the end of the vector
+
+pop97.prop[is.na(pop97.prop)] <- 0
+pop94.prop[is.na(pop94.prop)] <- 0
+
+m <- rbind(pop94.prop, pop97.prop, pop08.prop)
+colnames(m) <- 0:316
+
+# Plot
+library(wesanderson)
+col.palette <- wes_palette("FantasticFox1", 5, type = "discrete")
+palette(col.palette)
+
+png(file="~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/obs_sfs.png", width=11, height=3, res=300, units="in")
+
+par(
+  mar=c(4.5, 4, 1.5, 1), # panel magin size in "line number" units
+  mgp=c(3, 1, 0), # default is c(3,1,0); line number for axis label, tick label, axis
+  tcl=-0.5, # size of tick marks as distance INTO figure (negative means pointing outward)
+  cex=1, # character expansion factor; keep as 1; if you have a many-panel figure, they start changing the default!
+  ps=12
+)
+
+barplot(m, legend = c('1994-1995 cohort', '1997-1998 cohort','2008-2009 cohort'), beside = TRUE, xlab = 'Number of minor alleles', ylab = 'Proportion of SNPs', xlim = c(0, 590), col = col.palette[1:3])
+
+dev.off()
+
 
 # This doesn't actually work because the STRUCTURE file is counting the number of alleles (0, 1 or 2)
 # Write as a STRUCTURE file using the function below
