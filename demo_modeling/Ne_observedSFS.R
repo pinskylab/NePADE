@@ -103,16 +103,21 @@ pop08 <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysi
 pop97 <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/stable_fixing_nomaf2.res/stable_fixing_nomaf2_MAFpop1.obs', skip = 1, header = TRUE)
 pop94 <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/stable_fixing_nomaf2.res/stable_fixing_nomaf2_MAFpop2.obs', skip = 1, header = TRUE)
 
-hist(as.numeric(pop08))
-hist(as.numeric(pop97))
-hist(as.numeric(pop94))
+hist(as.numeric(pop08)) # 1222 polymorphic snps
+hist(as.numeric(pop97)) # 1141 polymorphic snps
+hist(as.numeric(pop94)) # 707 polymorphic snps
 
 # All the populations are different sizes, so need to convert to proportion of SNPs & then add zeros so that all cohorts have same number of columns
-pop08.prop <- t(pop08/sum(pop08)) # sum of all these is 1256, the number of SNPs
-pop97.prop <- t(pop97/sum(pop97))
-pop94.prop <- t(pop94/sum(pop94))
+# pop08.prop <- t(pop08/sum(pop08)) # sum of all these is 1256, the number of SNPs
+# pop97.prop <- t(pop97/sum(pop97))
+# pop94.prop <- t(pop94/sum(pop94))
 
-n <- max(length(pop08), length(pop97), length(pop94)) # determines max vector length (317) and then makes all shorter vectors 317
+pop08.prop <- t(pop08[-1]/sum(pop08[-1])) # denominator is number of SNPs (only polymorphic sites)
+pop97.prop <- t(pop97[-1]/sum(pop97[-1]))
+pop94.prop <- t(pop94[-1]/sum(pop94[-1]))
+
+# n <- max(length(pop08), length(pop97), length(pop94)) # determines max vector length (317) and then makes all shorter vectors 317 when including nonpolymorphic sites
+n <- max(length(pop08[-1]), length(pop97[-1]), length(pop94[-1])) # determines max vector length (316) and then makes all shorter vectors 31 when including only polymorphic sites
 pop08.prop <- as.numeric(pop08.prop)
 length(pop97.prop) <- n # adds NAs to the end of the vector
 length(pop94.prop) <- n # adds NAs to the end of the vector
@@ -121,26 +126,128 @@ pop97.prop[is.na(pop97.prop)] <- 0
 pop94.prop[is.na(pop94.prop)] <- 0
 
 m <- rbind(pop94.prop, pop97.prop, pop08.prop)
-colnames(m) <- 0:316
+# colnames(m) <- 0:316 # including polymorphic sites
+colnames(m) <- 1:316 # only polymorphic sites
 
 # Plot
 library(wesanderson)
 col.palette <- wes_palette("FantasticFox1", 5, type = "discrete")
 palette(col.palette)
 
-png(file="~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/obs_sfs.png", width=11, height=3, res=300, units="in")
+# png(file="~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/obs_sfs.png", width=11, height=3, res=300, units="in")
+png(file="~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/obs_sfs_polyonly.png", width=11, height=3, res=300, units="in")
 
 par(
-  mar=c(4.5, 4, 1.5, 1), # panel magin size in "line number" units
+  mar=c(4.5, 5, 1.5, 1), # panel magin size in "line number" units
   mgp=c(3, 1, 0), # default is c(3,1,0); line number for axis label, tick label, axis
   tcl=-0.5, # size of tick marks as distance INTO figure (negative means pointing outward)
   cex=1, # character expansion factor; keep as 1; if you have a many-panel figure, they start changing the default!
   ps=12
 )
 
-barplot(m, legend = c('1994-1995 cohort', '1997-1998 cohort','2008-2009 cohort'), beside = TRUE, xlab = 'Number of minor alleles', ylab = 'Proportion of SNPs', xlim = c(0, 590), col = col.palette[1:3])
+barplot(m, legend = c('1994-1995 cohort', '1997-1998 cohort','2008-2009 cohort'), beside = TRUE, xlab = 'Number of minor alleles', ylab = 'Proportion of SNPs', main = 'Observed SFS', xlim = c(0, 105), col = col.palette[1:3])
 
 dev.off()
+
+#### Comparing averaged SFSs under different demographic scenarios to the observed SFS ####
+# Reading in individual population SFSs simulated under constant population size demographic model
+pop08.constant <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/sim_sfs/constant/pop0_sfs_summary.txt') #100x317
+pop97.constant <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/sim_sfs/constant/pop1_sfs_summary.txt') #100x207
+pop94.constant <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/sim_sfs/constant/pop2_sfs_summary.txt') #100x49
+
+# Take means across each bin of # of minor alleles
+pop08.constant.avg <- colMeans(pop08.constant)
+pop97.constant.avg <- colMeans(pop97.constant)
+pop94.constant.avg <- colMeans(pop94.constant)
+
+# All the populations are different sizes, so need to convert to proportion of SNPs & then add zeros so that all cohorts have same number of columns
+pop08.avg.poly <- mean(rowSums(pop08.constant[-1])) #avg number of polymorphic snps for pop08
+pop97.avg.poly <- mean(rowSums(pop97.constant[-1])) #avg number of polymorphic snps for pop97
+pop94.avg.poly <- mean(rowSums(pop94.constant[-1])) #avg number of polymorphic snps for pop94
+
+pop08.constant.prop <- t(pop08.constant.avg[-1]/pop08.avg.poly) #prop of polymorphic snps vs # of minor alleles
+pop97.constant.prop <- t(pop97.constant.avg[-1]/pop97.avg.poly)
+pop94.constant.prop <- t(pop94.constant.avg[-1]/pop94.avg.poly)
+
+n <- max(length(pop08.constant.avg[-1]), length(pop97.constant.avg[-1]), length(pop94.constant.avg[-1])) # determines max vector length of only polymorphic sites (316) and then makes all shorter vectors 316
+pop08.constant.prop <- as.numeric(pop08.constant.prop)
+length(pop97.constant.prop) <- n # adds NAs to the end of the vector
+length(pop94.constant.prop) <- n # adds NAs to the end of the vector
+
+pop97.constant.prop[is.na(pop97.constant.prop)] <- 0 # Replaces NAs with 0
+pop94.constant.prop[is.na(pop94.constant.prop)] <- 0
+
+m <- rbind(pop94.constant.prop, pop97.constant.prop, pop08.constant.prop)
+colnames(m) <- 1:316
+
+# Plot
+library(wesanderson)
+col.palette <- wes_palette("FantasticFox1", 5, type = "discrete")
+palette(col.palette)
+
+png(file="~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/sim_sfs/constant/constant_sfs.png", width=11, height=3, res=300, units="in")
+
+par(
+  mar=c(4.5, 5, 1.5, 1), # panel magin size in "line number" units
+  mgp=c(3, 1, 0), # default is c(3,1,0); line number for axis label, tick label, axis
+  tcl=-0.5, # size of tick marks as distance INTO figure (negative means pointing outward)
+  cex=1, # character expansion factor; keep as 1; if you have a many-panel figure, they start changing the default!
+  ps=12
+)
+
+barplot(m, legend = c('1994-1995 cohort', '1997-1998 cohort','2008-2009 cohort'), beside = TRUE, xlab = 'Number of minor alleles', ylab = 'Proportion of polymorphic SNPs', main = 'Constant population size', xlim = c(0, 105), col = col.palette[1:3])
+
+dev.off()
+
+# Reading in individual population SFSs simulated under instantaneous recovery demographic model
+pop08.instant <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/sim_sfs/instant/pop0_sfs_instant_summary.txt') #100x317
+pop97.instant <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/sim_sfs/instant/pop1_sfs_instant_summary.txt') #100x207
+pop94.instant <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/sim_sfs/instant/pop2_sfs_instant_summary.txt') #100x49
+
+# Take means across each bin of # of minor alleles
+pop08.instant.avg <- colMeans(pop08.instant)
+pop97.instant.avg <- colMeans(pop97.instant)
+pop94.instant.avg <- colMeans(pop94.instant)
+
+# All the populations are different sizes, so need to convert to proportion of SNPs & then add zeros so that all cohorts have same number of columns
+pop08.avg.poly.inst <- mean(rowSums(pop08.instant[-1])) #avg number of polymorphic snps for pop08
+pop97.avg.poly.inst <- mean(rowSums(pop97.instant[-1])) #avg number of polymorphic snps for pop97
+pop94.avg.poly.inst <- mean(rowSums(pop94.instant[-1])) #avg number of polymorphic snps for pop94
+
+pop08.instant.prop <- t(pop08.instant.avg[-1]/pop08.avg.poly.inst) #prop of polymorphic snps vs # of minor alleles
+pop97.instant.prop <- t(pop97.instant.avg[-1]/pop97.avg.poly.inst)
+pop94.instant.prop <- t(pop94.instant.avg[-1]/pop94.avg.poly.inst)
+
+n <- max(length(pop08.instant.avg[-1]), length(pop97.instant.avg[-1]), length(pop94.instant.avg[-1])) # determines max vector length of only polymorphic sites (316) and then makes all shorter vectors 316
+pop08.instant.prop <- as.numeric(pop08.instant.prop)
+length(pop97.instant.prop) <- n # adds NAs to the end of the vector
+length(pop94.instant.prop) <- n # adds NAs to the end of the vector
+
+pop97.instant.prop[is.na(pop97.instant.prop)] <- 0 # Replaces NAs with 0
+pop94.instant.prop[is.na(pop94.instant.prop)] <- 0
+
+m <- rbind(pop94.instant.prop, pop97.instant.prop, pop08.instant.prop)
+colnames(m) <- 1:316
+
+# Plot
+library(wesanderson)
+col.palette <- wes_palette("FantasticFox1", 5, type = "discrete")
+palette(col.palette)
+
+png(file="~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/sim_sfs/instant/instant_sfs.png", width=11, height=3, res=300, units="in")
+
+par(
+  mar=c(4.5, 5, 1.5, 1), # panel magin size in "line number" units
+  mgp=c(3, 1, 0), # default is c(3,1,0); line number for axis label, tick label, axis
+  tcl=-0.5, # size of tick marks as distance INTO figure (negative means pointing outward)
+  cex=1, # character expansion factor; keep as 1; if you have a many-panel figure, they start changing the default!
+  ps=12
+)
+
+barplot(m, legend = c('1994-1995 cohort', '1997-1998 cohort','2008-2009 cohort'), beside = TRUE, xlab = 'Number of minor alleles', ylab = 'Proportion of polymorphic SNPs', main = 'Instantaneous recovery', xlim = c(0, 105), col = col.palette[1:3])
+
+dev.off()
+
 
 
 # This doesn't actually work because the STRUCTURE file is counting the number of alleles (0, 1 or 2)
