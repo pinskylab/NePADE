@@ -80,3 +80,35 @@ legend("bottomright",
        legend = c('Estimated abundance', 'Estimated mature'),
        pch=19,
        col = c('black', 'blue'))
+
+#### Calculating r for summer flounder using estimates of N ####
+N
+count <- rowSums(N)
+year <- as.numeric(rownames(N))
+
+plot(year, count)
+
+# Calculating r going back in time, so negative r mean population expansion
+# For a single year
+r <- vector()
+for (i in 1:length(count)) {
+  r[i] <- (log(count[i]/count[i+1]))/abs((year[i]-year[i+1]))
+}
+
+# Across 2 years
+r <- vector()
+for (i in 1:length(count)) {
+  r[i] <- (log(count[i]/count[i+2]))/abs((year[i]-year[i+2]))
+}
+
+# Across 3 years
+r <- vector()
+for (i in 1:length(count)) {
+  r[i] <- (log(count[i]/count[i+3]))/abs((year[i]-year[i+3]))
+}
+
+# Across 4 years
+r <- vector()
+for (i in 1:length(count)) {
+  r[i] <- (log(count[i]/count[i+4]))/abs((year[i]-year[i+4]))
+}
