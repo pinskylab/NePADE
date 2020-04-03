@@ -41,6 +41,7 @@ shrinking.best.nomaf <- read.table("~/Documents/Graduate School/Rutgers/Summer F
 # nobot.best.nomaf <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/from_amarel/nobot_nomaf/best.lhood.summary.nobot_nomaf.txt", header = TRUE) # constant population size for comparision to all the bottlenecks
 nobot.best.nomaf2 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/from_amarel/nobot_nomaf_oneparam/best.lhood.summary.nobot_nomaf.txt", header = TRUE) # constant population size for comparision to all the bottlenecks, but only estimating NPOP08
 tbot.fixed.nomaf <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/from_amarel/instant_nomaf_fixedTBOT/best.lhood.summary.stable_nomaf_fixedTBOT.txt", header = TRUE)
+expgrowth_instant <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/from_amarel/expgrowth_then_stable_instant_nomaf_Nlowerlimit100/best.lhood.summary.expgrowth_instant_nomaf.txt", header = TRUE)
 
 # Stable
 max(stable.best.nomaf$MaxEstLhood)
@@ -72,14 +73,20 @@ max(tbot.fixed.nomaf$MaxEstLhood)
 tbot.fixed.nomaf[which(tbot.fixed.nomaf$MaxEstLhood == max(tbot.fixed.nomaf$MaxEstLhood)),]
 tbot.fixed.nomaf[5,]$MaxEstLhood - tbot.fixed.nomaf[5,]$MaxObsLhood
 
+# Exponential growth, then bottleneck, then instantaneous recovery
+max(expgrowth_instant$MaxEstLhood)
+expgrowth_instant[which(expgrowth_instant$MaxEstLhood == max(expgrowth_instant$MaxEstLhood)),]
+expgrowth_instant[43,]$MaxEstLhood - expgrowth_instant[43,]$MaxObsLhood # difference between MaxEst and MaxObs
+
+
 #### AIC calculations ####
 # a test
 # a <- c(-918.395, -687.045, -740.019, -782.598	) # MaxEstLhood
 # b <- c(4, 6, 7, 7) # number of estimated parameters
 
 # Data from my models
-a <- c(-4016.987, -4021.143, -4038.039, -4054.514) # MaxEstLhood
-b <- c(5, 5, 5, 1) # number of estimated parameters
+a <- c(-4016.987, -4021.143, -4038.039, -4054.514, -3916.007) # MaxEstLhood
+b <- c(5, 5, 5, 1, 6) # number of estimated parameters
 
 aic <- 2*b-2*a
 
@@ -91,11 +98,12 @@ w <- vector()
 # }
 
 for (i in 1:length(aic)) {
-  w[i] <- (exp(-0.5*(aic[i]-max(aic))))/sum(exp(-0.5*(aic[1]-max(aic))), exp(-0.5*(aic[2]-max(aic))), exp(-0.5*(aic[3]-max(aic))), exp(-0.5*(aic[4]-max(aic))))
+  w[i] <- (exp(-0.5*(aic[i]-max(aic))))/sum(exp(-0.5*(aic[1]-max(aic))), exp(-0.5*(aic[2]-max(aic))), exp(-0.5*(aic[3]-max(aic))), exp(-0.5*(aic[4]-max(aic))), exp(-0.5*(aic[5]-max(aic))))
 }
 
 #### Plot all fsc runs from parametric bootstrapping, plus the best fit model ####
-boot <- read.table() # Read in ML bootstrapped parameters
+boot <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/from_amarel/stable_instant_nomaf_Nlowerlimit100/max.summary.txt', header = TRUE) # Read in ML bootstrapped parameters following 50 runs for each simulated SFS
+
 stable.best.nomaf <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/from_amarel/stable_instant_nomaf_Nlowerlimit100/best.lhood.summary.stable_nomaf.txt", header = TRUE)# Read in ML parameters from best model
 
 # Find maximum from best model
@@ -116,7 +124,18 @@ for (i in 1:nrow(boot)) {
 }
 
 # Set up plot and plot bootstrapped data
-plot(max$X1, max$X2, xlab = 'Year', ylab = 'Effective population size', type = 'n', ylim = c(0,100000))
+options(scipen = 5)
+
+png(file="~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/best_model_lineplot.png",width=6, height=5, res=300, units="in")
+par(mar=c(4.5, 5, 1.5, 1), # panel magin size in "line number" units
+    mgp=c(3, 1, 0), # default is c(3,1,0); line number for axis label, tick label, axis
+    tcl=-0.5, # size of tick marks as distance INTO figure (negative means pointing outward)
+    cex=1, # character expansion factor; keep as 1; if you have a many-panel figure, they start changing the default!
+    ps=12
+)
+
+# Plots bootstrapped 50 runs used to estimate 95% CI
+plot(max$X1, max$X2, xlab = 'Year', ylab = expression('N'[e]), type = 'n', ylim = c(0,100000), las = 1)
 for (l in 1:100) {
   lines(jitter(boot.max[,1,l], factor = 0.3), boot.max[,2,l], col = 'gray90')
 }
@@ -125,6 +144,7 @@ for (l in 1:100) {
 #   lines(boot.max[,,l], col = 'gray90')
 # }
 
-# parameters from best fit model
+# Plots parameters from best fit model
 lines(max$X1, max$X2)
 
+dev.off()
