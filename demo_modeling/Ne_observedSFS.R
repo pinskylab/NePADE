@@ -98,7 +98,7 @@ table(t(nomaf.msfs))
 which(nomaf.msfs == 40) # maf = 0.0070
 which(nomaf.msfs == 53) # maf = 0.0508
 
-# Read in single population SFSs
+# Read in single population observed SFSs
 pop08 <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/stable_fixing_nomaf2.res/stable_fixing_nomaf2_MAFpop0.obs', skip = 1, header = TRUE)
 pop97 <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/stable_fixing_nomaf2.res/stable_fixing_nomaf2_MAFpop1.obs', skip = 1, header = TRUE)
 pop94 <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/stable_fixing_nomaf2.res/stable_fixing_nomaf2_MAFpop2.obs', skip = 1, header = TRUE)
@@ -248,7 +248,80 @@ barplot(m, legend = c('1994-1995 cohort', '1997-1998 cohort','2008-2009 cohort')
 
 dev.off()
 
+# Reading in individual population SFSs simulated under exponential NANC growth, bottleneck then instantaneous recovery demographic model
+pop08.expgrowth_instant <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/sim_sfs/expgrowth_instant/pop0_sfs_expgrowth_instant_summary.txt') #100x317
+pop97.expgrowth_instant <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/sim_sfs/expgrowth_instant/pop1_sfs_expgrowth_instant_summary.txt') #100x207
+pop94.expgrowth_instant <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/sim_sfs/expgrowth_instant/pop2_sfs_expgrowth_instant_summary.txt') #100x49
 
+# Take means across each bin of # of minor alleles
+pop08.expgrowth_instant.avg <- colMeans(pop08.expgrowth_instant)
+pop97.expgrowth_instant.avg <- colMeans(pop97.expgrowth_instant)
+pop94.expgrowth_instant.avg <- colMeans(pop94.expgrowth_instant)
+
+# All the populations are different sizes, so need to convert to proportion of SNPs & then add zeros so that all cohorts have same number of columns
+pop08.avg.poly.expgrowth.inst <- mean(rowSums(pop08.expgrowth_instant[-1])) #avg number of polymorphic snps for pop08
+pop97.avg.poly.expgrowth.inst <- mean(rowSums(pop97.expgrowth_instant[-1])) #avg number of polymorphic snps for pop97
+pop94.avg.poly.expgrowth.inst <- mean(rowSums(pop94.expgrowth_instant[-1])) #avg number of polymorphic snps for pop94
+
+pop08.expgrowth.instant.prop <- t(pop08.expgrowth_instant.avg[-1]/pop08.avg.poly.expgrowth.inst) #prop of polymorphic snps vs # of minor alleles
+pop97.expgrowth.instant.prop <- t(pop97.expgrowth_instant.avg[-1]/pop97.avg.poly.expgrowth.inst)
+pop94.expgrowth.instant.prop <- t(pop94.expgrowth_instant.avg[-1]/pop94.avg.poly.expgrowth.inst)
+
+n <- max(length(pop08.expgrowth_instant.avg[-1]), length(pop97.expgrowth_instant.avg[-1]), length(pop94.expgrowth_instant.avg[-1])) # determines max vector length of only polymorphic sites (316) and then makes all shorter vectors 316
+pop08.expgrowth.instant.prop <- as.numeric(pop08.expgrowth.instant.prop)
+length(pop97.expgrowth.instant.prop) <- n # adds NAs to the end of the vector
+length(pop94.expgrowth.instant.prop) <- n # adds NAs to the end of the vector
+
+pop97.expgrowth.instant.prop[is.na(pop97.expgrowth.instant.prop)] <- 0 # Replaces NAs with 0
+pop94.expgrowth.instant.prop[is.na(pop94.expgrowth.instant.prop)] <- 0
+
+m <- rbind(pop94.expgrowth.instant.prop, pop97.expgrowth.instant.prop, pop08.expgrowth.instant.prop)
+colnames(m) <- 1:316
+
+# Plot
+library(wesanderson)
+col.palette <- wes_palette("FantasticFox1", 5, type = "discrete")
+palette(col.palette)
+
+png(file="~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/sim_sfs/expgrowth_instant/expgrowth_instant_sfs.png", width=11, height=3, res=300, units="in")
+
+par(
+  mar=c(4.5, 5, 1.5, 1), # panel magin size in "line number" units
+  mgp=c(3, 1, 0), # default is c(3,1,0); line number for axis label, tick label, axis
+  tcl=-0.5, # size of tick marks as distance INTO figure (negative means pointing outward)
+  cex=1, # character expansion factor; keep as 1; if you have a many-panel figure, they start changing the default!
+  ps=12
+)
+
+barplot(m, legend = c('1994-1995 cohort', '1997-1998 cohort','2008-2009 cohort'), beside = TRUE, xlab = 'Number of minor alleles', ylab = 'Proportion of polymorphic SNPs', main = 'Exponential growth of NANC, then bottleneck & instantaneous recovery', xlim = c(0, 105), col = col.palette[1:3])
+
+dev.off()
+
+#### Plots to compare demographic scenarios with observed ####
+library(wesanderson)
+col.palette <- wes_palette("FantasticFox1", 5, type = "discrete")
+palette(col.palette)
+
+early <- rbind(pop94.instant.prop, pop94.expgrowth.instant.prop, t(pop94.prop))
+colnames(early) <- 1:316 #1:48
+mid <- rbind(pop97.instant.prop, pop97.expgrowth.instant.prop, t(pop97.prop))
+colnames(mid) <- 1:316 #1:206
+late <- rbind(pop08.instant.prop, pop08.expgrowth.instant.prop, t(pop08.prop))
+colnames(late) <- 1:316
+
+png(file="~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/sim_sfs/sfs.comparison.png",width=12, height=9, res=300, units="in")
+par(mfrow = c(3,1),
+    mar=c(4.5, 5, 1.5, 1), # panel magin size in "line number" units
+    mgp=c(3, 1, 0), # default is c(3,1,0); line number for axis label, tick label, axis
+    tcl=-0.5, # size of tick marks as distance INTO figure (negative means pointing outward)
+    cex=1, # character expansion factor; keep as 1; if you have a many-panel figure, they start changing the default!
+    ps=12
+)
+
+barplot(early, legend = c('Instantaneous recovery', 'NANC exponential growth & instantaneous recovery', 'Observed'), beside = TRUE, xlab = 'Number of minor alleles', ylab = 'Proportion of polymorphic SNPs', main = '1994-1995 cohort', xlim = c(0, 100), col = col.palette[1:3])
+barplot(mid, legend = c('Instantaneous recovery','NANC exponential growth & instantaneous recovery', 'Observed'), beside = TRUE, xlab = 'Number of minor alleles', ylab = 'Proportion of polymorphic SNPs', main = '1997-1998 cohort', xlim = c(0, 100), col = col.palette[1:3])
+barplot(late, legend = c('Instantaneous recovery','NANC exponential growth & instantaneous recovery', 'Observed'), beside = TRUE, xlab = 'Number of minor alleles', ylab = 'Proportion of polymorphic SNPs', main = '2008-2009 cohort', xlim = c(0, 100), col = col.palette[1:3])
+dev.off()
 
 # This doesn't actually work because the STRUCTURE file is counting the number of alleles (0, 1 or 2)
 # Write as a STRUCTURE file using the function below
