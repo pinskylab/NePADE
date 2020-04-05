@@ -102,16 +102,25 @@ for (i in 1:length(aic)) {
 }
 
 #### Plot all fsc runs from parametric bootstrapping, plus the best fit model ####
-boot <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/from_amarel/stable_instant_nomaf_Nlowerlimit100/max.summary.txt', header = TRUE) # Read in ML bootstrapped parameters following 50 runs for each simulated SFS
+# Read in ML and bootstrapped parameters from instananeous recovery model
+# boot <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/from_amarel/stable_instant_nomaf_Nlowerlimit100/max.summary.txt', header = TRUE) # Read in ML bootstrapped parameters following 50 runs for each simulated SFS
+# stable.best.nomaf <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/from_amarel/stable_instant_nomaf_Nlowerlimit100/best.lhood.summary.stable_nomaf.txt", header = TRUE)# Read in ML parameters from instantaneous recovery model
 
-stable.best.nomaf <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/from_amarel/stable_instant_nomaf_Nlowerlimit100/best.lhood.summary.stable_nomaf.txt", header = TRUE)# Read in ML parameters from best model
+# Read in ML and bootstrapped parameters from exponential growth of NANC, then bottleneck & instananeous recovery model
+boot <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/from_amarel/expgrowth_then_stable_instant_nomaf_Nlowerlimit100/cis_sfs_summary.txt', header = TRUE) # Read in ML bootstrapped parameters following 50 runs for each simulated SFS
+expgrowth_instant.best.nomaf <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/from_amarel/expgrowth_then_stable_instant_nomaf_Nlowerlimit100/best.lhood.summary.expgrowth_instant_nomaf.txt", header = TRUE)# Read in ML parameters from instantaneous recovery model
 
-# Find maximum from best model
-max(stable.best.nomaf$MaxEstLhood)
-instant <- stable.best.nomaf[which(stable.best.nomaf$MaxEstLhood == max(stable.best.nomaf$MaxEstLhood)),]
+# Find maximum from best models
+# Instantaneous recovery
+# max(stable.best.nomaf$MaxEstLhood)
+# instant <- stable.best.nomaf[which(stable.best.nomaf$MaxEstLhood == max(stable.best.nomaf$MaxEstLhood)),]
 
-# Manipulate data so that its plottable
-# Best fit model
+# Exponential growth of NANC, then bottleneck & instantaneous recovery
+max(expgrowth_instant.best.nomaf$MaxEstLhood)
+expgrowth_instant <- expgrowth_instant.best.nomaf[which(expgrowth_instant.best.nomaf$MaxEstLhood == max(expgrowth_instant.best.nomaf$MaxEstLhood)),]
+
+#### Manipulate data so that its plottable ####
+# Instantaneous recovery model
 max <- data.frame(matrix(NA, nrow = 6, ncol = 2))
 max[,1] <- c(2008, 2008-(2*instant$TBOT), 2008-(2*instant$TBOT), 2008-(2*instant$TBOT+instant$TLEN), 2008-(2*instant$TBOT+instant$TLEN), 1980)
 max[,2] <- c(instant$NPOP08, instant$NPOP08, instant$NBOT, instant$NBOT, instant$NANC, instant$NANC)
@@ -126,7 +135,7 @@ for (i in 1:nrow(boot)) {
 # Set up plot and plot bootstrapped data
 options(scipen = 5)
 
-png(file="~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/best_model_lineplot.png",width=6, height=5, res=300, units="in")
+png(file="~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/instant_recovery_lineplot.png",width=6, height=5, res=300, units="in")
 par(mar=c(4.5, 5, 1.5, 1), # panel magin size in "line number" units
     mgp=c(3, 1, 0), # default is c(3,1,0); line number for axis label, tick label, axis
     tcl=-0.5, # size of tick marks as distance INTO figure (negative means pointing outward)
@@ -136,6 +145,44 @@ par(mar=c(4.5, 5, 1.5, 1), # panel magin size in "line number" units
 
 # Plots bootstrapped 50 runs used to estimate 95% CI
 plot(max$X1, max$X2, xlab = 'Year', ylab = expression('N'[e]), type = 'n', ylim = c(0,100000), las = 1)
+for (l in 1:100) {
+  lines(jitter(boot.max[,1,l], factor = 0.3), boot.max[,2,l], col = 'gray90')
+}
+
+# for (l in 1:100) {
+#   lines(boot.max[,,l], col = 'gray90')
+# }
+
+# Plots parameters from best fit model
+lines(max$X1, max$X2)
+
+dev.off()
+
+# Exponenetial growth of NANC then bottleneck & instantaneous recovery model
+max <- data.frame(matrix(NA, nrow = 8, ncol = 2))
+max[,1] <- c(2008, 2008-(2*expgrowth_instant$TBOT), 2008-(2*expgrowth_instant$TBOT), 2008-((2*expgrowth_instant$TBOT)+(2*expgrowth_instant$TLEN)), 2008-((2*expgrowth_instant$TBOT)+(2*expgrowth_instant$TLEN)), 2008-((2*expgrowth_instant$TBOT)+(2*expgrowth_instant$TLEN))-10, 2008-((2*expgrowth_instant$TBOT)+(2*expgrowth_instant$TLEN))-20, 2008-((2*expgrowth_instant$TBOT)+(2*expgrowth_instant$TLEN))-30)
+max[,2] <- c(expgrowth_instant$NPOP08, expgrowth_instant$NPOP08, expgrowth_instant$NBOT, expgrowth_instant$NBOT, expgrowth_instant$NANC, expgrowth_instant$NANC/exp(expgrowth_instant$RANC * -10), expgrowth_instant$NANC/exp(expgrowth_instant$RANC * -20), expgrowth_instant$NANC/exp(expgrowth_instant$RANC * -30))
+
+# Parametric bootstrapped data
+boot.max <- array(numeric(), c(8,2,100))
+for (i in 1:nrow(boot)) {
+  boot.max[,1,i] <- c(2008, 2008-(2*boot$TBOT[i]), 2008-(2*boot$TBOT[i]), 2008-((2*boot$TBOT[i])+(2*boot$TLEN[i])), 2008-((2*boot$TBOT[i])+(2*boot$TLEN[i])), 2008-((2*expgrowth_instant$TBOT)+(2*expgrowth_instant$TLEN))-10, 2008-((2*expgrowth_instant$TBOT)+(2*expgrowth_instant$TLEN))-20, 2008-((2*expgrowth_instant$TBOT)+(2*expgrowth_instant$TLEN))-30)
+  boot.max[,2,i] <- c(boot$NPOP08[i], boot$NPOP08[i], boot$NBOT[i], boot$NBOT[i], boot$NANC[i], boot$NANC[i]/exp(boot$RANC[i] * -10), boot$NANC[i]/exp(boot$RANC[i] * -20), boot$NANC[i]/exp(boot$RANC[i] * -30))
+}
+
+# Set up plot and plot bootstrapped data
+options(scipen = 5)
+
+png(file="~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/expgrowth_instant_lineplot.png",width=6, height=5, res=300, units="in")
+par(mar=c(4.5, 5, 1.5, 1), # panel magin size in "line number" units
+    mgp=c(3, 1, 0), # default is c(3,1,0); line number for axis label, tick label, axis
+    tcl=-0.5, # size of tick marks as distance INTO figure (negative means pointing outward)
+    cex=1, # character expansion factor; keep as 1; if you have a many-panel figure, they start changing the default!
+    ps=12
+)
+
+# Plots bootstrapped 50 runs used to estimate 95% CI
+plot(max$X1, max$X2, xlab = 'Year', ylab = expression('N'[e]), type = 'n', ylim = c(0,150000), las = 1)
 for (l in 1:100) {
   lines(jitter(boot.max[,1,l], factor = 0.3), boot.max[,2,l], col = 'gray90')
 }
