@@ -24,7 +24,7 @@ colnames(F) <- data$F_at_Age[1,]
 rownames(F) <- data$F_at_Age[-1,1]
 F[,-1] <- round(F[,-1],3)
 
-M <- data$M_at_Age[-1,] # input fishing mortality at age
+M <- data$M_at_Age[-1,] # input natural mortality at age
 colnames(M) <- data$M_at_Age[1,]
 rownames(M) <- data$M_at_Age[-1,1]
 M[,-1] <- round(M[,-1],3)
@@ -35,24 +35,24 @@ rownames(prop) <- data$Prop_Mat_at_Age[-1,1]
 prop <- prop[,-1]
 
 # Calculate N for a given age/month
-# Nt+1 = Nt*e^-pZ where p = month and Z = M+F
+# Nt+1 = Nt*e^-pZ where p = month and Z = M+F (natural mortality rate + fishing mortality rate)
 # p = month/12; Z = M+F
 Z <- F[,-1]+M[,-1]
 p <- 10 # for example, October
 
 N_atmonth <- vector()
 for (i in 1:length(unlist(N))){
-  N_atmonth[i] <- unlist(N)[i]*(exp(1))^(-(p/12)*unlist(Z)[i])
+  N_atmonth[i] <- unlist(N)[i]*(exp(1))^(-(p/12)*unlist(Z)[i]) #e=2.718282
 }
 
-N_atmonth_matrix <- matrix(N_atmonth, nrow = 34, ncol = 8)
+N_atmonth_matrix <- matrix(N_atmonth, nrow = 34, ncol = 8) # this is Nc
 N_atmonth_matrix_year <- rowSums(N_atmonth_matrix)
 
 # Now calculate proportion mature for a given age in November based on N
 prop_Nov <- as.vector(N_atmonth * unlist(prop))
 
 # Convert this to matrix of appropriate dimensions
-N_spawners <- matrix(prop_Nov, nrow = 34, ncol = 8)
+N_spawners <- matrix(prop_Nov, nrow = 34, ncol = 8) # this is Nb
 colnames(N_spawners) <- colnames(N)
 rownames(N_spawners) <- rownames(N)
 
@@ -63,23 +63,34 @@ for (c in 1:length(unlist(N_spawners))) {
   }
 
 check.matrix <- matrix(check, nrow = 34, ncol = 8) # should be all TRUE
+table(check.matrix)
 
 # Sum number of spawners across all age classes
 N_spawners_allages <- as.vector(rowSums(N_spawners))
 year <- as.vector(rownames(N_spawners))
 N_spawners_allages <- as.data.frame(cbind(as.integer(year), as.integer(N_spawners_allages)))
 
+png(file="~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/Nc_and_Nb_overtime.png",width=7, height=5, res=300, units="in")
+par(mar=c(4.5, 5, 1.5, 1), # panel magin size in "line number" units
+    mgp=c(3, 1, 0), # default is c(3,1,0); line number for axis label, tick label, axis
+    tcl=-0.5, # size of tick marks as distance INTO figure (negative means pointing outward)
+    cex=1, # character expansion factor; keep as 1; if you have a many-panel figure, they start changing the default!
+    ps=12
+)
+
 plot(year, N_atmonth_matrix_year, xlab = 'Year', ylab = 'Abundance at peak spawning (Nov)', pch = 19)
 lw1 <- loess(N_atmonth_matrix_year ~ year)
 lines(predict(lw1), x = N_spawners_allages$V1, col = 'black') # plots loess line for number of fish at peak spawning
-points(N_spawners_allages$V1, N_spawners_allages$V2, col = "blue", pch = 19)
+points(N_spawners_allages$V1, N_spawners_allages$V2, col = "gray70", pch = 19)
 lw2 <- loess(N_spawners_allages$V2 ~ N_spawners_allages$V1)
-lines(predict(lw2), x = N_spawners_allages$V1, col = 'blue') # plots loess line for mature fish
+lines(predict(lw2), x = N_spawners_allages$V1, col = 'gray70') # plots loess line for mature fish
 
 legend("bottomright",
-       legend = c('Estimated abundance', 'Estimated mature'),
+       legend = c(as.expression(bquote('Estimated total abundance (N'['c']*')')), as.expression(bquote('Estimated mature (N'['b']*')'))),
        pch=19,
-       col = c('black', 'blue'))
+       col = c('black', 'gray70'))
+
+dev.off()
 
 #### Calculating r for summer flounder using estimates of N ####
 N
