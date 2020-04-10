@@ -159,15 +159,19 @@ lines(max$X1, max$X2)
 dev.off()
 
 # Exponenetial growth of NANC then bottleneck & instantaneous recovery model
-max <- data.frame(matrix(NA, nrow = 8, ncol = 2))
-max[,1] <- c(2008, 2008-(2*expgrowth_instant$TBOT), 2008-(2*expgrowth_instant$TBOT), 2008-((2*expgrowth_instant$TBOT)+(2*expgrowth_instant$TLEN)), 2008-((2*expgrowth_instant$TBOT)+(2*expgrowth_instant$TLEN)), 2008-((2*expgrowth_instant$TBOT)+(2*expgrowth_instant$TLEN))-10, 2008-((2*expgrowth_instant$TBOT)+(2*expgrowth_instant$TLEN))-20, 2008-((2*expgrowth_instant$TBOT)+(2*expgrowth_instant$TLEN))-30)
-max[,2] <- c(expgrowth_instant$NPOP08, expgrowth_instant$NPOP08, expgrowth_instant$NBOT, expgrowth_instant$NBOT, expgrowth_instant$NANC, expgrowth_instant$NANC/exp(expgrowth_instant$RANC * -10), expgrowth_instant$NANC/exp(expgrowth_instant$RANC * -20), expgrowth_instant$NANC/exp(expgrowth_instant$RANC * -30))
+max <- data.frame(matrix(NA, nrow = 8, ncol = 3))
+max[,1] <- c(0, expgrowth_instant$TBOT, expgrowth_instant$TBOT, (expgrowth_instant$TBOT+expgrowth_instant$TLEN), (expgrowth_instant$TBOT+expgrowth_instant$TLEN), (expgrowth_instant$TBOT+expgrowth_instant$TLEN+2), (expgrowth_instant$TBOT+expgrowth_instant$TLEN+5), (expgrowth_instant$TBOT+expgrowth_instant$TLEN+100)) #generations going back in time
+# max[,2] <- c(2008, 2008-(2*expgrowth_instant$TBOT), 2008-(2*expgrowth_instant$TBOT), 2008-((2*expgrowth_instant$TBOT)+(2*expgrowth_instant$TLEN)), 2008-((2*expgrowth_instant$TBOT)+(2*expgrowth_instant$TLEN)), 2008-((2*expgrowth_instant$TBOT)+(2*expgrowth_instant$TLEN))-10, 2008-((2*expgrowth_instant$TBOT)+(2*expgrowth_instant$TLEN))-20, 2008-((2*expgrowth_instant$TBOT)+(2*expgrowth_instant$TLEN))-30) #convert to years assuming summer flounder generation time of 2 years
+max[,2] <- 2008 - 2*max[,1]
+max[,3] <- c(expgrowth_instant$NPOP08, expgrowth_instant$NPOP08, expgrowth_instant$NBOT, expgrowth_instant$NBOT, expgrowth_instant$NANC, expgrowth_instant$NANC/exp(expgrowth_instant$RANC * -2), expgrowth_instant$NANC/exp(expgrowth_instant$RANC * -5), expgrowth_instant$NANC/exp(expgrowth_instant$RANC * -100))
 
 # Parametric bootstrapped data
-boot.max <- array(numeric(), c(8,2,100))
+boot.max <- array(numeric(), c(8,3,100))
 for (i in 1:nrow(boot)) {
-  boot.max[,1,i] <- c(2008, 2008-(2*boot$TBOT[i]), 2008-(2*boot$TBOT[i]), 2008-((2*boot$TBOT[i])+(2*boot$TLEN[i])), 2008-((2*boot$TBOT[i])+(2*boot$TLEN[i])), 2008-((2*expgrowth_instant$TBOT)+(2*expgrowth_instant$TLEN))-10, 2008-((2*expgrowth_instant$TBOT)+(2*expgrowth_instant$TLEN))-20, 2008-((2*expgrowth_instant$TBOT)+(2*expgrowth_instant$TLEN))-30)
-  boot.max[,2,i] <- c(boot$NPOP08[i], boot$NPOP08[i], boot$NBOT[i], boot$NBOT[i], boot$NANC[i], boot$NANC[i]/exp(boot$RANC[i] * -10), boot$NANC[i]/exp(boot$RANC[i] * -20), boot$NANC[i]/exp(boot$RANC[i] * -30))
+  boot.max[,1,i] <- c(0, boot$TBOT[i], boot$TBOT[i], (boot$TBOT[i]+boot$TLEN[i]), (boot$TBOT[i]+boot$TLEN[i]), (boot$TBOT[i]+boot$TLEN[i]+2), (boot$TBOT[i]+boot$TLEN[i]+5), (boot$TBOT[i]+boot$TLEN[i]+100)) #generations going back in time
+  boot.max[,2,i] <- 2008 -2*boot.max[,1,i] #convert to years assuming summer flounder generation time is 2 years
+  #boot.max[,2,i] <- c(2008, 2008-(2*boot$TBOT[i]), 2008-(2*boot$TBOT[i]), 2008-((2*boot$TBOT[i])+(2*boot$TLEN[i])), 2008-((2*boot$TBOT[i])+(2*boot$TLEN[i])), 2008-((2*expgrowth_instant$TBOT)+(2*expgrowth_instant$TLEN))-10, 2008-((2*expgrowth_instant$TBOT)+(2*expgrowth_instant$TLEN))-20, 2008-((2*expgrowth_instant$TBOT)+(2*expgrowth_instant$TLEN))-30)
+  boot.max[,3,i] <- c(boot$NPOP08[i], boot$NPOP08[i], boot$NBOT[i], boot$NBOT[i], boot$NANC[i], boot$NANC[i]/exp(boot$RANC[i] * -2), boot$NANC[i]/exp(boot$RANC[i] * -5), boot$NANC[i]/exp(boot$RANC[i] * -100))
 }
 
 # Set up plot and plot bootstrapped data
@@ -182,9 +186,9 @@ par(mar=c(4.5, 5, 1.5, 1), # panel magin size in "line number" units
 )
 
 # Plots bootstrapped 50 runs used to estimate 95% CI
-plot(max$X1, max$X2, xlab = 'Year', ylab = expression('N'[e]), type = 'n', ylim = c(0,150000), las = 1)
+plot(max$X2, max$X3, xlab = 'Year', ylab = expression('N'[e]), type = 'n', xlim = c(1980,2008), ylim = c(0,150000), las = 1)
 for (l in 1:100) {
-  lines(jitter(boot.max[,1,l], factor = 0.3), boot.max[,2,l], col = 'gray90')
+  lines(jitter(boot.max[,2,l], factor = 0.3), boot.max[,3,l], col = 'gray90')
 }
 
 # for (l in 1:100) {
@@ -192,6 +196,25 @@ for (l in 1:100) {
 # }
 
 # Plots parameters from best fit model
-lines(max$X1, max$X2)
+lines(max$X2, max$X3)
+
+dev.off()
+
+png(file="~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/expgrowth_instant_lineplot_deeptime.png",width=6, height=5, res=300, units="in")
+par(mar=c(4.5, 5, 1.5, 1), # panel magin size in "line number" units
+    mgp=c(3, 1, 0), # default is c(3,1,0); line number for axis label, tick label, axis
+    tcl=-0.5, # size of tick marks as distance INTO figure (negative means pointing outward)
+    cex=1, # character expansion factor; keep as 1; if you have a many-panel figure, they start changing the default!
+    ps=12
+)
+
+# Plots bootstrapped 50 runs used to estimate 95% CI
+plot(max$X2, max$X3, xlab = 'Year', ylab = expression('N'[e]), type = 'n', xlim = c(1900,2008), ylim = c(0,150000), las = 1)
+for (l in 1:100) {
+  lines(jitter(boot.max[,2,l], factor = 0.3), boot.max[,3,l], col = 'gray90')
+}
+
+# Plots parameters from best fit model
+lines(max$X2, max$X3)
 
 dev.off()
