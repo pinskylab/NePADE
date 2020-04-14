@@ -23,22 +23,36 @@ hist(cis$RANC, main = 'NANC growth rate', xlab = 'Growth rate of NANC going back
 abline(v=best$RANC, col = 'tomato')
 hist(cis$MaxEstLhood)
 hist(cis$MaxObsLhood)
+hist(log10(cis$NBOT/cis$NPOP08), xlab = 'log10(NBOT/NPOP08)', main = 'NBOT/NPOP08 ratio') # same as hist(log10(cis$NBOT)-log10(cis$NPOP08))
+hist(log10(cis$NANC/cis$NBOT), xlab = 'log10(NANC/NBOT)', main = 'NANC/NBOT ratio')
 
 # Boxplots of population size from simulated SFS & point estimates of the ML parameters
-boxplot(log10(cis$NANC), log10(cis$NBOT), log10(cis$NPOP08), ylab = expression('log'[10]*'(N'[e]* 'estimate)'), names = c('NANC', 'NBOT', 'NPOP08'))
-points(c(1,2,3), c(log10(best$NANC), log10(best$NBOT), log10(best$NPOP08)), col = 'tomato', pch = 19)
+png(file="~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/Ne_boxplots.png",width=6, height=5, res=300, units="in")
+par(mar=c(4.5, 5, 1.5, 1), # panel magin size in "line number" units
+    mgp=c(3, 1, 0), # default is c(3,1,0); line number for axis label, tick label, axis
+    tcl=-0.5, # size of tick marks as distance INTO figure (negative means pointing outward)
+    cex=1, # character expansion factor; keep as 1; if you have a many-panel figure, they start changing the default!
+    ps=12
+)
+
+# boxplot(log10(cis$NANC), log10(cis$NBOT), log10(cis$NPOP08), ylab = expression('log'[10]*'(N'[e]* 'estimate)'), names = c('NANC', 'NBOT', 'NPOP08')) # haploid
+# points(c(1,2,3), c(log10(best$NANC), log10(best$NBOT), log10(best$NPOP08)), col = 'tomato', pch = 19)
+boxplot(log10(cis$NANC/2), log10(cis$NBOT/2), log10(cis$NPOP08/2), ylab = expression('log'[10]*'(N'[e]* ' estimate)'), names = c('NANC', 'NBOT', 'NPOP08')) # convert Ne to diploid by dividing haploid number by 2
+points(c(1,2,3), c(log10(best$NANC/2), log10(best$NBOT/2), log10(best$NPOP08/2)), col = 'tomato', pch = 19)
+
+dev.off()
 
 # Calculate 95% confidence intervals
 # NPOP08
 # mean(cis$NPOP08) + 1.960*(sd(cis$NPOP08)/sqrt(100))
 # mean(cis$NPOP08) - 1.960*(sd(cis$NPOP08)/sqrt(100))
-quantile(cis$NPOP08, c(0.025, 0.975))
+quantile(cis$NPOP08, c(0.025, 0.975)) # haploid
 
 # NANC
-quantile(cis$NANC, c(0.025, 0.975))
+quantile(cis$NANC, c(0.025, 0.975)) # haploid
 
 # NBOT
-quantile(cis$NBOT, c(0.025, 0.975))
+quantile(cis$NBOT, c(0.025, 0.975)) # haploid
 
 # TBOT
 quantile(cis$TBOT, c(0.025, 0.975))
@@ -48,4 +62,10 @@ quantile(cis$TLEN, c(0.025, 0.975))
 
 # RANC
 quantile(cis$RANC, c(0.025, 0.975))
+
+# NBOT/NPOP08 ratio
+quantile((cis$NBOT/cis$NPOP08), c(0.025, 0.975))
+
+# NANC/NBOT ratio
+quantile((cis$NANC/cis$NBOT), c(0.025, 0.975))
 

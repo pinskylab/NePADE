@@ -158,20 +158,22 @@ lines(max$X1, max$X2)
 
 dev.off()
 
-# Exponenetial growth of NANC then bottleneck & instantaneous recovery model
-max <- data.frame(matrix(NA, nrow = 8, ncol = 3))
+# Exponenetial growth of NANC then bottleneck & instantaneous recovery model & convert haploid numbers to diploid by dividing by 2
+max <- data.frame(matrix(NA, nrow = 8, ncol = 4))
 max[,1] <- c(0, expgrowth_instant$TBOT, expgrowth_instant$TBOT, (expgrowth_instant$TBOT+expgrowth_instant$TLEN), (expgrowth_instant$TBOT+expgrowth_instant$TLEN), (expgrowth_instant$TBOT+expgrowth_instant$TLEN+2), (expgrowth_instant$TBOT+expgrowth_instant$TLEN+5), (expgrowth_instant$TBOT+expgrowth_instant$TLEN+100)) #generations going back in time
 # max[,2] <- c(2008, 2008-(2*expgrowth_instant$TBOT), 2008-(2*expgrowth_instant$TBOT), 2008-((2*expgrowth_instant$TBOT)+(2*expgrowth_instant$TLEN)), 2008-((2*expgrowth_instant$TBOT)+(2*expgrowth_instant$TLEN)), 2008-((2*expgrowth_instant$TBOT)+(2*expgrowth_instant$TLEN))-10, 2008-((2*expgrowth_instant$TBOT)+(2*expgrowth_instant$TLEN))-20, 2008-((2*expgrowth_instant$TBOT)+(2*expgrowth_instant$TLEN))-30) #convert to years assuming summer flounder generation time of 2 years
 max[,2] <- 2008 - 2*max[,1]
-max[,3] <- c(expgrowth_instant$NPOP08, expgrowth_instant$NPOP08, expgrowth_instant$NBOT, expgrowth_instant$NBOT, expgrowth_instant$NANC, expgrowth_instant$NANC/exp(expgrowth_instant$RANC * -2), expgrowth_instant$NANC/exp(expgrowth_instant$RANC * -5), expgrowth_instant$NANC/exp(expgrowth_instant$RANC * -100))
+max[,3] <- c(expgrowth_instant$NPOP08, expgrowth_instant$NPOP08, expgrowth_instant$NBOT, expgrowth_instant$NBOT, expgrowth_instant$NANC, expgrowth_instant$NANC/exp(expgrowth_instant$RANC * -2), expgrowth_instant$NANC/exp(expgrowth_instant$RANC * -5), expgrowth_instant$NANC/exp(expgrowth_instant$RANC * -100)) #haploid
+max[,4] <- max[,3]/2 #diploid
 
 # Parametric bootstrapped data
-boot.max <- array(numeric(), c(8,3,100))
+boot.max <- array(numeric(), c(8,4,100))
 for (i in 1:nrow(boot)) {
   boot.max[,1,i] <- c(0, boot$TBOT[i], boot$TBOT[i], (boot$TBOT[i]+boot$TLEN[i]), (boot$TBOT[i]+boot$TLEN[i]), (boot$TBOT[i]+boot$TLEN[i]+2), (boot$TBOT[i]+boot$TLEN[i]+5), (boot$TBOT[i]+boot$TLEN[i]+100)) #generations going back in time
   boot.max[,2,i] <- 2008 -2*boot.max[,1,i] #convert to years assuming summer flounder generation time is 2 years
   #boot.max[,2,i] <- c(2008, 2008-(2*boot$TBOT[i]), 2008-(2*boot$TBOT[i]), 2008-((2*boot$TBOT[i])+(2*boot$TLEN[i])), 2008-((2*boot$TBOT[i])+(2*boot$TLEN[i])), 2008-((2*expgrowth_instant$TBOT)+(2*expgrowth_instant$TLEN))-10, 2008-((2*expgrowth_instant$TBOT)+(2*expgrowth_instant$TLEN))-20, 2008-((2*expgrowth_instant$TBOT)+(2*expgrowth_instant$TLEN))-30)
-  boot.max[,3,i] <- c(boot$NPOP08[i], boot$NPOP08[i], boot$NBOT[i], boot$NBOT[i], boot$NANC[i], boot$NANC[i]/exp(boot$RANC[i] * -2), boot$NANC[i]/exp(boot$RANC[i] * -5), boot$NANC[i]/exp(boot$RANC[i] * -100))
+  boot.max[,3,i] <- c(boot$NPOP08[i], boot$NPOP08[i], boot$NBOT[i], boot$NBOT[i], boot$NANC[i], boot$NANC[i]/exp(boot$RANC[i] * -2), boot$NANC[i]/exp(boot$RANC[i] * -5), boot$NANC[i]/exp(boot$RANC[i] * -100)) #haploid
+  boot.max[,4,i] <- boot.max[,3,i]/2 #diploid
 }
 
 # Set up plot and plot bootstrapped data
@@ -185,18 +187,18 @@ par(mar=c(4.5, 5, 1.5, 1), # panel magin size in "line number" units
     ps=12
 )
 
-# Plots bootstrapped 50 runs used to estimate 95% CI
-plot(max$X2, max$X3, xlab = 'Year', ylab = expression('N'[e]), type = 'n', xlim = c(1980,2008), ylim = c(0,150000), las = 1)
+# Plots bootstrapped 50 runs used to estimate 95% CI. Specify haploid or diploid numbers
+plot(max$X2, max$X4, xlab = 'Year', ylab = expression('N'[E]), type = 'n', xlim = c(1980,2008), ylim = c(0,70000), las = 1)
 for (l in 1:100) {
-  lines(jitter(boot.max[,2,l], factor = 0.3), boot.max[,3,l], col = 'gray90')
+  lines(jitter(boot.max[,2,l], factor = 0.3), boot.max[,4,l], col = 'gray90')
 }
 
 # for (l in 1:100) {
 #   lines(boot.max[,,l], col = 'gray90')
 # }
 
-# Plots parameters from best fit model
-lines(max$X2, max$X3)
+# Plots parameters from best fit model. Specify haploid or diploid
+lines(max$X2, max$X4)
 
 dev.off()
 
@@ -208,13 +210,13 @@ par(mar=c(4.5, 5, 1.5, 1), # panel magin size in "line number" units
     ps=12
 )
 
-# Plots bootstrapped 50 runs used to estimate 95% CI
-plot(max$X2, max$X3, xlab = 'Year', ylab = expression('N'[e]), type = 'n', xlim = c(1900,2008), ylim = c(0,150000), las = 1)
+# Plots bootstrapped 50 runs used to estimate 95% CI. Specify haploid or diploid
+plot(max$X2, max$X4, xlab = 'Year', ylab = expression('N'[E]), type = 'n', xlim = c(1900,2008), ylim = c(0,70000), las = 1)
 for (l in 1:100) {
-  lines(jitter(boot.max[,2,l], factor = 0.3), boot.max[,3,l], col = 'gray90')
+  lines(jitter(boot.max[,2,l], factor = 0.3), boot.max[,4,l], col = 'gray90')
 }
 
-# Plots parameters from best fit model
-lines(max$X2, max$X3)
+# Plots parameters from best fit model. Specify haploid or diploid
+lines(max$X2, max$X4)
 
 dev.off()
