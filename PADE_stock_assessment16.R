@@ -78,17 +78,26 @@ par(mar=c(4.5, 5, 1.5, 1), # panel magin size in "line number" units
     ps=12
 )
 
-plot(year, N_atmonth_matrix_year, xlab = 'Year', ylab = 'Abundance at peak spawning (Nov)', pch = 19)
-lw1 <- loess(N_atmonth_matrix_year ~ year)
-lines(predict(lw1), x = N_spawners_allages$V1, col = 'black') # plots loess line for number of fish at peak spawning
-points(N_spawners_allages$V1, N_spawners_allages$V2, col = "gray70", pch = 19)
-lw2 <- loess(N_spawners_allages$V2 ~ N_spawners_allages$V1)
-lines(predict(lw2), x = N_spawners_allages$V1, col = 'gray70') # plots loess line for mature fish
+# options(scipen = 5)
+
+plot(year, N_atmonth_matrix_year/1000000, xlab = 'Year', ylab = 'Abundance (in millions) at peak spawning (Nov)', pch = 19, ylim = c(10,110))
+lines(year, N_atmonth_matrix_year/1000000, col = 'black', pch = 19)
+# lw1 <- loess(N_atmonth_matrix_year ~ year)
+# lines(predict(lw1), x = N_spawners_allages$V1, col = 'black') # plots loess line for number of fish at peak spawning
+points(N_spawners_allages$V1, N_spawners_allages$V2/1000000, col = "gray70", pch = 19)
+lines(N_spawners_allages$V1, N_spawners_allages$V2/1000000, col = "gray70", pch = 19)
+# lw2 <- loess(N_spawners_allages$V2 ~ N_spawners_allages$V1)
+# lines(predict(lw2), x = N_spawners_allages$V1, col = 'gray70') # plots loess line for mature fish
 
 legend("bottomright",
-       legend = c(as.expression(bquote('Estimated total abundance (N'['c']*')')), as.expression(bquote('Estimated mature (N'['b']*')'))),
+       legend = c('Estimated total abundance', 'Estimated mature spawners'),
        pch=19,
        col = c('black', 'gray70'))
+
+# legend("bottomright",
+#        legend = c(as.expression(bquote('Estimated total abundance (N'['C']*')')), as.expression(bquote('Estimated mature (N'['B']*')'))),
+#        pch=19,
+#        col = c('black', 'gray70'))
 
 dev.off()
 
