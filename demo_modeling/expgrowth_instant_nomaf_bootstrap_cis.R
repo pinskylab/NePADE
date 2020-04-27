@@ -24,7 +24,9 @@ abline(v=best$RANC, col = 'tomato')
 hist(cis$MaxEstLhood)
 hist(cis$MaxObsLhood)
 hist(log10(cis$NBOT/cis$NPOP08), xlab = 'log10(NBOT/NPOP08)', main = 'NBOT/NPOP08 ratio') # same as hist(log10(cis$NBOT)-log10(cis$NPOP08))
+abline(v = log10(best$NBOT/best$NPOP08), col = 'tomato')
 hist(log10(cis$NANC/cis$NBOT), xlab = 'log10(NANC/NBOT)', main = 'NANC/NBOT ratio')
+abline(v = log10(best$NANC/best$NBOT), col = 'tomato')
 
 # Boxplots of population size from simulated SFS & point estimates of the ML parameters
 png(file="~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/Ne_boxplots.png",width=6, height=5, res=300, units="in")
@@ -63,9 +65,11 @@ quantile(cis$TLEN, c(0.025, 0.975))
 # RANC
 quantile(cis$RANC, c(0.025, 0.975))
 
-# NBOT/NPOP08 ratio
-quantile((cis$NBOT/cis$NPOP08), c(0.025, 0.975))
+# NPOP08/NBOT ratio
+best$NPOP08/best$NBOT # point estimate, same regardless of haploid or diploid
+quantile((cis$NPOP08/cis$NBOT), c(0.025, 0.975))
 
-# NANC/NBOT ratio
-quantile((cis$NANC/cis$NBOT), c(0.025, 0.975))
+# NBOT/NANC ratio
+best$NBOT/best$NANC # point estimate, same regardless of haploid or diploid
+quantile((cis$NBOT/cis$NANC), c(0.025, 0.975))
 
