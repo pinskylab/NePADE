@@ -267,6 +267,7 @@ pop08.expgrowth.instant.prop <- t(pop08.expgrowth_instant.avg[-1]/pop08.avg.poly
 pop97.expgrowth.instant.prop <- t(pop97.expgrowth_instant.avg[-1]/pop97.avg.poly.expgrowth.inst)
 pop94.expgrowth.instant.prop <- t(pop94.expgrowth_instant.avg[-1]/pop94.avg.poly.expgrowth.inst)
 
+# Option 1
 n <- max(length(pop08.expgrowth_instant.avg[-1]), length(pop97.expgrowth_instant.avg[-1]), length(pop94.expgrowth_instant.avg[-1])) # determines max vector length of only polymorphic sites (316) and then makes all shorter vectors 316
 pop08.expgrowth.instant.prop <- as.numeric(pop08.expgrowth.instant.prop)
 length(pop97.expgrowth.instant.prop) <- n # adds NAs to the end of the vector
@@ -277,6 +278,15 @@ pop94.expgrowth.instant.prop[is.na(pop94.expgrowth.instant.prop)] <- 0
 
 m <- rbind(pop94.expgrowth.instant.prop, pop97.expgrowth.instant.prop, pop08.expgrowth.instant.prop)
 colnames(m) <- 1:316
+
+# Option 2, but proportion of alleles can't use same axis scale because greatest common divisor of 48, 206 and 316 is 2
+pop08.expgrowth.instant.prop.alleles <- split(pop08.expgrowth.instant.prop, ceiling(seq_along(pop08.expgrowth.instant.prop)/4))
+pop97.expgrowth.instant.prop.alleles <- split(pop97.expgrowth.instant.prop, ceiling(seq_along(pop97.expgrowth.instant.prop)/4))
+pop94.expgrowth.instant.prop.alleles <- split(pop94.expgrowth.instant.prop, ceiling(seq_along(pop94.expgrowth.instant.prop)/4))
+
+pop08.expgrowth.instant.prop.alleles.sum <- unlist(lapply(pop08.expgrowth.instant.prop.alleles, function(x) sum(x)))
+pop97.expgrowth.instant.prop.alleles.sum <- unlist(lapply(pop97.expgrowth.instant.prop.alleles, function(x) sum(x)))
+pop94.expgrowth.instant.prop.alleles.sum <- unlist(lapply(pop94.expgrowth.instant.prop.alleles, function(x) sum(x)))
 
 # Plot
 library(wesanderson)
@@ -318,9 +328,9 @@ par(mfrow = c(3,1),
     ps=12
 )
 
-barplot(early, legend = c('Instantaneous recovery', 'NANC exponential growth & instantaneous recovery', 'Observed'), beside = TRUE, xlab = 'Number of minor alleles', ylab = 'Proportion of polymorphic SNPs', main = '1994-1995 cohort', xlim = c(0, 100), col = col.palette[1:3])
-barplot(mid, legend = c('Instantaneous recovery','NANC exponential growth & instantaneous recovery', 'Observed'), beside = TRUE, xlab = 'Number of minor alleles', ylab = 'Proportion of polymorphic SNPs', main = '1997-1998 cohort', xlim = c(0, 100), col = col.palette[1:3])
-barplot(late, legend = c('Instantaneous recovery','NANC exponential growth & instantaneous recovery', 'Observed'), beside = TRUE, xlab = 'Number of minor alleles', ylab = 'Proportion of polymorphic SNPs', main = '2008-2009 cohort', xlim = c(0, 100), col = col.palette[1:3])
+barplot(early, legend = c('Model 2', 'Model 5', 'Observed'), beside = TRUE, xlab = 'Number of minor alleles', ylab = 'Proportion of polymorphic SNPs', main = '1994-1995 cohort', xlim = c(0, 100), col = col.palette[1:3])
+barplot(mid, legend = c('Model 2','Model 5', 'Observed'), beside = TRUE, xlab = 'Number of minor alleles', ylab = 'Proportion of polymorphic SNPs', main = '1997-1998 cohort', xlim = c(0, 100), col = col.palette[1:3])
+barplot(late, legend = c('Model 2','Model 5', 'Observed'), beside = TRUE, xlab = 'Number of minor alleles', ylab = 'Proportion of polymorphic SNPs', main = '2008-2009 cohort', xlim = c(0, 100), col = col.palette[1:3])
 dev.off()
 
 # This doesn't actually work because the STRUCTURE file is counting the number of alleles (0, 1 or 2)
