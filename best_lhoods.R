@@ -42,6 +42,7 @@ shrinking.best.nomaf <- read.table("~/Documents/Graduate School/Rutgers/Summer F
 nobot.best.nomaf2 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/from_amarel/nobot_nomaf_oneparam/best.lhood.summary.nobot_nomaf.txt", header = TRUE) # constant population size for comparision to all the bottlenecks, but only estimating NPOP08
 tbot.fixed.nomaf <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/from_amarel/instant_nomaf_fixedTBOT/best.lhood.summary.stable_nomaf_fixedTBOT.txt", header = TRUE)
 expgrowth_instant <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/from_amarel/expgrowth_then_stable_instant_nomaf_Nlowerlimit100/best.lhood.summary.expgrowth_instant_nomaf.txt", header = TRUE)
+two_bots <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/from_amarel/two_bots/best.lhood.summary.two_bots_nomaf.txt", header = TRUE)
 
 # Stable
 max(stable.best.nomaf$MaxEstLhood)
@@ -78,6 +79,11 @@ max(expgrowth_instant$MaxEstLhood)
 expgrowth_instant[which(expgrowth_instant$MaxEstLhood == max(expgrowth_instant$MaxEstLhood)),]
 expgrowth_instant[43,]$MaxEstLhood - expgrowth_instant[43,]$MaxObsLhood # difference between MaxEst and MaxObs
 
+# Two bottlenecks
+max(two_bots$MaxEstLhood)
+two_bots[which(two_bots$MaxEstLhood == max(two_bots$MaxEstLhood)),]
+two_bots[21,]$MaxEstLhood - two_bots[21,]$MaxObsLhood # difference between MaxEst and MaxObs
+
 
 #### AIC calculations ####
 # a test
@@ -85,8 +91,8 @@ expgrowth_instant[43,]$MaxEstLhood - expgrowth_instant[43,]$MaxObsLhood # differ
 # b <- c(4, 6, 7, 7) # number of estimated parameters
 
 # Data from my models
-a <- c(-4016.987, -4021.143, -4038.039, -4054.514, -3916.007) # MaxEstLhood
-b <- c(5, 5, 5, 1, 6) # number of estimated parameters
+a <- c(-4016.987, -4021.143, -4038.039, -4054.514, -3916.007, -4015.570) # MaxEstLhood
+b <- c(5, 5, 5, 1, 6, 9) # number of estimated parameters
 
 aic <- 2*b-2*a
 
@@ -98,7 +104,7 @@ w <- vector()
 # }
 
 for (i in 1:length(aic)) {
-  w[i] <- (exp(-0.5*(aic[i]-max(aic))))/sum(exp(-0.5*(aic[1]-max(aic))), exp(-0.5*(aic[2]-max(aic))), exp(-0.5*(aic[3]-max(aic))), exp(-0.5*(aic[4]-max(aic))), exp(-0.5*(aic[5]-max(aic))))
+  w[i] <- (exp(-0.5*(aic[i]-max(aic))))/sum(exp(-0.5*(aic[1]-max(aic))), exp(-0.5*(aic[2]-max(aic))), exp(-0.5*(aic[3]-max(aic))), exp(-0.5*(aic[4]-max(aic))), exp(-0.5*(aic[5]-max(aic))), exp(-0.5*(aic[6]-max(aic))))
 }
 
 #### Plot all fsc runs from parametric bootstrapping, plus the best fit model ####
