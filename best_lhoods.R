@@ -36,28 +36,30 @@ stable.best.nomaf[which(stable.best.nomaf$MaxEstLhood == max(stable.best.nomaf$M
 #######################################################################################################################################################################################################
 # Needed to play around with the parameters, but here are the best ML for instantaneous recovery, exp growth and exp decay following a bottleneck. The lower limit for N is 100 (50 diploid individuals)
 stable.best.nomaf <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/from_amarel/stable_instant_nomaf_Nlowerlimit100/best.lhood.summary.stable_nomaf.txt", header = TRUE)
-growing.best.nomaf <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/from_amarel/growing_nomaf/best.lhood.summary.growing_nomaf_Nlowerlimit100.txt", header = TRUE)
-shrinking.best.nomaf <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/from_amarel/shrinking_nomaf/best.lhood.summary.shrinking_nomaf.txt", header = TRUE)
+# growing.best.nomaf <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/from_amarel/growing_nomaf/best.lhood.summary.growing_nomaf_Nlowerlimit100.txt", header = TRUE)
+# shrinking.best.nomaf <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/from_amarel/shrinking_nomaf/best.lhood.summary.shrinking_nomaf.txt", header = TRUE)
 # nobot.best.nomaf <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/from_amarel/nobot_nomaf/best.lhood.summary.nobot_nomaf.txt", header = TRUE) # constant population size for comparision to all the bottlenecks
 nobot.best.nomaf2 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/from_amarel/nobot_nomaf_oneparam/best.lhood.summary.nobot_nomaf.txt", header = TRUE) # constant population size for comparision to all the bottlenecks, but only estimating NPOP08
-tbot.fixed.nomaf <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/from_amarel/instant_nomaf_fixedTBOT/best.lhood.summary.stable_nomaf_fixedTBOT.txt", header = TRUE)
+#tbot.fixed.nomaf <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/from_amarel/instant_nomaf_fixedTBOT/best.lhood.summary.stable_nomaf_fixedTBOT.txt", header = TRUE)
 expgrowth_instant <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/from_amarel/expgrowth_then_stable_instant_nomaf_Nlowerlimit100/best.lhood.summary.expgrowth_instant_nomaf.txt", header = TRUE)
 two_bots <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/from_amarel/two_bots/best.lhood.summary.two_bots_nomaf.txt", header = TRUE)
+exp_change <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/from_amarel/exp_change_nomaf/best.lhood.summary.exp_change_nomaf.txt", header = TRUE)
 
 # Stable
-max(stable.best.nomaf$MaxEstLhood)
+stable_ml <- max(stable.best.nomaf$MaxEstLhood)
 stable.best.nomaf[which(stable.best.nomaf$MaxEstLhood == max(stable.best.nomaf$MaxEstLhood)),]
 stable.best.nomaf[23,]$MaxEstLhood - stable.best.nomaf[23,]$MaxObsLhood # difference between MaxEst and MaxObs
+stable_param_no <- ncol(stable.best.nomaf)-2
 
 # Growing
-max(growing.best.nomaf$MaxEstLhood)
-growing.best.nomaf[which(growing.best.nomaf$MaxEstLhood == max(growing.best.nomaf$MaxEstLhood)),]
-growing.best.nomaf[16,]$MaxEstLhood - growing.best.nomaf[16,]$MaxObsLhood # difference between MaxEst and MaxObs
+# max(growing.best.nomaf$MaxEstLhood)
+# growing.best.nomaf[which(growing.best.nomaf$MaxEstLhood == max(growing.best.nomaf$MaxEstLhood)),]
+# growing.best.nomaf[16,]$MaxEstLhood - growing.best.nomaf[16,]$MaxObsLhood # difference between MaxEst and MaxObs
 
 # Shrinking
-max(shrinking.best.nomaf$MaxEstLhood)
-shrinking.best.nomaf[which(shrinking.best.nomaf$MaxEstLhood == max(shrinking.best.nomaf$MaxEstLhood)),]
-shrinking.best.nomaf[9,]$MaxEstLhood - shrinking.best.nomaf[9,]$MaxObsLhood # difference between MaxEst and MaxObs
+# max(shrinking.best.nomaf$MaxEstLhood)
+# shrinking.best.nomaf[which(shrinking.best.nomaf$MaxEstLhood == max(shrinking.best.nomaf$MaxEstLhood)),]
+# shrinking.best.nomaf[9,]$MaxEstLhood - shrinking.best.nomaf[9,]$MaxObsLhood # difference between MaxEst and MaxObs
 
 # Constant
 # max(nobot.best.nomaf$MaxEstLhood)
@@ -65,25 +67,33 @@ shrinking.best.nomaf[9,]$MaxEstLhood - shrinking.best.nomaf[9,]$MaxObsLhood # di
 # nobot.best.nomaf[28,]$MaxEstLhood - nobot.best.nomaf[28,]$MaxObsLhood # difference between MaxEst and MaxObs
 
 # Constant, one parameter only
-max(nobot.best.nomaf2$MaxEstLhood)
+nobot_ml <- max(nobot.best.nomaf2$MaxEstLhood)
 nobot.best.nomaf2[which(nobot.best.nomaf2$MaxEstLhood == max(nobot.best.nomaf2$MaxEstLhood)),]
 nobot.best.nomaf2[5,]$MaxEstLhood - nobot.best.nomaf2[5,]$MaxObsLhood
+nobot_param_no <- ncol(nobot.best.nomaf2)-2
 
 # Fixed TBOT to 7
-max(tbot.fixed.nomaf$MaxEstLhood)
-tbot.fixed.nomaf[which(tbot.fixed.nomaf$MaxEstLhood == max(tbot.fixed.nomaf$MaxEstLhood)),]
-tbot.fixed.nomaf[5,]$MaxEstLhood - tbot.fixed.nomaf[5,]$MaxObsLhood
+# max(tbot.fixed.nomaf$MaxEstLhood)
+# tbot.fixed.nomaf[which(tbot.fixed.nomaf$MaxEstLhood == max(tbot.fixed.nomaf$MaxEstLhood)),]
+# tbot.fixed.nomaf[5,]$MaxEstLhood - tbot.fixed.nomaf[5,]$MaxObsLhood
 
 # Exponential growth, then bottleneck, then instantaneous recovery
-max(expgrowth_instant$MaxEstLhood)
+expgrowth_instant_ml <- max(expgrowth_instant$MaxEstLhood)
 expgrowth_instant[which(expgrowth_instant$MaxEstLhood == max(expgrowth_instant$MaxEstLhood)),]
 expgrowth_instant[43,]$MaxEstLhood - expgrowth_instant[43,]$MaxObsLhood # difference between MaxEst and MaxObs
+expgrowth_instant_param_no <- ncol(expgrowth_instant)-2
 
 # Two bottlenecks
-max(two_bots$MaxEstLhood)
+two_bots_ml <- max(two_bots$MaxEstLhood)
 two_bots[which(two_bots$MaxEstLhood == max(two_bots$MaxEstLhood)),]
 two_bots[21,]$MaxEstLhood - two_bots[21,]$MaxObsLhood # difference between MaxEst and MaxObs
+two_bots_param_no <- ncol(two_bots)-2
 
+# Exponential change after bottleneck
+exp_change_ml <- max(exp_change$MaxEstLhood)
+exp_change[which(exp_change$MaxEstLhood == max(exp_change$MaxEstLhood)),]
+exp_change[34,]$MaxEstLhood - exp_change[34,]$MaxObsLhood # difference between MaxEst and MaxObs
+exp_change_param_no <- ncol(exp_change)-2
 
 #### AIC calculations ####
 # a test
@@ -91,8 +101,8 @@ two_bots[21,]$MaxEstLhood - two_bots[21,]$MaxObsLhood # difference between MaxEs
 # b <- c(4, 6, 7, 7) # number of estimated parameters
 
 # Data from my models
-a <- c(-4016.987, -4021.143, -4038.039, -4054.514, -3916.007, -4015.570) # MaxEstLhood
-b <- c(5, 5, 5, 1, 6, 9) # number of estimated parameters
+a <- c(nobot_ml, stable_ml, exp_change_ml, expgrowth_instant_ml, two_bots_ml) # MaxEstLhood
+b <- c(nobot_param_no, stable_param_no, exp_change_param_no, expgrowth_instant_param_no, two_bots_param_no) # number of estimated parameters
 
 aic <- 2*b-2*a
 
@@ -104,7 +114,7 @@ w <- vector()
 # }
 
 for (i in 1:length(aic)) {
-  w[i] <- (exp(-0.5*(aic[i]-max(aic))))/sum(exp(-0.5*(aic[1]-max(aic))), exp(-0.5*(aic[2]-max(aic))), exp(-0.5*(aic[3]-max(aic))), exp(-0.5*(aic[4]-max(aic))), exp(-0.5*(aic[5]-max(aic))), exp(-0.5*(aic[6]-max(aic))))
+  w[i] <- (exp(-0.5*(aic[i]-max(aic))))/sum(exp(-0.5*(aic[1]-max(aic))), exp(-0.5*(aic[2]-max(aic))), exp(-0.5*(aic[3]-max(aic))), exp(-0.5*(aic[4]-max(aic))), exp(-0.5*(aic[5]-max(aic))))
 }
 
 #### Plot all fsc runs from parametric bootstrapping, plus the best fit model ####
