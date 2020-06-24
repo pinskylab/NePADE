@@ -95,6 +95,18 @@ exp_change[which(exp_change$MaxEstLhood == max(exp_change$MaxEstLhood)),]
 exp_change[34,]$MaxEstLhood - exp_change[34,]$MaxObsLhood # difference between MaxEst and MaxObs
 exp_change_param_no <- ncol(exp_change)-2
 
+#### Plot ML for parameters over fsc iterations ####
+plot(expgrowth_instant$MaxEstLhood, ylab = 'Maximum likelihood', xlab = 'Iteration')
+lines(expgrowth_instant$MaxEstLhood) # there's a local maximum when RANC is positive
+points(43,-3916.007, col = 'tomato', pch = 19)
+
+plot(expgrowth_instant)
+
+expgrowth_instant$ML_diff <- expgrowth_instant$MaxEstLhood - (-3916.007)
+plot(expgrowth_instant$ML_diff)
+lines(expgrowth_instant$ML_diff)
+barplot(expgrowth_instant$ML_diff, xlab = 'Iteration', ylab = "Difference from ML")
+
 #### AIC calculations ####
 # a test
 # a <- c(-918.395, -687.045, -740.019, -782.598	) # MaxEstLhood
@@ -117,13 +129,13 @@ for (i in 1:length(aic)) {
   w[i] <- (exp(-0.5*(aic[i]-max(aic))))/sum(exp(-0.5*(aic[1]-max(aic))), exp(-0.5*(aic[2]-max(aic))), exp(-0.5*(aic[3]-max(aic))), exp(-0.5*(aic[4]-max(aic))), exp(-0.5*(aic[5]-max(aic))))
 }
 
-#### Plot all fsc runs from parametric bootstrapping, plus the best fit model ####
+#### Plot all fsc runs from nonparametric bootstrapping, plus the best fit model ####
 # Read in ML and bootstrapped parameters from instananeous recovery model
 # boot <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/from_amarel/stable_instant_nomaf_Nlowerlimit100/max.summary.txt', header = TRUE) # Read in ML bootstrapped parameters following 50 runs for each simulated SFS
 # stable.best.nomaf <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/from_amarel/stable_instant_nomaf_Nlowerlimit100/best.lhood.summary.stable_nomaf.txt", header = TRUE)# Read in ML parameters from instantaneous recovery model
 
-# Read in ML and bootstrapped parameters from exponential growth of NANC, then bottleneck & instananeous recovery model
-boot <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/from_amarel/expgrowth_then_stable_instant_nomaf_Nlowerlimit100/cis_sfs_summary.txt', header = TRUE) # Read in ML bootstrapped parameters following 50 runs for each simulated SFS
+# Read in ML and nonparametric bootstrapped parameters from exponential growth of NANC, then bottleneck & instananeous recovery model
+boot <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/from_amarel/expgrowth_then_stable_instant_nomaf_Nlowerlimit100/nonparametric_ci_summary.txt', header = TRUE) # Read in ML nonparametric bootstrapped parameters following 10 runs for each simulated SFS
 expgrowth_instant.best.nomaf <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/from_amarel/expgrowth_then_stable_instant_nomaf_Nlowerlimit100/best.lhood.summary.expgrowth_instant_nomaf.txt", header = TRUE)# Read in ML parameters from instantaneous recovery model
 
 # Find maximum from best models
@@ -220,7 +232,7 @@ lines(max$X2, max$X4)
 dev.off()
 
 png(file="~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/expgrowth_instant_lineplot_deeptime.png",width=6, height=5, res=300, units="in")
-par(mar=c(4.5, 5, 1.5, 1), # panel magin size in "line number" units
+par(mar=c(4.5, 5, 1.5, 1), # panel margin size in "line number" units
     mgp=c(3, 1, 0), # default is c(3,1,0); line number for axis label, tick label, axis
     tcl=-0.5, # size of tick marks as distance INTO figure (negative means pointing outward)
     cex=1, # character expansion factor; keep as 1; if you have a many-panel figure, they start changing the default!

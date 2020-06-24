@@ -1,7 +1,7 @@
 #### Plotting the results from the fsc26 bootstrapping ####
 
-# Read in the parameters estimated from simulated SFS
-cis <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/from_amarel/expgrowth_then_stable_instant_nomaf_Nlowerlimit100/cis_sfs_summary.txt', header = TRUE) # Read in ML bootstrapped parameters following 50 runs for each simulated SFS
+# Read in the parameters estimated from simulated SFS (nonparametric)
+cis <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/from_amarel/expgrowth_then_stable_instant_nomaf_Nlowerlimit100/nonparametric_ci_summary.txt', header = TRUE) # Read in ML bootstrapped parameters following 10 runs for each simulated SFS
 
 # Read in ML parameters from best fit model
 expgrowth_instant.best.nomaf <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/from_amarel/expgrowth_then_stable_instant_nomaf_Nlowerlimit100/best.lhood.summary.expgrowth_instant_nomaf.txt", header = TRUE)# Read in ML parameters from instantaneous recovery model
@@ -48,13 +48,13 @@ dev.off()
 # NPOP08
 # mean(cis$NPOP08) + 1.960*(sd(cis$NPOP08)/sqrt(100))
 # mean(cis$NPOP08) - 1.960*(sd(cis$NPOP08)/sqrt(100))
-quantile(cis$NPOP08, c(0.025, 0.975)) # haploid
+quantile(cis$NPOP08/2, c(0.025, 0.975)) # diploid
 
 # NANC
-quantile(cis$NANC, c(0.025, 0.975)) # haploid
+quantile(cis$NANC/2, c(0.025, 0.975)) # diploid
 
 # NBOT
-quantile(cis$NBOT, c(0.025, 0.975)) # haploid
+quantile(cis$NBOT/2, c(0.025, 0.975)) # diploid
 
 # TBOT
 quantile(cis$TBOT, c(0.025, 0.975))
