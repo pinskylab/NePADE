@@ -130,7 +130,7 @@ for (i in 1:length(aic)) {
 }
 
 #### Plot all fsc runs from nonparametric bootstrapping, plus the best fit model ####
-# Read in ML and bootstrapped parameters from instananeous recovery model
+# Read in ML and bootstrapped parameters from instantaneous recovery model
 # boot <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/from_amarel/stable_instant_nomaf_Nlowerlimit100/max.summary.txt', header = TRUE) # Read in ML bootstrapped parameters following 50 runs for each simulated SFS
 # stable.best.nomaf <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/from_amarel/stable_instant_nomaf_Nlowerlimit100/best.lhood.summary.stable_nomaf.txt", header = TRUE)# Read in ML parameters from instantaneous recovery model
 
@@ -149,49 +149,49 @@ expgrowth_instant <- expgrowth_instant.best.nomaf[which(expgrowth_instant.best.n
 
 #### Manipulate data so that its plottable ####
 # Instantaneous recovery model
-max <- data.frame(matrix(NA, nrow = 6, ncol = 2))
-max[,1] <- c(2008, 2008-(2*instant$TBOT), 2008-(2*instant$TBOT), 2008-(2*instant$TBOT+instant$TLEN), 2008-(2*instant$TBOT+instant$TLEN), 1980)
-max[,2] <- c(instant$NPOP08, instant$NPOP08, instant$NBOT, instant$NBOT, instant$NANC, instant$NANC)
-
-# Parametric bootstrapped data
-boot.max <- array(numeric(), c(6,2,100))
-for (i in 1:nrow(boot)) {
-  boot.max[,1,i] <- c(2008, 2008-(2*boot$TBOT[i]), 2008-(2*boot$TBOT[i]), 2008-(2*boot$TBOT[i]+boot$TLEN[i]), 2008-(2*boot$TBOT[i]+boot$TLEN[i]), 1980)
-  boot.max[,2,i] <- c(boot$NPOP08[i], boot$NPOP08[i], boot$NBOT[i], boot$NBOT[i], boot$NANC[i], boot$NANC[i])
-}
-
-# Set up plot and plot bootstrapped data
-options(scipen = 5)
-
-png(file="~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/instant_recovery_lineplot.png",width=6, height=5, res=300, units="in")
-par(mar=c(4.5, 5, 1.5, 1), # panel magin size in "line number" units
-    mgp=c(3, 1, 0), # default is c(3,1,0); line number for axis label, tick label, axis
-    tcl=-0.5, # size of tick marks as distance INTO figure (negative means pointing outward)
-    cex=1, # character expansion factor; keep as 1; if you have a many-panel figure, they start changing the default!
-    ps=12
-)
-
-# Plots bootstrapped 50 runs used to estimate 95% CI
-plot(max$X1, max$X2, xlab = 'Year', ylab = expression('N'[e]), type = 'n', ylim = c(0,100000), las = 1)
-for (l in 1:100) {
-  lines(jitter(boot.max[,1,l], factor = 0.3), boot.max[,2,l], col = 'gray90')
-}
-
-# for (l in 1:100) {
-#   lines(boot.max[,,l], col = 'gray90')
+# max <- data.frame(matrix(NA, nrow = 6, ncol = 2))
+# max[,1] <- c(2008, 2008-(2*instant$TBOT), 2008-(2*instant$TBOT), 2008-(2*instant$TBOT+instant$TLEN), 2008-(2*instant$TBOT+instant$TLEN), 1980)
+# max[,2] <- c(instant$NPOP08, instant$NPOP08, instant$NBOT, instant$NBOT, instant$NANC, instant$NANC)
+# 
+# # Parametric bootstrapped data
+# boot.max <- array(numeric(), c(6,2,100))
+# for (i in 1:nrow(boot)) {
+#   boot.max[,1,i] <- c(2008, 2008-(2*boot$TBOT[i]), 2008-(2*boot$TBOT[i]), 2008-(2*boot$TBOT[i]+boot$TLEN[i]), 2008-(2*boot$TBOT[i]+boot$TLEN[i]), 1980)
+#   boot.max[,2,i] <- c(boot$NPOP08[i], boot$NPOP08[i], boot$NBOT[i], boot$NBOT[i], boot$NANC[i], boot$NANC[i])
 # }
+# 
+# # Set up plot and plot bootstrapped data
+# options(scipen = 5)
+# 
+# png(file="~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/instant_recovery_lineplot.png",width=6, height=5, res=300, units="in")
+# par(mar=c(4.5, 5, 1.5, 1), # panel magin size in "line number" units
+#     mgp=c(3, 1, 0), # default is c(3,1,0); line number for axis label, tick label, axis
+#     tcl=-0.5, # size of tick marks as distance INTO figure (negative means pointing outward)
+#     cex=1, # character expansion factor; keep as 1; if you have a many-panel figure, they start changing the default!
+#     ps=12
+# )
+# 
+# # Plots bootstrapped 50 runs used to estimate 95% CI
+# plot(max$X1, max$X2, xlab = 'Year', ylab = expression('N'[e]), type = 'n', ylim = c(0,100000), las = 1)
+# for (l in 1:100) {
+#   lines(jitter(boot.max[,1,l], factor = 0.3), boot.max[,2,l], col = 'gray90')
+# }
+# 
+# # for (l in 1:100) {
+# #   lines(boot.max[,,l], col = 'gray90')
+# # }
+# 
+# # Plots parameters from best fit model
+# lines(max$X1, max$X2)
+# 
+# dev.off()
 
-# Plots parameters from best fit model
-lines(max$X1, max$X2)
-
-dev.off()
-
-# Exponenetial growth of NANC then bottleneck & instantaneous recovery model & convert haploid numbers to diploid by dividing by 2; check RANC by calculating log(N_0/N_t)/(t_0/t_t)
+# Exponential growth of NANC then bottleneck & instantaneous recovery model & convert haploid numbers to diploid by dividing by 2; check RANC by calculating log(N_0/N_t)/(t_0/t_t)
 max <- data.frame(matrix(NA, nrow = 8, ncol = 4))
 max[,1] <- c(0, expgrowth_instant$TBOT, expgrowth_instant$TBOT, (expgrowth_instant$TBOT+expgrowth_instant$TLEN), (expgrowth_instant$TBOT+expgrowth_instant$TLEN), (expgrowth_instant$TBOT+expgrowth_instant$TLEN+2), (expgrowth_instant$TBOT+expgrowth_instant$TLEN+5), (expgrowth_instant$TBOT+expgrowth_instant$TLEN+1000)) #generations going back in time
 # max[,2] <- c(2008, 2008-(2*expgrowth_instant$TBOT), 2008-(2*expgrowth_instant$TBOT), 2008-((2*expgrowth_instant$TBOT)+(2*expgrowth_instant$TLEN)), 2008-((2*expgrowth_instant$TBOT)+(2*expgrowth_instant$TLEN)), 2008-((2*expgrowth_instant$TBOT)+(2*expgrowth_instant$TLEN))-10, 2008-((2*expgrowth_instant$TBOT)+(2*expgrowth_instant$TLEN))-20, 2008-((2*expgrowth_instant$TBOT)+(2*expgrowth_instant$TLEN))-30) #convert to years assuming summer flounder generation time of 2 years
 max[,2] <- 2008 - 2*max[,1]
-max[,3] <- c(expgrowth_instant$NPOP08, expgrowth_instant$NPOP08, expgrowth_instant$NBOT, expgrowth_instant$NBOT, expgrowth_instant$NANC, expgrowth_instant$NANC/exp(expgrowth_instant$RANC * -2), expgrowth_instant$NANC/exp(expgrowth_instant$RANC * -5), expgrowth_instant$NANC/exp(expgrowth_instant$RANC * -1000)) #haploid
+max[,3] <- c(expgrowth_instant$NPOP08, expgrowth_instant$NPOP08, expgrowth_instant$NBOT, expgrowth_instant$NBOT, expgrowth_instant$NANC, (expgrowth_instant$NANC*exp(expgrowth_instant$RANC * 2)), (expgrowth_instant$NANC*exp(expgrowth_instant$RANC * 5)), (expgrowth_instant$NANC*exp(expgrowth_instant$RANC * 1000))) #haploid
 max[,4] <- max[,3]/2 #diploid
 
 # Parametric bootstrapped data
@@ -200,7 +200,7 @@ for (i in 1:nrow(boot)) {
   boot.max[,1,i] <- c(0, boot$TBOT[i], boot$TBOT[i], (boot$TBOT[i]+boot$TLEN[i]), (boot$TBOT[i]+boot$TLEN[i]), (boot$TBOT[i]+boot$TLEN[i]+2), (boot$TBOT[i]+boot$TLEN[i]+5), (boot$TBOT[i]+boot$TLEN[i]+1000)) #generations going back in time
   boot.max[,2,i] <- 2008 -2*boot.max[,1,i] #convert to years assuming summer flounder generation time is 2 years
   #boot.max[,2,i] <- c(2008, 2008-(2*boot$TBOT[i]), 2008-(2*boot$TBOT[i]), 2008-((2*boot$TBOT[i])+(2*boot$TLEN[i])), 2008-((2*boot$TBOT[i])+(2*boot$TLEN[i])), 2008-((2*expgrowth_instant$TBOT)+(2*expgrowth_instant$TLEN))-10, 2008-((2*expgrowth_instant$TBOT)+(2*expgrowth_instant$TLEN))-20, 2008-((2*expgrowth_instant$TBOT)+(2*expgrowth_instant$TLEN))-30)
-  boot.max[,3,i] <- c(boot$NPOP08[i], boot$NPOP08[i], boot$NBOT[i], boot$NBOT[i], boot$NANC[i], boot$NANC[i]/exp(boot$RANC[i] * -2), boot$NANC[i]/exp(boot$RANC[i] * -5), boot$NANC[i]/exp(boot$RANC[i] * -1000)) #haploid
+  boot.max[,3,i] <- c(boot$NPOP08[i], boot$NPOP08[i], boot$NBOT[i], boot$NBOT[i], boot$NANC[i], (boot$NANC[i]*exp(boot$RANC[i] * 2)), (boot$NANC[i]*exp(boot$RANC[i] * 5)), (boot$NANC[i]*exp(boot$RANC[i] * 1000))) #haploid
   boot.max[,4,i] <- boot.max[,3,i]/2 #diploid
 }
 
@@ -240,7 +240,7 @@ par(mar=c(4.5, 5, 1.5, 1), # panel margin size in "line number" units
 )
 
 # Plots bootstrapped 50 runs used to estimate 95% CI. Specify haploid or diploid
-plot(max$X2, max$X4, xlab = 'Year', ylab = expression('N'[E]), type = 'n', xlim = c(1500,2008), ylim = c(0,70000), las = 1)
+plot(max$X2, max$X4, xlab = 'Year', ylab = expression('N'[E]), type = 'n', xlim = c(1500,2008), ylim = c(0,72000), las = 1)
 for (l in 1:100) {
   lines(jitter(boot.max[,2,l], factor = 0.2), boot.max[,4,l], col = cols)
 }
