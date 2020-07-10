@@ -328,9 +328,9 @@ par(mfrow = c(3,1),
     ps=12
 )
 
-barplot(early, legend = c('Model 2', 'Model 5', 'Observed'), beside = TRUE, xlab = 'Number of minor alleles', ylab = 'Proportion of polymorphic SNPs', main = '1994-1995 cohort', xlim = c(0, 100), col = col.palette[1:3])
-barplot(mid, legend = c('Model 2','Model 5', 'Observed'), beside = TRUE, xlab = 'Number of minor alleles', ylab = 'Proportion of polymorphic SNPs', main = '1997-1998 cohort', xlim = c(0, 100), col = col.palette[1:3])
-barplot(late, legend = c('Model 2','Model 5', 'Observed'), beside = TRUE, xlab = 'Number of minor alleles', ylab = 'Proportion of polymorphic SNPs', main = '2008-2009 cohort', xlim = c(0, 100), col = col.palette[1:3])
+barplot(early, legend = c('Model 2', 'Model 4', 'Observed'), beside = TRUE, xlab = 'Number of minor alleles', ylab = 'Proportion of polymorphic SNPs', main = '1994-1995 cohort', xlim = c(0, 100), col = col.palette[1:3])
+barplot(mid, legend = c('Model 2','Model 4', 'Observed'), beside = TRUE, xlab = 'Number of minor alleles', ylab = 'Proportion of polymorphic SNPs', main = '1997-1998 cohort', xlim = c(0, 100), col = col.palette[1:3])
+barplot(late, legend = c('Model 2','Model 4', 'Observed'), beside = TRUE, xlab = 'Number of minor alleles', ylab = 'Proportion of polymorphic SNPs', main = '2008-2009 cohort', xlim = c(0, 100), col = col.palette[1:3])
 dev.off()
 
 # This doesn't actually work because the STRUCTURE file is counting the number of alleles (0, 1 or 2)
