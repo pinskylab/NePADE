@@ -39,7 +39,7 @@ par(mar=c(4.5, 5, 1.5, 1), # panel magin size in "line number" units
 
 # boxplot(log10(cis$NANC), log10(cis$NBOT), log10(cis$NPOP08), ylab = expression('log'[10]*'(N'[e]* 'estimate)'), names = c('NANC', 'NBOT', 'NPOP08')) # haploid
 # points(c(1,2,3), c(log10(best$NANC), log10(best$NBOT), log10(best$NPOP08)), col = 'tomato', pch = 19)
-boxplot(log10(cis$NANC/2), log10(cis$NBOT/2), log10(cis$NPOP08/2), ylab = expression('log'[10]*'(N'[e]* ' estimate)'), names = c('NANC', 'NBOT', 'NPOP08')) # convert Ne to diploid by dividing haploid number by 2
+boxplot(log10(cis$NANC/2), log10(cis$NBOT/2), log10(cis$NPOP08/2), range = 0, ylab = expression('log'[10]*'(N'[E]* ' estimate)'), names = c('NANC', 'NBOT', 'NPOP08')) # convert Ne to diploid by dividing haploid number by 2
 points(c(1,2,3), c(log10(best$NANC/2), log10(best$NBOT/2), log10(best$NPOP08/2)), col = 'tomato', pch = 19)
 
 dev.off()
