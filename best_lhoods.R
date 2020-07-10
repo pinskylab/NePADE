@@ -118,6 +118,8 @@ b <- c(nobot_param_no, stable_param_no, exp_change_param_no, expgrowth_instant_p
 
 aic <- 2*b-2*a
 
+delta_aic <-aic - min(aic)
+
 # Akaike weight = provides relative weight of evidence for each model. Probability that model i is the best model for the observed data, given the candidate set of models
 w <- vector()
 
@@ -208,7 +210,7 @@ for (i in 1:nrow(boot)) {
 options(scipen = 5)
 
 png(file="~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/expgrowth_instant_lineplot.png",width=6, height=5, res=300, units="in")
-par(mar=c(4.5, 5, 1.5, 1), # panel magin size in "line number" units
+par(mar=c(4, 6, 1, 1), # panel margin size in "line number" units
     mgp=c(3, 1, 0), # default is c(3,1,0); line number for axis label, tick label, axis
     tcl=-0.5, # size of tick marks as distance INTO figure (negative means pointing outward)
     cex=1, # character expansion factor; keep as 1; if you have a many-panel figure, they start changing the default!
@@ -217,22 +219,24 @@ par(mar=c(4.5, 5, 1.5, 1), # panel magin size in "line number" units
 
 # Plots bootstrapped 50 runs used to estimate 95% CI. Specify haploid or diploid numbers
 cols <- adjustcolor('gray70', alpha.f = 0.5)
-plot(max$X2, max$X4, xlab = 'Year', ylab = expression('N'[E]), type = 'n', xlim = c(1980,2008), ylim = c(0,70000), las = 1)
+plot(max$X2, max$X4, xlab = '', ylab = '', type = 'n', xlim = c(1980,2008), ylim = c(0,70000), las = 1)
 for (l in 1:100) {
   lines(jitter(boot.max[,2,l], factor = 0.2), boot.max[,4,l], col = cols)
 }
+mtext('Year', 1, 2.5, cex = 1.2)
+mtext(expression('N'[E]), 2, 3.7, cex = 1.2)
 
 # for (l in 1:100) {
 #   lines(boot.max[,,l], col = 'gray90')
 # }
 
 # Plots parameters from best fit model. Specify haploid or diploid
-lines(max$X2, max$X4)
+lines(max$X2, max$X4, lwd = 1.8)
 
 dev.off()
 
 png(file="~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/expgrowth_instant_lineplot_deeptime.png",width=6, height=5, res=300, units="in")
-par(mar=c(4.5, 5, 1.5, 1), # panel margin size in "line number" units
+par(mar=c(4, 6, 1, 1), # panel margin size in "line number" units
     mgp=c(3, 1, 0), # default is c(3,1,0); line number for axis label, tick label, axis
     tcl=-0.5, # size of tick marks as distance INTO figure (negative means pointing outward)
     cex=1, # character expansion factor; keep as 1; if you have a many-panel figure, they start changing the default!
@@ -240,12 +244,14 @@ par(mar=c(4.5, 5, 1.5, 1), # panel margin size in "line number" units
 )
 
 # Plots bootstrapped 50 runs used to estimate 95% CI. Specify haploid or diploid
-plot(max$X2, max$X4, xlab = 'Year', ylab = expression('N'[E]), type = 'n', xlim = c(1500,2008), ylim = c(0,72000), las = 1)
+plot(max$X2, max$X4, xlab = '', ylab = '', type = 'n', xlim = c(1500,2008), ylim = c(0,72000), las = 1)
 for (l in 1:100) {
   lines(jitter(boot.max[,2,l], factor = 0.2), boot.max[,4,l], col = cols)
 }
+mtext('Year', 1, 2.5, cex = 1.2)
+mtext(expression('N'[E]), 2, 3.7, cex = 1.2)
 
 # Plots parameters from best fit model. Specify haploid or diploid
-lines(max$X2, max$X4)
+lines(max$X2, max$X4, lwd = 1.8)
 
 dev.off()
