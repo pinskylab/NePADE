@@ -1,111 +1,54 @@
-#### Fsc26 has been run 50 times and the maximum likelihoods and associated parameters have been concatinated ####
-# Using a SFS where a MAF < 0.05 was used
-# Instantaneous recovery following a bottleneck
-stable.best <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/stable_fixing.res/best.lhood.summary.stableinstant.txt", header = TRUE)
+#### Fsc26 has been run 50 times and the maximum likelihoods and associated parameters have been concatenated ####
+# Using a SFS that summarizes 280 larvae across three cohorts, 1196 loci and no MAF filter
+# Read in the estimated parameters for each model
+mod1 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/model_results/model1.bestlhoods.summary.txt", header = TRUE) # constant population size for comparision to all the bottlenecks, but only estimating NPOP08
+mod2 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/model_results/model2.bestlhoods.summary.txt", header = TRUE) # constant population size for comparision to all the bottlenecks, but only estimating NPOP08
+mod3 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/model_results/model3.bestlhoods.summary.txt", header = TRUE) # constant population size for comparision to all the bottlenecks, but only estimating NPOP08
+mod4 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/model_results/model4.bestlhoods.summary.txt", header = TRUE) # constant population size for comparision to all the bottlenecks, but only estimating NPOP08
+mod5 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/model_results/model5.bestlhoods.summary.txt", header = TRUE) # constant population size for comparision to all the bottlenecks, but only estimating NPOP08
 
-plot(stable.best)
-plot(stable.best$NBOT ~ stable.best$TLEN, xlab = 'Length of bottleneck', ylab = 'Ne bottleneck')
+# Now find the ML run for each model
+# Model 1, no bottleneck
+mod1_ml <- max(mod1$MaxEstLhood)
+mod1[which(mod1$MaxEstLhood == max(mod1$MaxEstLhood)),]
+mod1[19,]$MaxEstLhood - mod1[19,]$MaxObsLhood
+mod1_param_no <- ncol(mod1)-2
 
-max(stable.best$MaxEstLhood)
-stable.best[which(stable.best$MaxEstLhood == max(stable.best$MaxEstLhood)),]
+# Model 2, instantaneous bottleneck
+mod2_ml <- max(mod2$MaxEstLhood)
+mod2[which(mod2$MaxEstLhood == max(mod2$MaxEstLhood)),]
+mod2[21,]$MaxEstLhood - mod2[21,]$MaxObsLhood # difference between MaxEst and MaxObs
+mod2_param_no <- ncol(mod2)-2
 
-#####################################################################################################################
-# Malin is worried that the length and mangnitude of the bottleneck are correlated --> holding TLEN = 2
-stable_fixed.best <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/stable_fixedTLEN/best.lhood.summary.stableinstant_fixedtlen.txt", header = TRUE)
-plot(stable_fixed.best)
+# Model 3, exponential change after bottleneck
+mod3_ml <- max(mod3$MaxEstLhood)
+mod3[which(mod3$MaxEstLhood == max(mod3$MaxEstLhood)),]
+mod3[8,]$MaxEstLhood - mod3[8,]$MaxObsLhood # difference between MaxEst and MaxObs
+mod3_param_no <- ncol(mod3)-2
 
-max(stable_fixed.best$MaxEstLhood)
-stable_fixed.best[which(stable_fixed.best$MaxEstLhood == max(stable_fixed.best$MaxEstLhood)),]
+# Model 4, exponential growth, then bottleneck, then instantaneous recovery
+mod4_ml <- max(mod4$MaxEstLhood)
+mod4[which(mod4$MaxEstLhood == max(mod4$MaxEstLhood)),]
+mod4[2,]$MaxEstLhood - mod4[2,]$MaxObsLhood # difference between MaxEst and MaxObs
+mod4_param_no <- ncol(mod4)-2
 
-# Malin is worried that the length and mangnitude of the bottleneck are correlated --> holding TBOT = 7
-stable_fixed2.best <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/stable_fixedTBOT/best.lhood.summary.stable_fixedTBOT.txt", header = TRUE)
-
-max(stable_fixed2.best$MaxEstLhood)
-stable_fixed2.best[which(stable_fixed2.best$MaxEstLhood == max(stable_fixed2.best$MaxEstLhood)),]
-
-#####################################################################################################################
-# Instantaneous recovery following a bottleneck using the SFS with no MAF
-stable.best.nomaf <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/stable_fixing_nomaf2.res/best.lhood.summary.stable_nomaf.txt", header = TRUE)
-
-plot(stable.best.nomaf)
-plot(stable.best.nomaf$NBOT ~ stable.best.nomaf$TLEN, xlab = 'Length of bottleneck', ylab = 'Ne bottleneck')
-
-max(stable.best.nomaf$MaxEstLhood)
-stable.best.nomaf[which(stable.best.nomaf$MaxEstLhood == max(stable.best.nomaf$MaxEstLhood)),]
-
-#######################################################################################################################################################################################################
-# Needed to play around with the parameters, but here are the best ML for instantaneous recovery, exp growth and exp decay following a bottleneck. The lower limit for N is 100 (50 diploid individuals)
-stable.best.nomaf <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/from_amarel/stable_instant_nomaf_Nlowerlimit100/best.lhood.summary.stable_nomaf.txt", header = TRUE)
-# growing.best.nomaf <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/from_amarel/growing_nomaf/best.lhood.summary.growing_nomaf_Nlowerlimit100.txt", header = TRUE)
-# shrinking.best.nomaf <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/from_amarel/shrinking_nomaf/best.lhood.summary.shrinking_nomaf.txt", header = TRUE)
-# nobot.best.nomaf <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/from_amarel/nobot_nomaf/best.lhood.summary.nobot_nomaf.txt", header = TRUE) # constant population size for comparision to all the bottlenecks
-nobot.best.nomaf2 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/from_amarel/nobot_nomaf_oneparam/best.lhood.summary.nobot_nomaf.txt", header = TRUE) # constant population size for comparision to all the bottlenecks, but only estimating NPOP08
-#tbot.fixed.nomaf <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/from_amarel/instant_nomaf_fixedTBOT/best.lhood.summary.stable_nomaf_fixedTBOT.txt", header = TRUE)
-expgrowth_instant <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/from_amarel/expgrowth_then_stable_instant_nomaf_Nlowerlimit100/best.lhood.summary.expgrowth_instant_nomaf.txt", header = TRUE)
-two_bots <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/from_amarel/two_bots/best.lhood.summary.two_bots_nomaf.txt", header = TRUE)
-exp_change <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/from_amarel/exp_change_nomaf/best.lhood.summary.exp_change_nomaf.txt", header = TRUE)
-
-# Stable
-stable_ml <- max(stable.best.nomaf$MaxEstLhood)
-stable.best.nomaf[which(stable.best.nomaf$MaxEstLhood == max(stable.best.nomaf$MaxEstLhood)),]
-stable.best.nomaf[23,]$MaxEstLhood - stable.best.nomaf[23,]$MaxObsLhood # difference between MaxEst and MaxObs
-stable_param_no <- ncol(stable.best.nomaf)-2
-
-# Growing
-# max(growing.best.nomaf$MaxEstLhood)
-# growing.best.nomaf[which(growing.best.nomaf$MaxEstLhood == max(growing.best.nomaf$MaxEstLhood)),]
-# growing.best.nomaf[16,]$MaxEstLhood - growing.best.nomaf[16,]$MaxObsLhood # difference between MaxEst and MaxObs
-
-# Shrinking
-# max(shrinking.best.nomaf$MaxEstLhood)
-# shrinking.best.nomaf[which(shrinking.best.nomaf$MaxEstLhood == max(shrinking.best.nomaf$MaxEstLhood)),]
-# shrinking.best.nomaf[9,]$MaxEstLhood - shrinking.best.nomaf[9,]$MaxObsLhood # difference between MaxEst and MaxObs
-
-# Constant
-# max(nobot.best.nomaf$MaxEstLhood)
-# nobot.best.nomaf[which(nobot.best.nomaf$MaxEstLhood == max(nobot.best.nomaf$MaxEstLhood)),]
-# nobot.best.nomaf[28,]$MaxEstLhood - nobot.best.nomaf[28,]$MaxObsLhood # difference between MaxEst and MaxObs
-
-# Constant, one parameter only
-nobot_ml <- max(nobot.best.nomaf2$MaxEstLhood)
-nobot.best.nomaf2[which(nobot.best.nomaf2$MaxEstLhood == max(nobot.best.nomaf2$MaxEstLhood)),]
-nobot.best.nomaf2[5,]$MaxEstLhood - nobot.best.nomaf2[5,]$MaxObsLhood
-nobot_param_no <- ncol(nobot.best.nomaf2)-2
-
-# Fixed TBOT to 7
-# max(tbot.fixed.nomaf$MaxEstLhood)
-# tbot.fixed.nomaf[which(tbot.fixed.nomaf$MaxEstLhood == max(tbot.fixed.nomaf$MaxEstLhood)),]
-# tbot.fixed.nomaf[5,]$MaxEstLhood - tbot.fixed.nomaf[5,]$MaxObsLhood
-
-# Exponential growth, then bottleneck, then instantaneous recovery
-expgrowth_instant_ml <- max(expgrowth_instant$MaxEstLhood)
-expgrowth_instant[which(expgrowth_instant$MaxEstLhood == max(expgrowth_instant$MaxEstLhood)),]
-expgrowth_instant[43,]$MaxEstLhood - expgrowth_instant[43,]$MaxObsLhood # difference between MaxEst and MaxObs
-expgrowth_instant_param_no <- ncol(expgrowth_instant)-2
-
-# Two bottlenecks
-two_bots_ml <- max(two_bots$MaxEstLhood)
-two_bots[which(two_bots$MaxEstLhood == max(two_bots$MaxEstLhood)),]
-two_bots[21,]$MaxEstLhood - two_bots[21,]$MaxObsLhood # difference between MaxEst and MaxObs
-two_bots_param_no <- ncol(two_bots)-2
-
-# Exponential change after bottleneck
-exp_change_ml <- max(exp_change$MaxEstLhood)
-exp_change[which(exp_change$MaxEstLhood == max(exp_change$MaxEstLhood)),]
-exp_change[34,]$MaxEstLhood - exp_change[34,]$MaxObsLhood # difference between MaxEst and MaxObs
-exp_change_param_no <- ncol(exp_change)-2
+# Model 5, two bottlenecks
+mod5_ml <- max(mod5$MaxEstLhood)
+mod5[which(mod5$MaxEstLhood == max(mod5$MaxEstLhood)),]
+mod5[37,]$MaxEstLhood - mod5[37,]$MaxObsLhood # difference between MaxEst and MaxObs
+mod5_param_no <- ncol(mod5)-2
 
 #### Plot ML for parameters over fsc iterations ####
-plot(expgrowth_instant$MaxEstLhood, ylab = 'Maximum likelihood', xlab = 'Iteration')
-lines(expgrowth_instant$MaxEstLhood) # there's a local maximum when RANC is positive
-points(43,-3916.007, col = 'tomato', pch = 19)
+plot(mod4$MaxEstLhood, ylab = 'Maximum likelihood', xlab = 'Iteration')
+lines(mod4$MaxEstLhood) # there's a local maximum when RANC is positive
+points(2,-3713.266, col = 'tomato', pch = 19)
 
-plot(expgrowth_instant)
+plot(mod4)
 
-expgrowth_instant$ML_diff <- expgrowth_instant$MaxEstLhood - (-3916.007)
-plot(expgrowth_instant$ML_diff)
-lines(expgrowth_instant$ML_diff)
-barplot(expgrowth_instant$ML_diff, xlab = 'Iteration', ylab = "Difference from ML")
+mod4$ML_diff <- mod4$MaxEstLhood - (-3713.266)
+plot(mod4$ML_diff)
+lines(mod4$ML_diff)
+barplot(mod4$ML_diff, xlab = 'Iteration', ylab = "Difference from ML")
 
 #### AIC calculations ####
 # a test
@@ -113,10 +56,11 @@ barplot(expgrowth_instant$ML_diff, xlab = 'Iteration', ylab = "Difference from M
 # b <- c(4, 6, 7, 7) # number of estimated parameters
 
 # Data from my models
-a <- c(nobot_ml, stable_ml, exp_change_ml, expgrowth_instant_ml, two_bots_ml) # MaxEstLhood
-b <- c(nobot_param_no, stable_param_no, exp_change_param_no, expgrowth_instant_param_no, two_bots_param_no) # number of estimated parameters
+a <- c(mod1_ml, mod2_ml, mod3_ml, mod4_ml, mod5_ml) # MaxEstLhood. These are log10 likelihoods
+aa <- c(mod1_ml, mod2_ml, mod3_ml, mod4_ml, mod5_ml)*2.303 # Convert from log10 to ln
+b <- c(mod1_param_no, mod2_param_no, mod3_param_no, mod4_param_no, mod5_param_no) # number of estimated parameters
 
-aic <- 2*b-2*a
+aic <- 2*b-2*aa
 
 delta_aic <-aic - min(aic)
 
