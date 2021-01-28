@@ -2,10 +2,11 @@
 # Using a SFS that summarizes 280 larvae across three cohorts, 1196 loci and no MAF filter
 # Read in the estimated parameters for each model
 mod1 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/model_results/model1.bestlhoods.summary.txt", header = TRUE) # constant population size for comparision to all the bottlenecks, but only estimating NPOP08
-mod2 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/model_results/model2.bestlhoods.summary.txt", header = TRUE) # constant population size for comparision to all the bottlenecks, but only estimating NPOP08
-mod3 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/model_results/model3.bestlhoods.summary.txt", header = TRUE) # constant population size for comparision to all the bottlenecks, but only estimating NPOP08
-mod4 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/model_results/model4.bestlhoods.summary.txt", header = TRUE) # constant population size for comparision to all the bottlenecks, but only estimating NPOP08
-mod5 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/model_results/model5.bestlhoods.summary.txt", header = TRUE) # constant population size for comparision to all the bottlenecks, but only estimating NPOP08
+mod2 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/model_results/model2.bestlhoods.summary.txt", header = TRUE)
+mod3 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/model_results/model3.bestlhoods.summary.txt", header = TRUE)
+mod4 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/model_results/model4.bestlhoods.summary.txt", header = TRUE)
+mod5 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/model_results/model5.bestlhoods.summary.txt", header = TRUE)
+mod6 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/model_results/model6.bestlhoods.summary.txt", header = TRUE)
 
 # Now find the ML run for each model
 # Model 1, no bottleneck
@@ -38,6 +39,12 @@ mod5[which(mod5$MaxEstLhood == max(mod5$MaxEstLhood)),]
 mod5[37,]$MaxEstLhood - mod5[37,]$MaxObsLhood # difference between MaxEst and MaxObs
 mod5_param_no <- ncol(mod5)-2
 
+# Model 6, exponential change in pop size before and after bottleneck
+mod6_ml <- max(mod6$MaxEstLhood)
+mod6[which(mod6$MaxEstLhood == max(mod6$MaxEstLhood)),]
+mod6[27,]$MaxEstLhood - mod6[27,]$MaxObsLhood
+mod6_param_no <- ncol(mod6)-2
+
 #### Plot ML for parameters over fsc iterations ####
 plot(mod4$MaxEstLhood, ylab = 'Maximum likelihood', xlab = 'Iteration')
 lines(mod4$MaxEstLhood) # there's a local maximum when RANC is positive
@@ -56,9 +63,9 @@ barplot(mod4$ML_diff, xlab = 'Iteration', ylab = "Difference from ML")
 # b <- c(4, 6, 7, 7) # number of estimated parameters
 
 # Data from my models
-a <- c(mod1_ml, mod2_ml, mod3_ml, mod4_ml, mod5_ml) # MaxEstLhood. These are log10 likelihoods
-aa <- c(mod1_ml, mod2_ml, mod3_ml, mod4_ml, mod5_ml)*2.303 # Convert from log10 to ln
-b <- c(mod1_param_no, mod2_param_no, mod3_param_no, mod4_param_no, mod5_param_no) # number of estimated parameters
+a <- c(mod1_ml, mod2_ml, mod3_ml, mod4_ml, mod5_ml, mod6_ml) # MaxEstLhood. These are log10 likelihoods
+aa <- c(mod1_ml, mod2_ml, mod3_ml, mod4_ml, mod5_ml, mod6_ml)*2.303 # Convert from log10 to ln
+b <- c(mod1_param_no, mod2_param_no, mod3_param_no, mod4_param_no, mod5_param_no, mod6_param_no) # number of estimated parameters
 
 aic <- 2*b-2*aa
 
@@ -72,7 +79,7 @@ w <- vector()
 # }
 
 for (i in 1:length(aic)) {
-  w[i] <- (exp(-0.5*(aic[i]-max(aic))))/sum(exp(-0.5*(aic[1]-max(aic))), exp(-0.5*(aic[2]-max(aic))), exp(-0.5*(aic[3]-max(aic))), exp(-0.5*(aic[4]-max(aic))), exp(-0.5*(aic[5]-max(aic))))
+  w[i] <- (exp(-0.5*(aic[i]-max(aic))))/sum(exp(-0.5*(aic[1]-max(aic))), exp(-0.5*(aic[2]-max(aic))), exp(-0.5*(aic[3]-max(aic))), exp(-0.5*(aic[4]-max(aic))), exp(-0.5*(aic[5]-max(aic))), exp(-0.5*(aic[6]-max(aic))))
 }
 
 #### Plot all fsc runs from nonparametric bootstrapping, plus the best fit model ####
