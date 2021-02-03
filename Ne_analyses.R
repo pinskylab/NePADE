@@ -19,7 +19,7 @@ library(boot)
 # ne_data <- read.genepop("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/SNP.DP3g95maf05.FIL.FIL.recode.firstsnp.genepop.gen", ncode = 3L) # wants .gen extension, file is the same as that with .txt extension; 3 digits used to denote nucleotide
 # ne_data <- read.genepop("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/troubleshooting/SNP.DP3g95maf05.FIL.FIL.recode.trimmed144.firstsnp.genepop.gen", ncode = 3L) # troubleshooting the Ne dataset because the read lengths of the different sequencing runs are different
 # ne_data <- read.genepop("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/troubleshooting/newref/SNP.DP3g95maf05.FIL.FIL.recode.firstsnp.genepop.gen", ncode = 3L) # troubleshooting the Ne dataset, these are SNPs called from the new larval reference
-ne_data <- read.genepop("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/newref_alltrimmed140/SNP.DP3g95maf05.FIL.FIL.recode.firstsnp.genepop.gen", ncode = 3L) # troubleshooting the Ne dataset, these are SNPs called from the new larval reference and all mapped reads have been trimmed to 140
+# ne_data <- read.genepop("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/newref_alltrimmed140/SNP.DP3g95maf05.FIL.FIL.recode.firstsnp.genepop.gen", ncode = 3L) # troubleshooting the Ne dataset, these are SNPs called from the new larval reference and all mapped reads have been trimmed to 140
 
 # Need to modify names in allele count data (genind object) so that I can match them up with names in the larval database
 freq_names <- as.vector(rownames(ne_data@tab))
@@ -62,7 +62,7 @@ pca1
 # Plot PCA based on three time periods
 col <- wes_palette("Darjeeling1", 5, type = "discrete")
 palette(col)
-s.class(pca1$li, pop(ne_data), xax=1,yax=2, col = transp(col,0.7), axesell=TRUE, cellipse=1.5, cstar=1,cpoint=1.75, grid=FALSE, addaxes = FALSE, clabel = 0, xlim = c(-22,50), ylim = c(-50,60))
+s.class(pca1$li, pop(ne_data), xax=1,yax=2, col = transp(col,0.7), axesell=TRUE, cellipse=1.5, cstar=1,cpoint=1.75, grid=FALSE, addaxes = FALSE, clabel = 0, xlim = c(-22,50), ylim = c(-50,65))
 axis(1, at=seq(-20,60, by=10), labels=seq(-20,60, by= 10), line = 2)
 axis(2, at=seq(-30,50, by = 10), labels=seq(-30,50, by= 10), line = 0, las = 2)
 mtext("PC1 (0.80%)", side = 1, line = 4)
@@ -168,33 +168,80 @@ eig_percent [1:3]
 #### Diversity metrics ####
 # Need to decide if I allow missing data or not in these calculations? Also the no MAF dataset or the 0.05 MAF dataset?
 # ne_data_nomaf <- read.genepop("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/Ne_PADE_1256loci_complete.gen", ncode = 3L) # troubleshooting the Ne dataset, these are SNPs called from the new larval reference and all mapped reads have been trimmed to 140; dataset where no MAF filter applied, and only sites with no missing data: 1256 loci
-ne_data_nomaf <- read.genepop("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/newref_alltrimmed140/SNP.DP3g95nomaf.FIL.FIL.recode.firstsnp.genepop.gen", ncode = 3L) # troubleshooting the Ne dataset, these are SNPs called from the new larval reference and all mapped reads have been trimmed to 140; no MAF filter applied and some missing data allowed: 3979 loci
+# ne_data_nomaf <- read.genepop("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/newref_alltrimmed140/SNP.DP3g95nomaf.FIL.FIL.recode.firstsnp.genepop.gen", ncode = 3L) # troubleshooting the Ne dataset, these are SNPs called from the new larval reference and all mapped reads have been trimmed to 140; no MAF filter applied and some missing data allowed: 3979 loci
+# ne281_3721_nomaf <- read.genepop("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/newref_alltrimmed140/SNP.DP3g95nomaf.FIL.FIL.recode.281fish.firstsnp.genepop.gen", ncode = 3L) # 281 larvae and 3721 loci
+ne280_3821_nomaf <- read.genepop("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/newref_alltrimmed140/SNP.DP3g95nomaf.FIL.FIL.recode.140trimmed.280fish.firstsnp.genepop.gen", ncode = 3L) # 280 larvae and 3821 loci
+
+# what fish are different between SNP.DP3g95nomaf.FIL.FIL.recode.firstsnp.genepop.gen (285) and SNP.DP3g95nomaf.FIL.FIL.recode.140trimmed.280fish.firstsnp.genepop.gen (280)? I removed 7 fish but there is only a numerical difference of 5 fish
+setdiff(rownames(ne_data_nomaf@tab), rownames(ne280_3821_nomaf@tab)) # these are the 7 fish that were removed
+setdiff(rownames(ne280_3821_nomaf@tab), rownames(ne_data_nomaf@tab)) # these two fish were added
+
+# Test SNPs for HWE
+hwe <- hw.test(ne_data_nomaf,res="matrix")
+pval <- hwe[hwe[,"Pr.exact"] < 0.0100,] # p<0.01, exact test
+length(pval[,"Pr.exact"]) 
+
+#### Do PCA & plot ####
+sum(is.na(ne280_3821_nomaf$tab)) #26050
+X <- scaleGen(ne280_3821_nomaf, NA.method = "mean")
+dim(X)
+class (X)
+
+# make PCA
+pca1 <- dudi.pca(X,cent=FALSE,scale=FALSE,scannf=FALSE,nf=3)
+barplot(pca1$eig[1:50],main="PCA eigenvalues", col=heat.colors(50))
+
+pca1
+loadingplot(pca1$c1^2)
+
+# Plot PCA based on three time periods
+col <- wes_palette("Darjeeling1", 5, type = "discrete")
+palette(col)
+s.class(pca1$li, pop(ne280_3821_nomaf), xax=1,yax=2, col = transp(col,0.7), axesell=TRUE, cellipse=1.5, cstar=1,cpoint=1.75, grid=FALSE, addaxes = FALSE, clabel = 0, xlim = c(-40,100), ylim = c(-80,100))
+axis(1, at=seq(-20,100, by=10), labels=seq(-20,100, by= 10), line = 2)
+axis(2, at=seq(-50,60, by = 10), labels=seq(-50,60, by= 10), line = 0, las = 2)
+mtext("PC1 (0.84%)", side = 1, line = 4)
+mtext("PC2 (0.82%)", side = 2, line = 2)
+
+legend(20, 40,
+       legend=c("2008-2009 (n = 153)", "1994-1995 (n = 24)", "1997-1998 (n = 103)"),
+       pch=c(19, 19, 19),
+       col = col,
+       bty = "n",
+       y.intersp = 0.8,
+       cex = 0.85)
+
+eig_percent <- round((pca1$eig/(sum(pca1$eig)))*100,2)
+eig_percent [1:3]
 
 # genotype accumulation curve
 # genotype_curve(ne_data, sample = 100, quiet = TRUE)
 
 # diversity table using poppr
-poppr(ne_data_nomaf) # He uses Nei's gene diversity
+poppr(ne280_3821_nomaf) # He uses Nei's gene diversity
 
 # expected heterozygosity
-Hs(ne_data_nomaf) # pretty similar between 3 time periods, but slightly different than using poppr function above
-Hs(ne_data_nomaf, ne_data_nomaf@strata$X1)
+Hs(ne280_3821_nomaf) # pretty similar between 3 time periods, but slightly different than using poppr function above
+Hs(ne280_3821_nomaf, ne280_3821_nomaf@strata$X1)
 
 # Heterozygosity across all individuals
-div <- summary(ne_data_nomaf)
+div <- summary(ne280_3821_nomaf)
 
 # subset the genind object by population, so heterozygosity can be calculated by population
-early.genind <- popsub(ne_data_nomaf, sublist = 'PADE_95011L2524')
-mid.genind <- popsub(ne_data_nomaf, sublist = 'PADE_98027L2146')
-late.genind <- popsub(ne_data_nomaf, sublist = 'PADE_09151L2330')
+early.genind <- popsub(ne280_3821_nomaf, sublist = 'PADE_95011L2524')
+mid.genind <- popsub(ne280_3821_nomaf, sublist = 'PADE_98027L2146')
+late.genind <- popsub(ne280_3821_nomaf, sublist = 'PADE_09151L2330')
 
 early.he <- summary(early.genind)
 mid.he <- summary(mid.genind)
 late.he <- summary(late.genind)
 
 mean(early.he$Hobs)
+mean(early.he$Hexp)
 mean(mid.he$Hobs)
+mean(mid.he$Hexp)
 mean(late.he$Hobs)
+mean(late.he$Hexp)
 
 bartlett.test(list(early.he$Hexp, early.he$Hobs)) #test for differences between Hexp and Hobs; different for earliest cohort
 bartlett.test(list(mid.he$Hexp, mid.he$Hobs)) # different for middle cohort
@@ -216,27 +263,15 @@ stats.early <- basic.stats(early.hier)
 stats.mid <- basic.stats(mid.hier)
 stats.late <- basic.stats(late.hier)
 
-#### Pi calculations for 3979 loci ####
-# Site pi
-# Read in pi calculations from vcftools on Amarel
-early.pi <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/newref_alltrimmed140/names94_95.sites.pi", header = TRUE)
-mid.pi <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/newref_alltrimmed140/names97_98.sites.pi", header = TRUE)
-late.pi <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/newref_alltrimmed140/names08_09.sites.pi", header = TRUE)
-
-# Read in CHOM column from SNP.DP3g95nomaf.FIL.FIL.recode.firstsnp.vcf so I can figure out which ones are missing in the site pi files
-contig_names <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/newref_alltrimmed140/contig_names_3979.txt")
-
-early.missing <- contig_names[!contig_names[,1] %in% early.pi$CHROM,]
-mid.missing <- contig_names[!contig_names[,1] %in% mid.pi$CHROM,]
-late.missing <- contig_names[!contig_names[,1] %in% late.pi$CHROM,]
-
+#### Pi calculations for 3821 loci ####
 # Read in window pi calculations from vcftools on Amarel
-early.win.pi <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/newref_alltrimmed140/names94_95.windowed.pi", header = TRUE) #2153 x 5
-mid.win.pi <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/newref_alltrimmed140/names97_98.windowed.pi", header = TRUE) #3475 x 5
-late.win.pi <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/newref_alltrimmed140/names08_09.windowed.pi", header = TRUE) #3478 x 5
+early.win.pi <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/newref_alltrimmed140/namess94_95.windowed.pi", header = TRUE) #2090 x 5
+mid.win.pi <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/newref_alltrimmed140/namess97_98.windowed.pi", header = TRUE) #3348 x 5
+late.win.pi <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/newref_alltrimmed140/namess08_09.windowed.pi", header = TRUE) #3322 x 5
 
+# This was only for trouble shooting which loci were missing from the pi calculations. Code to acutally calculate pi is below.
 # Read in CHOM column from SNP.DP3g95nomaf.FIL.FIL.recode.firstsnp.vcf so I can figure out which ones are missing in the site pi files
-contig_names <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/newref_alltrimmed140/contig_names_3979.txt")
+contig_names <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/newref_alltrimmed140/all_contigs3821.txt")
 contig_names$index <- rownames(contig_names)
 
 early.win.missing <- contig_names[!contig_names[,1] %in% early.win.pi$CHROM,] #names and indices of snps missing for window pi calculations
@@ -338,33 +373,43 @@ mean(mid.win.pi$PI)
 mean(late.win.pi$PI)
 
 # add zeros for all the loci that got dropped, then take mean
-early.pi3979 <- c(early.win.pi$PI, rep(0,1826))
-mid.pi3979 <- c(mid.win.pi$PI, rep(0,504))
-late.pi3979 <- c(late.win.pi$PI, rep(0,501))
+early.pi3821 <- c(early.win.pi$PI, rep(0,1731))
+mid.pi3821 <- c(mid.win.pi$PI, rep(0,473))
+late.pi3821 <- c(late.win.pi$PI, rep(0,499))
 
-mean(early.pi3979)
-mean(mid.pi3979)
-mean(late.pi3979)
+mean(early.pi3821)
+mean(mid.pi3821)
+mean(late.pi3821)
 
 # bootstrap pi to get CI
 samplemean <- function(x, d) {
   return(mean(x[d]))
 }
 
-early.boot <- boot(early.pi3979, samplemean, 1000)
+early.boot <- boot(early.pi3821, samplemean, 1000)
 plot(early.boot)
 early.ci <- boot.ci(early.boot, conf = 0.95, type = c('norm', 'basic', 'perc'))
 early.ci$normal # view 95% CIs
 
-mid.boot <- boot(mid.pi3979, samplemean, 1000)
+mid.boot <- boot(mid.pi3821, samplemean, 1000)
 plot(mid.boot)
 mid.ci <- boot.ci(mid.boot, conf = 0.95, type = c('norm', 'basic', 'perc'))
 mid.ci$normal # view 95% CIs
 
-late.boot <- boot(late.pi3979, samplemean, 1000)
+late.boot <- boot(late.pi3821, samplemean, 1000)
 plot(late.boot)
 late.ci <- boot.ci(late.boot, conf = 0.95, type = c('norm', 'basic', 'perc'))
 late.ci$normal # view 95% CIs
+
+# Plot average pi
+error.bar <- function(x, y, upper, lower=upper, length=0.1,...){
+  arrows(x,y+upper, x, y-lower, angle=90, code=3, length=length, ...)
+} # error bar function
+
+options(scipen = 5)
+barplot(c(early.boot$t0, mid.boot$t0, late.boot$t0), ylim = c(0,0.0006), xlab = 'Larval cohort', ylab = 'Average nucleotide diversity (π)')
+error.bar(c(0.7,1.9,3.1), c(early.boot$t0, mid.boot$t0, late.boot$t0), c(early.ci$normal[3]-early.boot$t0, mid.ci$normal[3]-mid.boot$t0, late.ci$normal[3]-late.boot$t0), c(early.boot$t0-early.ci$normal[2], mid.boot$t0-mid.ci$normal[2], late.boot$t0-late.ci$normal[2]))
+axis(1, at=c(0.7,1.9,3.1), labels = c('1994', '1997', '2008'))
 
 #### Pi calculations for 1296 loci ####
 # How about trying a vcf that contains no missing data: 1296 loci across 285 fish
@@ -491,6 +536,21 @@ plot(late.boot)
 late.ci <- boot.ci(late.boot, conf = 0.95, type = c('norm', 'basic', 'perc'))
 late.ci$normal # view 95% CIs
 
+png(file="~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/newref_alltrimmed140/pi1296_barplots.png",width=6, height=5, res=300, units="in")
+par(mar=c(4.5, 5, 1.5, 1), # panel magin size in "line number" units
+    mgp=c(3, 1, 0), # default is c(3,1,0); line number for axis label, tick label, axis
+    tcl=-0.5, # size of tick marks as distance INTO figure (negative means pointing outward)
+    cex=1, # character expansion factor; keep as 1; if you have a many-panel figure, they start changing the default!
+    ps=12
+)
+
+options(scipen = 5)
+barplot(c(early.boot$t0, mid.boot$t0, late.boot$t0), ylim = c(0,0.0007), xlab = 'Larval cohort', ylab = 'Average nucleotide diversity (π)')
+error.bar(c(0.7,1.9,3.1), c(early.boot$t0, mid.boot$t0, late.boot$t0), c(early.ci$normal[3]-early.boot$t0, mid.ci$normal[3]-mid.boot$t0, late.ci$normal[3]-late.boot$t0), c(early.boot$t0-early.ci$normal[2], mid.boot$t0-mid.ci$normal[2], late.boot$t0-late.ci$normal[2]))
+axis(1, at=c(0.7,1.9,3.1), labels = c('1994', '1997', '2008'))
+
+dev.off()
+
 ####################
 # FST
 ne_data
@@ -544,5 +604,85 @@ hist(mid$PI, add = TRUE, col=rgb(0,0,1,0.5))
 hist(late$PI, add = TRUE, col=rgb(0,1,0,0.5))
 legend('topright', legend = c('1994-1995', '1997-1998', '2008-2009'), col = c(rgb(1,0,0,0.5), rgb(0,0,1,0.5), rgb(0,1,0,0.5)), pch = 15, cex = 0.8, title = 'Cohort', text.font = 1)
 
+#### Sort fish based on site of capture for pi calculation sensitivity analysis ####
+ordered_meta_sub2 # from top of script
+data <- ordered_meta_sub2[, c("PinskyID","Year","Place")]
+
+# Subset data to figure out IDs of NJ and NC fish
+names94_95_NJ <- data[which(data$Place == 'Little Egg Inlet, NJ' & data$Year <= 1995),] #24 fish
+names94_95_NC <- data[which(data$Place == 'Beaufort, NC' & data$Year <= 1995),] #0
+
+names97_98_NJ <- data[which(data$Year >= 1997 & data$Year < 2008 & data$Place == 'Little Egg Inlet, NJ'),] # order of the arguments really matters here; 85 fish
+names97_98_NC <- data[which(data$Year >= 1997 & data$Year < 2008 & data$Place == 'Beaufort, NC'),] # 18
+
+names08_09_NJ <- data[which(data$Place == 'Little Egg Inlet, NJ' & data$Year >= 2008),] #146
+names08_09_NC <- data[which(data$Place == 'Beaufort, NC' & data$Year >= 2008),]
+
+# Read in names that correspond to genetic data
+genetic.names <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/newref_alltrimmed140/names.txt")
+
+genetic.names_split <- do.call(rbind, strsplit(as.character(genetic.names$V1), 'L'))
+genetic.names_split2 <- separate(as.data.frame(genetic.names_split), V1, c("name1", "name2", "name3", "name4"),sep = c(4,5,7))
+genetic.newnames <- paste(freq_names_split2$name1, freq_names_split2$name3, freq_names_split2$name2, freq_names_split2$name4, sep = '') #PADEXX_XXX formatting
+
+# Subset genetic names based on which fish came from NJ/NC and when
+names97_98_NJ_genetic <- genetic.names[genetic.newnames %in% names97_98_NJ$PinskyID,]
+names97_98_NC_genetic <- genetic.names[genetic.newnames %in% names97_98_NC$PinskyID,]
+
+names08_09_NJ_genetic <- genetic.names[genetic.newnames %in% names08_09_NJ$PinskyID,]
+names08_09_NC_genetic <- genetic.names[genetic.newnames %in% names08_09_NC$PinskyID,]
+
+# Split the genetic names
+write.table(names97_98_NJ_genetic, "~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/newref_alltrimmed140/names97_98_NJ.txt", col.names = FALSE, row.names = FALSE)
+write.table(names97_98_NC_genetic, "~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/newref_alltrimmed140/names97_98_NC.txt", col.names = FALSE, row.names = FALSE)
+write.table(names08_09_NJ_genetic, "~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/newref_alltrimmed140/names08_09_NJ.txt", col.names = FALSE, row.names = FALSE)
+write.table(names08_09_NC_genetic, "~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/newref_alltrimmed140/names08_09_NC.txt", col.names = FALSE, row.names = FALSE)
+
+# Read in window pi calculations for NJ/NC and cohort combos calculated by vcftools on Amarel
+mid.nj.win.pi <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/newref_alltrimmed140/names97_98_NJ.windowed.pi", header = TRUE) #3353 x 5
+mid.nc.win.pi <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/newref_alltrimmed140/names97_98_NC.windowed.pi", header = TRUE) #2047 x 5
+late.nj.win.pi <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/newref_alltrimmed140/names08_09_NJ.windowed.pi", header = TRUE) #3449x 5
+late.nc.win.pi <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/newref_alltrimmed140/names08_09_NC.windowed.pi", header = TRUE) #1690 x 5
+
+mean(mid.nj.win.pi$PI)
+mean(mid.nc.win.pi$PI)
+mean(late.nj.win.pi$PI)
+mean(late.nc.win.pi$PI)
+
+# add zeros for all the loci that got dropped, then take mean
+mid.nj.win.pi3979 <- c(mid.nj.win.pi$PI, rep(0,626))
+mid.nc.win.pi3979 <- c(mid.nc.win.pi$PI, rep(0,1932))
+late.nj.win.pi3979 <- c(late.nj.win.pi$PI, rep(0,530))
+late.nc.win.pi3979 <- c(late.nc.win.pi$PI, rep(0,2289))
+
+mean(mid.nj.win.pi3979)
+mean(mid.nc.win.pi3979)
+mean(late.nj.win.pi3979)
+mean(late.nc.win.pi3979)
+
+# bootstrap pi to get CI
+samplemean <- function(x, d) {
+  return(mean(x[d]))
+}
+
+mid.nj.boot <- boot(mid.nj.win.pi3979, samplemean, 1000)
+plot(mid.nj.boot)
+mid.nj.ci <- boot.ci(mid.nj.boot, conf = 0.95, type = c('norm', 'basic', 'perc'))
+mid.nj.ci$normal # view 95% CIs
+
+mid.nc.boot <- boot(mid.nc.win.pi3979, samplemean, 1000)
+plot(mid.nc.boot)
+mid.nc.ci <- boot.ci(mid.nc.boot, conf = 0.95, type = c('norm', 'basic', 'perc'))
+mid.nc.ci$normal # view 95% CIs
+
+late.nj.boot <- boot(late.nj.win.pi3979, samplemean, 1000)
+plot(late.nj.boot)
+late.nj.ci <- boot.ci(late.nj.boot, conf = 0.95, type = c('norm', 'basic', 'perc'))
+late.nj.ci$normal # view 95% CIs
+
+late.nc.boot <- boot(late.nc.win.pi3979, samplemean, 1000)
+plot(late.nc.boot)
+late.nc.ci <- boot.ci(late.nc.boot, conf = 0.95, type = c('norm', 'basic', 'perc'))
+late.nc.ci$normal # view 95% CIs
 
 
