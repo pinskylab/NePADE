@@ -30,9 +30,9 @@ Contains a figure comparing the observed SFS to those of the best demographic mo
 
    • **Ne_boxplots.png** shows ML point estimates and CIs for the best model  
    • **Ne_observedSFS.R** prepares SNP data for SFS required by fastsimcoal  
-   • **all_demo_scenarios.pdf** figure of tested demographic scenarios
-   • **model4_lineplot_a_and_b.png** shows how point estimates and CIs of Ne from the fastsimcoal demographic modeling change over time for Model 4 
-   • **obs_sfs_polyonly** observed SFS for each larval cohort 
+   • **all_demo_scenarios.pdf** figure of tested demographic scenarios  
+   • **model4_lineplot_a_and_b.png** shows how point estimates and CIs of Ne from the fastsimcoal demographic modeling change over time for Model 4  
+   • **obs_sfs_polyonly** observed SFS for each larval cohort  
 
 ## Figures
 
