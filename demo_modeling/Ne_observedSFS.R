@@ -202,18 +202,56 @@ pop94.mod4.prop[is.na(pop94.mod4.prop)] <- 0
 m <- rbind(pop94.mod4.prop, pop97.mod4.prop, pop08.mod4.prop)
 colnames(m) <- 1:306
 
+# Reading in individual population SFSs simulated for Model 6 (exponential change in population size before and after bottleneck)
+pop08.mod6 <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/sim_sfs/model 6/mod6_pop0_sfs_summary.txt') #100x307
+pop97.mod6 <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/sim_sfs/model 6/mod6_pop1_sfs_summary.txt') #100x207
+pop94.mod6 <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/sim_sfs/model 6/mod6_pop2_sfs_summary.txt') #100x49
+
+# Take means across each bin of # of minor alleles
+pop08.mod6.avg <- colMeans(pop08.mod6)
+pop97.mod6.avg <- colMeans(pop97.mod6)
+pop94.mod6.avg <- colMeans(pop94.mod6)
+
+# All the populations are different sizes, so need to convert to proportion of SNPs & then add zeros so that all cohorts have same number of columns
+pop08.mod6.avg.poly <- mean(rowSums(pop08.mod6[-1])) #avg number of polymorphic snps for pop08
+pop97.mod6.avg.poly <- mean(rowSums(pop97.mod6[-1])) #avg number of polymorphic snps for pop97
+pop94.mod6.avg.poly <- mean(rowSums(pop94.mod6[-1])) #avg number of polymorphic snps for pop94
+
+pop08.mod6.prop <- t(pop08.mod6.avg[-1]/pop08.mod6.avg.poly) #prop of polymorphic snps vs # of minor alleles
+pop97.mod6.prop <- t(pop97.mod6.avg[-1]/pop97.mod6.avg.poly)
+pop94.mod6.prop <- t(pop94.mod6.avg[-1]/pop94.mod6.avg.poly)
+
+n <- max(length(pop08.mod6.avg[-1]), length(pop97.mod6.avg[-1]), length(pop94.mod6.avg[-1])) # determines max vector length of only polymorphic sites (306) and then makes all shorter vectors 306
+pop08.mod6.prop <- as.numeric(pop08.mod6.prop)
+length(pop97.mod6.prop) <- n # adds NAs to the end of the vector
+length(pop94.mod6.prop) <- n # adds NAs to the end of the vector
+
+pop97.mod6.prop[is.na(pop97.mod6.prop)] <- 0 # Replaces NAs with 0
+pop94.mod6.prop[is.na(pop94.mod6.prop)] <- 0
+
+m <- rbind(pop94.mod6.prop, pop97.mod6.prop, pop08.mod6.prop)
+colnames(m) <- 1:306
+
 #### Plots to compare demographic scenarios with observed ####
 col.palette <- wes_palette("FantasticFox1", 5, type = "discrete")
 palette(col.palette)
 
-early <- rbind(pop94.mod2.prop, pop94.mod4.prop, t(pop94.obs.prop))
+# early <- rbind(pop94.mod2.prop, pop94.mod4.prop, t(pop94.obs.prop))
+# colnames(early) <- 1:306 #1:48
+# mid <- rbind(pop97.mod2.prop, pop97.mod4.prop, t(pop97.obs.prop))
+# colnames(mid) <- 1:306 #1:206
+# late <- rbind(pop08.mod2.prop, pop08.mod4.prop, t(pop08.obs.prop))
+# colnames(late) <- 1:306
+
+early <- rbind(pop94.mod2.prop, pop94.mod4.prop, pop94.mod6.prop, t(pop94.obs.prop))
 colnames(early) <- 1:306 #1:48
-mid <- rbind(pop97.mod2.prop, pop97.mod4.prop, t(pop97.obs.prop))
+mid <- rbind(pop97.mod2.prop, pop97.mod4.prop, pop97.mod6.prop, t(pop97.obs.prop))
 colnames(mid) <- 1:306 #1:206
-late <- rbind(pop08.mod2.prop, pop08.mod4.prop, t(pop08.obs.prop))
+late <- rbind(pop08.mod2.prop, pop08.mod4.prop, pop08.mod6.prop, t(pop08.obs.prop))
 colnames(late) <- 1:306
 
-png(file="~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/sim_sfs/sfs.comparison.png",width=12, height=9, res=300, units="in")
+
+png(file="~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/sim_sfs/sfs.comparison.top3.png",width=12, height=9, res=300, units="in")
 par(mfrow = c(3,1),
     mar=c(4.5, 5, 1.5, 1), # panel magin size in "line number" units
     mgp=c(3, 1, 0), # default is c(3,1,0); line number for axis label, tick label, axis
@@ -222,8 +260,14 @@ par(mfrow = c(3,1),
     ps=12
 )
 
-barplot(early, legend = c('Model 2', 'Model 4', 'Observed'), beside = TRUE, xlab = 'Number of minor alleles', ylab = 'Proportion of polymorphic SNPs', main = '1994-1995 cohort', xlim = c(0, 106), col = col.palette[1:3], ylim = c(0,0.5))
-barplot(mid, legend = c('Model 2','Model 4', 'Observed'), beside = TRUE, xlab = 'Number of minor alleles', ylab = 'Proportion of polymorphic SNPs', main = '1997-1998 cohort', xlim = c(0, 106), col = col.palette[1:3], ylim = c(0,0.25))
-barplot(late, legend = c('Model 2','Model 4', 'Observed'), beside = TRUE, xlab = 'Number of minor alleles', ylab = 'Proportion of polymorphic SNPs', main = '2008-2009 cohort', xlim = c(0, 106), col = col.palette[1:3], ylim = c(0,0.20))
-dev.off()
+# Model 2 & 4, plus observed
+# barplot(early, legend = c('Model 2', 'Model 4', 'Observed'), beside = TRUE, xlab = 'Number of minor alleles', ylab = 'Proportion of polymorphic SNPs', main = '1994-1995 cohort', xlim = c(0, 106), col = col.palette[1:3], ylim = c(0,0.5))
+# barplot(mid, legend = c('Model 2','Model 4', 'Observed'), beside = TRUE, xlab = 'Number of minor alleles', ylab = 'Proportion of polymorphic SNPs', main = '1997-1998 cohort', xlim = c(0, 106), col = col.palette[1:3], ylim = c(0,0.25))
+# barplot(late, legend = c('Model 2','Model 4', 'Observed'), beside = TRUE, xlab = 'Number of minor alleles', ylab = 'Proportion of polymorphic SNPs', main = '2008-2009 cohort', xlim = c(0, 106), col = col.palette[1:3], ylim = c(0,0.20))
+# dev.off()
 
+# Model 2, 4 & 6, plus observed
+barplot(early, legend = c('Model 2', 'Model 4', 'Model 6', 'Observed'), beside = TRUE, xlab = 'Number of minor alleles', ylab = 'Proportion of polymorphic SNPs', main = '1994-1995 cohort', xlim = c(0, 133), col = col.palette[c(1:3,5)], ylim = c(0,0.5))
+barplot(mid, legend = c('Model 2','Model 4', 'Model 6', 'Observed'), beside = TRUE, xlab = 'Number of minor alleles', ylab = 'Proportion of polymorphic SNPs', main = '1997-1998 cohort', xlim = c(0, 133), col = col.palette[c(1:3,5)], ylim = c(0,0.25))
+barplot(late, legend = c('Model 2','Model 4', 'Model 6', 'Observed'), beside = TRUE, xlab = 'Number of minor alleles', ylab = 'Proportion of polymorphic SNPs', main = '2008-2009 cohort', xlim = c(0, 133), col = col.palette[c(1:3,5)], ylim = c(0,0.20))
+dev.off()
