@@ -267,7 +267,7 @@ par(mfrow = c(3,1),
 # dev.off()
 
 # Model 2, 4 & 6, plus observed
-barplot(early, legend = c('Model 2', 'Model 4', 'Model 6', 'Observed'), beside = TRUE, xlab = 'Number of minor alleles', ylab = 'Proportion of polymorphic SNPs', main = '1994-1995 cohort', xlim = c(0, 133), col = col.palette[c(1:3,5)], ylim = c(0,0.5), las = 2)
-barplot(mid, legend = c('Model 2','Model 4', 'Model 6', 'Observed'), beside = TRUE, xlab = 'Number of minor alleles', ylab = 'Proportion of polymorphic SNPs', main = '1997-1998 cohort', xlim = c(0, 133), col = col.palette[c(1:3,5)], ylim = c(0,0.25), las = 2)
-barplot(late, legend = c('Model 2','Model 4', 'Model 6', 'Observed'), beside = TRUE, xlab = 'Number of minor alleles', ylab = 'Proportion of polymorphic SNPs', main = '2008-2009 cohort', xlim = c(0, 133), col = col.palette[c(1:3,5)], ylim = c(0,0.20), las = 2)
+barplot(early, legend = c('Model 2', 'Model 4', 'Model 6', 'Observed'), beside = TRUE, xlab = 'Number of minor alleles', ylab = 'Proportion of polymorphic SNPs', main = '1994-1995 cohort', xlim = c(0, 133), col = col.palette[c(1:3,5)], ylim = c(0,0.5), las = 1)
+barplot(mid, legend = c('Model 2','Model 4', 'Model 6', 'Observed'), beside = TRUE, xlab = 'Number of minor alleles', ylab = 'Proportion of polymorphic SNPs', main = '1997-1998 cohort', xlim = c(0, 133), col = col.palette[c(1:3,5)], ylim = c(0,0.25), las = 1)
+barplot(late, legend = c('Model 2','Model 4', 'Model 6', 'Observed'), beside = TRUE, xlab = 'Number of minor alleles', ylab = 'Proportion of polymorphic SNPs', main = '2008-2009 cohort', xlim = c(0, 133), col = col.palette[c(1:3,5)], ylim = c(0,0.20), las = 1)
 dev.off()
