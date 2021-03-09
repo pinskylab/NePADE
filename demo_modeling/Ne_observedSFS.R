@@ -271,3 +271,55 @@ barplot(early, legend = c('Model 2', 'Model 4', 'Model 6', 'Observed'), beside =
 barplot(mid, legend = c('Model 2','Model 4', 'Model 6', 'Observed'), beside = TRUE, xlab = 'Number of minor alleles', ylab = 'Proportion of polymorphic SNPs', main = '1997-1998 cohort', xlim = c(0, 133), col = col.palette[c(1:3,5)], ylim = c(0,0.25), las = 1)
 barplot(late, legend = c('Model 2','Model 4', 'Model 6', 'Observed'), beside = TRUE, xlab = 'Number of minor alleles', ylab = 'Proportion of polymorphic SNPs', main = '2008-2009 cohort', xlim = c(0, 133), col = col.palette[c(1:3,5)], ylim = c(0,0.20), las = 1)
 dev.off()
+
+##################################################################### 
+#### Plot observed SFS containing no putative siblings ####
+nosibs.msfs <- fread("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/Ne276_1196loci_nomaf_nosibs.res/Ne276_1196loci_nomaf_nosibs_MSFS.obs", skip = 2) # Read in MSFS and check that there are 1196 loci
+dim(nosibs.msfs)
+sum(nosibs.msfs[1,]) #1196 snps, yes
+table(t(nosibs.msfs)) #the number of snps in each of the categories
+
+# Okay, now read in single population observed SFSs for plotting
+pop08.obs <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/Ne276_1196loci_nomaf_nosibs.res/Ne276_1196loci_nomaf_nosibs_MAFpop0.obs', skip = 1, header = TRUE)
+pop97.obs <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/Ne276_1196loci_nomaf_nosibs.res/Ne276_1196loci_nomaf_nosibs_MAFpop1.obs', skip = 1, header = TRUE)
+pop94.obs <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/Ne276_1196loci_nomaf_nosibs.res/Ne276_1196loci_nomaf_nosibs_MAFpop2.obs', skip = 1, header = TRUE)
+
+hist(as.numeric(pop08.obs))
+hist(as.numeric(pop97.obs))
+hist(as.numeric(pop94.obs))
+
+# All the populations are different sizes, so need to convert to proportion of SNPs & then add zeros so that all cohorts have same number of columns
+pop08.obs.prop <- t(pop08.obs[-1]/sum(pop08.obs[-1])) # denominator is number of SNPs (only polymorphic sites)
+pop97.obs.prop <- t(pop97.obs[-1]/sum(pop97.obs[-1]))
+pop94.obs.prop <- t(pop94.obs[-1]/sum(pop94.obs[-1]))
+
+# n <- max(length(pop08), length(pop97), length(pop94)) # determines max vector length (299) and then makes all shorter vectors 307 when including nonpolymorphic sites
+n <- max(length(pop08.obs[-1]), length(pop97.obs[-1]), length(pop94.obs[-1])) # determines max vector length (298) and then makes all shorter vectors 298 when including only polymorphic sites
+pop08.obs.prop <- as.numeric(pop08.obs.prop)
+length(pop97.obs.prop) <- n # adds NAs to the end of the vector
+length(pop94.obs.prop) <- n # adds NAs to the end of the vector
+
+pop97.obs.prop[is.na(pop97.obs.prop)] <- 0
+pop94.obs.prop[is.na(pop94.obs.prop)] <- 0
+
+m <- rbind(pop94.obs.prop, pop97.obs.prop, pop08.obs.prop)
+colnames(m) <- 1:298 # only polymorphic sites
+
+# Plot
+col.palette <- wes_palette("FantasticFox1", 5, type = "discrete")
+palette(col.palette)
+
+png(file="~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/obs_sfs_polyonly_nosibs.png", width=11, height=3, res=300, units="in")
+
+par(
+  mar=c(4.5, 5, 1.5, 1), # panel magin size in "line number" units
+  mgp=c(3, 1, 0), # default is c(3,1,0); line number for axis label, tick label, axis
+  tcl=-0.5, # size of tick marks as distance INTO figure (negative means pointing outward)
+  cex=1, # character expansion factor; keep as 1; if you have a many-panel figure, they start changing the default!
+  ps=12
+)
+
+barplot(m, legend = c('1994-1995 cohort', '1997-1998 cohort','2008-2009 cohort'), beside = TRUE, xlab = 'Number of minor alleles', ylab = 'Proportion of SNPs', main = 'Observed SFS', xlim = c(0, 105), col = col.palette[1:3])
+
+dev.off()
+
