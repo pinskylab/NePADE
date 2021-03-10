@@ -18,7 +18,7 @@ R2008
 4 historical event
 5.5 1 0 1 1 0 0
 7 2 0 1 1 0 0 
-TBOT 0 0 0 RESBOT 0 0
+TBOT 0 0 0 1 0 0
 TSTARBOT 0 0 0 RESSTARBOT 0 0
 //Number of independent loci [chromosome] 
 1 0
