@@ -15,11 +15,12 @@ NPOP08
 //Number of migration matrices : 0 implies no migration between demes
 0
 //historical event: time, source, sink, migrants, new size, new growth rate, migr. matrix 
-4 historical event
+5 historical event
 5.5 1 0 1 1 0 0
 7 2 0 1 1 0 0 
 TBOT 0 0 0 RESBOT 0 0
 TSTARBOT 0 0 0 RESSTARBOT RANC 0
+9000 0 0 0 1 0 0
 //Number of independent loci [chromosome] 
 1 0
 //Per chromosome: Number of linkage blocks

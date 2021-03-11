@@ -9,7 +9,7 @@
 1 NBOT logunif 100 100000 output
 1 TBOT unif 1 12 output
 1 TLEN unif 1 5 output
-0 RANC unif -0.3 0.1 output bounded
+1 NOLD logunif 100 100000 output
 
 [RULES]
 
@@ -17,3 +17,6 @@
 0 RESBOT = NBOT/NPOP08 hide
 0 RESSTARBOT = NANC/NBOT hide
 1 TSTARBOT = TBOT+TLEN hide
+0 RatioANC = NOLD/NANC hide
+0 logRatANC = log(RatioANC) hide
+0 RANC = logRatANC/9000 output
