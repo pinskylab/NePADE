@@ -166,22 +166,49 @@ quantile((boot$NBOT/boot$NANC), c(0.025, 0.975))
 
 #### Manipulate ML and bootstrapped data so that it can be plotted over time ####
 # Model 6 & convert haploid numbers to diploid by dividing by 2; check RANC by calculating log(N_0/N_t)/(t_0/t_t)
-max <- data.frame(matrix(NA, nrow = 8, ncol = 4))
-max[,1] <- c(0, mod6_ml_parameters$TBOT, mod6_ml_parameters$TBOT, (mod6_ml_parameters$TBOT+mod6_ml_parameters$TLEN), (mod6_ml_parameters$TBOT+mod6_ml_parameters$TLEN), (mod6_ml_parameters$TBOT+mod6_ml_parameters$TLEN+2), (mod6_ml_parameters$TBOT+mod6_ml_parameters$TLEN+5), (mod6_ml_parameters$TBOT+mod6_ml_parameters$TLEN+1000)) #generations going back in time, 5 and 1000 generations pre-bottleneck were chosen arbitrarily for plotting
+# Calculate recent growth rate R2008 from population size for later
+r2008 <- (log(mod6_ml_parameters$NBOT/mod6_ml_parameters$NPOP08)/(mod6_ml_parameters$TBOT)) # check that this is correct; growth rate going back in time
+
+max <- data.frame(matrix(NA, nrow = 12, ncol = 4))
+# max[,1] <- c(0, mod6_ml_parameters$TBOT, mod6_ml_parameters$TBOT, (mod6_ml_parameters$TBOT+mod6_ml_parameters$TLEN), (mod6_ml_parameters$TBOT+mod6_ml_parameters$TLEN), (mod6_ml_parameters$TBOT+mod6_ml_parameters$TLEN+2), (mod6_ml_parameters$TBOT+mod6_ml_parameters$TLEN+5), (mod6_ml_parameters$TBOT+mod6_ml_parameters$TLEN+1000)) #generations going back in time, 5 and 1000 generations pre-bottleneck were chosen arbitrarily for plotting
+# max[,1] <- c(0, mod6_ml_parameters$TBOT-3, mod6_ml_parameters$TBOT-1, mod6_ml_parameters$TBOT, (mod6_ml_parameters$TBOT+mod6_ml_parameters$TLEN), (mod6_ml_parameters$TBOT+mod6_ml_parameters$TLEN), (mod6_ml_parameters$TBOT+mod6_ml_parameters$TLEN+2), (mod6_ml_parameters$TBOT+mod6_ml_parameters$TLEN+5), (mod6_ml_parameters$TBOT+mod6_ml_parameters$TLEN+1000)) #generations going back in time, 5 and 1000 generations pre-bottleneck were chosen arbitrarily for plotting
+max[,1] <- c(0, mod6_ml_parameters$TBOT-8, mod6_ml_parameters$TBOT-6, mod6_ml_parameters$TBOT-4, mod6_ml_parameters$TBOT-3, mod6_ml_parameters$TBOT-1, mod6_ml_parameters$TBOT, (mod6_ml_parameters$TBOT+mod6_ml_parameters$TLEN), (mod6_ml_parameters$TBOT+mod6_ml_parameters$TLEN), (mod6_ml_parameters$TBOT+mod6_ml_parameters$TLEN+2), (mod6_ml_parameters$TBOT+mod6_ml_parameters$TLEN+5), (mod6_ml_parameters$TBOT+mod6_ml_parameters$TLEN+1000)) #generations going back in time, 5 and 1000 generations pre-bottleneck were chosen arbitrarily for plotting
+
 # max[,2] <- c(2008, 2008-(2*mod6_ml_parameters$TBOT), 2008-(2*mod6_ml_parameters$TBOT), 2008-((2*mod6_ml_parameters$TBOT)+(2*mod6_ml_parameters$TLEN)), 2008-((2*mod6_ml_parameters$TBOT)+(2*mod6_ml_parameters$TLEN)), 2008-((2*mod6_ml_parameters$TBOT)+(2*mod6_ml_parameters$TLEN))-10, 2008-((2*mod6_ml_parameters$TBOT)+(2*mod6_ml_parameters$TLEN))-20, 2008-((2*mod6_ml_parameters$TBOT)+(2*mod6_ml_parameters$TLEN))-30) #convert to years assuming summer flounder generation time of 2 years
 max[,2] <- 2008 - 2*max[,1]
-max[,3] <- c(mod6_ml_parameters$NPOP08, mod6_ml_parameters$NPOP08, mod6_ml_parameters$NBOT, mod6_ml_parameters$NBOT, mod6_ml_parameters$NANC, (mod6_ml_parameters$NANC*exp(mod6_ml_parameters$RANC * 2)), (mod6_ml_parameters$NANC*exp(mod6_ml_parameters$RANC * 5)), (mod6_ml_parameters$NANC*exp(mod6_ml_parameters$RANC * 1000))) #haploid; when t is replaced by 9000 generations, NOLD = 2877
+# max[,3] <- c(mod6_ml_parameters$NPOP08, mod6_ml_parameters$NPOP08, mod6_ml_parameters$NBOT, mod6_ml_parameters$NBOT, mod6_ml_parameters$NANC, (mod6_ml_parameters$NANC*exp(mod6_ml_parameters$RANC * 2)), (mod6_ml_parameters$NANC*exp(mod6_ml_parameters$RANC * 5)), (mod6_ml_parameters$NANC*exp(mod6_ml_parameters$RANC * 1000))) #haploid; when t is replaced by 9000 generations, NOLD = 2877
+max[,3] <- c(mod6_ml_parameters$NPOP08, (mod6_ml_parameters$NPOP08*exp(r2008 * (mod6_ml_parameters$TBOT-8))), (mod6_ml_parameters$NPOP08*exp(r2008 * (mod6_ml_parameters$TBOT-6))), (mod6_ml_parameters$NPOP08*exp(r2008 * (mod6_ml_parameters$TBOT-4))), (mod6_ml_parameters$NPOP08*exp(r2008 * (mod6_ml_parameters$TBOT-3))), (mod6_ml_parameters$NPOP08*exp(r2008 * (mod6_ml_parameters$TBOT-1))), mod6_ml_parameters$NBOT, mod6_ml_parameters$NBOT, mod6_ml_parameters$NANC, (mod6_ml_parameters$NANC*exp(mod6_ml_parameters$RANC * 2)), (mod6_ml_parameters$NANC*exp(mod6_ml_parameters$RANC * 5)), (mod6_ml_parameters$NANC*exp(mod6_ml_parameters$RANC * 1000))) #haploid; when t is replaced by 9000 generations, NOLD = 2877
+
 max[,4] <- max[,3]/2 #diploid
 
 # Nonparametric bootstrapped data
-boot.max <- array(numeric(), c(8,4,100))
+# First calculate recent r (R2008) for each SFS
+r <- vector(length = 100)
+for (i in 1:length(r)) {
+  r[i] <- (log(boot$NBOT[i]/boot$NPOP08[i])/(boot$TBOT[i])) # check a few to make sure they're correct
+}
+
+# Fewer discrete points, curve is rougher, but avoids plotting beyond 2008
+boot.max <- array(numeric(), c(10,4,100))
 for (i in 1:nrow(boot)) {
-  boot.max[,1,i] <- c(0, boot$TBOT[i], boot$TBOT[i], (boot$TBOT[i]+boot$TLEN[i]), (boot$TBOT[i]+boot$TLEN[i]), (boot$TBOT[i]+boot$TLEN[i]+2), (boot$TBOT[i]+boot$TLEN[i]+5), (boot$TBOT[i]+boot$TLEN[i]+1000)) #generations going back in time
+  # boot.max[,1,i] <- c(0, boot$TBOT[i], boot$TBOT[i], (boot$TBOT[i]+boot$TLEN[i]), (boot$TBOT[i]+boot$TLEN[i]), (boot$TBOT[i]+boot$TLEN[i]+2), (boot$TBOT[i]+boot$TLEN[i]+5), (boot$TBOT[i]+boot$TLEN[i]+1000)) #generations going back in time
+  boot.max[,1,i] <- c(0, boot$TBOT[i]-3, boot$TBOT[i]-2, boot$TBOT[i]-1, boot$TBOT[i], (boot$TBOT[i]+boot$TLEN[i]), (boot$TBOT[i]+boot$TLEN[i]), (boot$TBOT[i]+boot$TLEN[i]+2), (boot$TBOT[i]+boot$TLEN[i]+5), (boot$TBOT[i]+boot$TLEN[i]+1000)) #generations going back in time
   boot.max[,2,i] <- 2008 -2*boot.max[,1,i] #convert to years assuming summer flounder generation time is 2 years
   #boot.max[,2,i] <- c(2008, 2008-(2*boot$TBOT[i]), 2008-(2*boot$TBOT[i]), 2008-((2*boot$TBOT[i])+(2*boot$TLEN[i])), 2008-((2*boot$TBOT[i])+(2*boot$TLEN[i])), 2008-((2*expgrowth_instant$TBOT)+(2*expgrowth_instant$TLEN))-10, 2008-((2*expgrowth_instant$TBOT)+(2*expgrowth_instant$TLEN))-20, 2008-((2*expgrowth_instant$TBOT)+(2*expgrowth_instant$TLEN))-30)
-  boot.max[,3,i] <- c(boot$NPOP08[i], boot$NPOP08[i], boot$NBOT[i], boot$NBOT[i], boot$NANC[i], (boot$NANC[i]*exp(boot$RANC[i] * 2)), (boot$NANC[i]*exp(boot$RANC[i] * 5)), (boot$NANC[i]*exp(boot$RANC[i] * 1000))) #haploid
+  # boot.max[,3,i] <- c(boot$NPOP08[i], boot$NPOP08[i], boot$NBOT[i], boot$NBOT[i], boot$NANC[i], (boot$NANC[i]*exp(boot$RANC[i] * 2)), (boot$NANC[i]*exp(boot$RANC[i] * 5)), (boot$NANC[i]*exp(boot$RANC[i] * 1000))) #haploid
+  boot.max[,3,i] <- c(boot$NPOP08[i], (boot$NPOP08[i]*exp(r[i] * (boot$TBOT[i]-3))), (boot$NPOP08[i]*exp(r[i] * (boot$TBOT[i]-2))), (boot$NPOP08[i]*exp(r[i] * (boot$TBOT[i]-1))), boot$NBOT[i], boot$NBOT[i], boot$NANC[i], (boot$NANC[i]*exp(boot$RANC[i] * 2)), (boot$NANC[i]*exp(boot$RANC[i] * 5)), (boot$NANC[i]*exp(boot$RANC[i] * 1000))) #haploid
   boot.max[,4,i] <- boot.max[,3,i]/2 #diploid
 }
+
+# More discrete points for smoother exponential curve
+boot.max <- array(numeric(), c(14,4,100))
+for (i in 1:nrow(boot)) {
+  boot.max[,1,i] <- c(0, boot$TBOT[i]-12, boot$TBOT[i]-10, boot$TBOT[i]-8, boot$TBOT[i]-6, boot$TBOT[i]-4, boot$TBOT[i]-2, boot$TBOT[i]-1, boot$TBOT[i], (boot$TBOT[i]+boot$TLEN[i]), (boot$TBOT[i]+boot$TLEN[i]), (boot$TBOT[i]+boot$TLEN[i]+2), (boot$TBOT[i]+boot$TLEN[i]+5), (boot$TBOT[i]+boot$TLEN[i]+1000)) #generations going back in time
+  boot.max[,2,i] <- 2008 -2*boot.max[,1,i] #convert to years assuming summer flounder generation time is 2 years
+  boot.max[,3,i] <- c(boot$NPOP08[i], (boot$NPOP08[i]*exp(r[i] * (boot$TBOT[i]-12))), (boot$NPOP08[i]*exp(r[i] * (boot$TBOT[i]-10))), (boot$NPOP08[i]*exp(r[i] * (boot$TBOT[i]-8))), (boot$NPOP08[i]*exp(r[i] * (boot$TBOT[i]-6))), (boot$NPOP08[i]*exp(r[i] * (boot$TBOT[i]-4))), (boot$NPOP08[i]*exp(r[i] * (boot$TBOT[i]-2))), (boot$NPOP08[i]*exp(r[i] * (boot$TBOT[i]-1))), boot$NBOT[i], boot$NBOT[i], boot$NANC[i], (boot$NANC[i]*exp(boot$RANC[i] * 2)), (boot$NANC[i]*exp(boot$RANC[i] * 5)), (boot$NANC[i]*exp(boot$RANC[i] * 1000))) #haploid
+  boot.max[,4,i] <- boot.max[,3,i]/2 #diploid
+}
+
 
 # Set up plot and plot bootstrapped data
 options(scipen = 5)
