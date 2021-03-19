@@ -100,6 +100,16 @@ mean(g_male_year[1:7]) #based on 1982-1988
 mean(c(g_female_year[1:27],g_male_year[1:27])) # average G of males and females from 1982-2008
 
 # Plot g over time
+png(file="~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/pade_generation_length.png", width=5, height=4, res=300, units="in")
+
+par(
+  mar=c(4.5, 5, 1.5, 1), # panel magin size in "line number" units
+  mgp=c(3, 1, 0), # default is c(3,1,0); line number for axis label, tick label, axis
+  tcl=-0.5, # size of tick marks as distance INTO figure (negative means pointing outward)
+  cex=1, # character expansion factor; keep as 1; if you have a many-panel figure, they start changing the default!
+  ps=12
+)
+
 plot(c(1982:2015), g_female_year, xlab = 'Year', ylab = 'Generation length', col = 'tomato', pch = 19, ylim = c(0,5))
 points(c(1982:2015), g_male_year, col = 'blue', pch = 19)
 lines(c(1982:2015), g_female_year, col = 'tomato')
@@ -108,6 +118,8 @@ legend('bottomright',
        legend = c('Females', 'Males'),
        col = c('tomato', 'blue'),
        pch = 19)
+
+dev.off()
 
 # Plot N contributing eggs in each age class for each year
 for (i in 1:nrow(N_contributing_eggs)) {
