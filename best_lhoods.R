@@ -264,3 +264,39 @@ mtext('(b)', 2,4.5, cex = 1.4, las = 1, at = 65000)
 lines(max$X2, max$X4, lwd = 1.8)
 
 dev.off()
+
+
+#### Using a SFS that summarizes 276 larvae across three cohorts, 1196 loci and no MAF filter ####
+# Read in the estimated parameters for each model
+mod1 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/nosibs_models/model1.bestlhoods.txt", header = TRUE) # constant population size for comparision to all the bottlenecks, but only estimating NPOP08
+mod2 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/nosibs_models/model2.bestlhoods.txt", header = TRUE)
+mod3 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/nosibs_models/model3.bestlhoods.txt", header = TRUE)
+mod4 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/nosibs_models/model4.bestlhoods.txt", header = TRUE)
+mod5 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/nosibs_models/model5.bestlhoods.txt", header = TRUE)
+mod6 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/nosibs_models/model6.bestlhoods.txt", header = TRUE)
+
+# Now find the ML run for each model
+mod1_ml <- max(mod1$MaxEstLhood)
+mod2_ml <- max(mod2$MaxEstLhood)
+mod3_ml <- max(mod3$MaxEstLhood)
+mod4_ml <- max(mod4$MaxEstLhood)
+mod5_ml <- max(mod5$MaxEstLhood)
+mod6_ml <- max(mod6$MaxEstLhood)
+
+# AIC calculation
+a <- c(mod1_ml, mod2_ml, mod3_ml, mod4_ml, mod5_ml, mod6_ml) # MaxEstLhood. These are log10 likelihoods
+aa <- c(mod1_ml, mod2_ml, mod3_ml, mod4_ml, mod5_ml, mod6_ml)*2.303 # Convert from log10 to ln
+b <- c(1,5,5,6,9,6) # number of estimated parameters
+
+aic <- 2*b-2*aa
+
+delta_aic <-round(aic,0) - min(round(aic,0))
+
+# Akaike weight = provides relative weight of evidence for each model. Probability that model i is the best model for the observed data, given the candidate set of models
+w <- vector()
+
+for (i in 1:length(aic)) {
+  w[i] <- (exp(-0.5*(aic[i]-max(aic))))/sum(exp(-0.5*(aic[1]-max(aic))), exp(-0.5*(aic[2]-max(aic))), exp(-0.5*(aic[3]-max(aic))), exp(-0.5*(aic[4]-max(aic))), exp(-0.5*(aic[5]-max(aic))), exp(-0.5*(aic[6]-max(aic))))
+}
+
+
