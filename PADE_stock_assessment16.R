@@ -101,6 +101,26 @@ legend("bottomright",
 
 dev.off()
 
+#### Calculating Ne/Nc
+N_spawners_allages # This is the number of breeders of all age classes in a year
+
+# Read in Ne data
+mod6 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/model_results/model6.bestlhoods.summary.txt", header = TRUE) # Read in ML parameters from Model 6
+
+# Find maximum from best model
+# Exponential growth of NANC, then bottleneck & instantaneous recovery (Model 4)
+max(mod6$MaxEstLhood)
+mod6_ml_parameters <- mod6[which(mod6$MaxEstLhood == max(mod6$MaxEstLhood)),]
+
+# 1988
+(mod6_ml_parameters$NANC/2)/N_spawners_allages$V2[7] #calculate year by 2008 - (2*TBOT) - (2*TLEN)
+
+# 1990
+(mod6_ml_parameters$NBOT/2)/N_spawners_allages$V2[9] #calculate year by 2008 - (2*TBOT)
+
+# 2008
+(mod6_ml_parameters$NPOP08/2)/N_spawners_allages$V2[27]
+
 #### Calculating r for summer flounder using estimates of N ####
 N
 count <- rowSums(N)
