@@ -164,6 +164,10 @@ quantile((boot$NPOP08/boot$NBOT), c(0.025, 0.975))
 mod6_ml_parameters$NBOT/mod6_ml_parameters$NANC # point estimate, same regardless of haploid or diploid
 quantile((boot$NBOT/boot$NANC), c(0.025, 0.975))
 
+# NPOP08/NANC ratio
+mod6_ml_parameters$NPOP08/mod6_ml_parameters$NANC # point estimate, same regardless of haploid or diploid
+quantile((boot$NPOP08/boot$NANC), c(0.025, 0.975))
+
 #### Manipulate ML and bootstrapped data so that it can be plotted over time ####
 # Model 6 & convert haploid numbers to diploid by dividing by 2; check RANC by calculating log(N_0/N_t)/(t_0/t_t)
 # Calculate recent growth rate R2008 from population size for later
