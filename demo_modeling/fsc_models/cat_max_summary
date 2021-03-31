@@ -1,0 +1,12 @@
+#!/bin/bash
+
+for file in /projects/f_mlp195/hoey/bootSFS_280fish_1196loci_model6/*/cis_sfs_summary
+do
+
+#Sorts the file by column 6 (likelihood) in descending order and then prints the last row (maximum since it's negative)
+sort -nk 7 "$file" | tail -n 1 > "$file.max"
+
+#Concatinates the run with the maximum likelihood for each SFS into a file
+cat /projects/f_mlp195/hoey/bootSFS_280fish_1196loci_model6/*/cis_sfs_summary.max > /projects/f_mlp195/hoey/bootSFS_280fish_1196loci_model6/max.summary.txt
+
+done

@@ -1,0 +1,13 @@
+#!/bin/bash
+
+for d in */
+do
+
+for file in /projects/f_mlp195/hoey/bootSFS_280fish_1196loci_model6/*/slurm-out/*/Ne280_1196loci_nomaf/Ne280_1196loci_nomaf.bestlhoods
+do
+sed '1d' "$file" > "$file.trimmed"
+
+cat /projects/f_mlp195/hoey/bootSFS_280fish_1196loci_model6/$d/slurm-out/*/Ne280_1196loci_nomaf/Ne280_1196loci_nomaf.bestlhoods.trimmed > /projects/f_mlp195/hoey/bootSFS_280fish_1196loci_model6/$d/cis_sfs_summary
+done
+
+done
