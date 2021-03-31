@@ -1,4 +1,4 @@
-This repository contains data, scripts and figures for a project investigating how genetic diversity and effective population size has changed over time for summer flounder
+This repository contains data, scripts and figures for a project investigating how genetic diversity and effective population size have changed over time for summer flounder
 
 ## Scripts
 
