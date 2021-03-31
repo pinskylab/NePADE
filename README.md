@@ -27,10 +27,10 @@ This directory contains the input and output files from demographic modeling usi
 ``` fsc_models/ ```
 Contains the .est and .tpl files necessary to run each of the six models in fastsimcoal. Also contains the observed MSFS whose name must match the .est and .tpl file names when running fastsimcoal. Example slurm scripts for model selection and CI estimation, as well as helper scripts for concatenating fsc .bestlhoods files when fsc is run many times.
 
-   • **cat_bestlhoods.sh** an example of how to concatenate fsc results for downstream model selection
-   • **cat_cis.sh** an example of how to concatenate fsc results when fsc is run on many simulated SFSs
-   • **cat_max_summary.sh** an example of how to select the ML run for many simulated SFSs and concatenate for CI estimation
-   • **run_fsc_Ne_CI_singlethread.sh** an example slurm script for running fsc on many simulated SFSs for CI estimation
+   • **cat_bestlhoods.sh** an example of how to concatenate fsc results for downstream model selection   
+   • **cat_cis.sh** an example of how to concatenate fsc results when fsc is run on many simulated SFSs  
+   • **cat_max_summary.sh** an example of how to select the ML run for many simulated SFSs and concatenate for CI estimation  
+   • **run_fsc_Ne_CI_singlethread.sh** an example slurm script for running fsc on many simulated SFSs for CI estimation    
    • **run_model6_singlethread.sh** an example of how to submit a fastsimcoal run to a shared computing cluster with each job on a single thread (this is faster than multithreading)  
    • **run_model6_multithread.sh** an example of how to submit a fastsimcoal run to a shared computing cluster (this can be slow) 
 
