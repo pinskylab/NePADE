@@ -96,8 +96,8 @@ mod6_ml_parameters <- mod6[which(mod6$MaxEstLhood == max(mod6$MaxEstLhood)),]
 # Histograms of parameters estimated from simulated SFS, plus a line for the point estimates
 hist(log10(boot$NPOP08), main = 'Population size in 2008', xlab = 'log10(NPOP08)')
 abline(v = log10(mod6_ml_parameters$NPOP08), col = 'tomato')
-hist(log10(boot$NANC), main = 'Ancestral population size', xlab = 'log10(NANC)')
-abline(v=log10(mod6_ml_parameters$NANC), col = 'tomato')
+hist(log10(boot$NPREBOT), main = 'Pre-bottleneck population size', xlab = 'log10(NPREBOT)')
+abline(v=log10(mod6_ml_parameters$NPREBOT), col = 'tomato')
 hist(log10(boot$NBOT), main = 'Population size during bottleneck', xlab = 'log10(NBOT)')
 abline(v=log10(mod6_ml_parameters$NBOT), col = 'tomato')
 hist(boot$TBOT, main = 'Time after bottleneck', xlab = 'Generations (2 years/generation)')
@@ -106,14 +106,14 @@ hist(boot$TLEN, main = 'Length of bottleneck', xlab = 'Generations (2 years/gene
 abline(v=mod6_ml_parameters$TLEN, col = 'tomato')
 hist(boot$RANC, main = 'NANC growth rate', xlab = 'Growth rate of NANC going back in time\n(Negative means positive growth)')
 abline(v=mod6_ml_parameters$RANC, col = 'tomato')
-hist(log10(boot$NOLD), main = 'Population size prior to pre-bottleneck growth', xlab = 'log10(NOLD))')
-abline(v=log10(mod6_ml_parameters$NOLD), col = 'tomato')
+hist(log10(boot$NANC), main = 'Population size prior to pre-bottleneck growth', xlab = 'log10(NANC))')
+abline(v=log10(mod6_ml_parameters$NANC), col = 'tomato')
 hist(boot$MaxEstLhood)
 hist(boot$MaxObsLhood)
 hist(log10(boot$NBOT/boot$NPOP08), xlab = 'log10(NBOT/NPOP08)', main = 'NBOT/NPOP08 ratio') # same as hist(log10(boot$NBOT)-log10(boot$NPOP08))
 abline(v = log10(mod6_ml_parameters$NBOT/mod6_ml_parameters$NPOP08), col = 'tomato')
-hist(log10(boot$NANC/boot$NBOT), xlab = 'log10(NANC/NBOT)', main = 'NANC/NBOT ratio')
-abline(v = log10(mod6_ml_parameters$NANC/mod6_ml_parameters$NBOT), col = 'tomato')
+hist(log10(boot$NPREBOT/boot$NBOT), xlab = 'log10(NPREBOT/NBOT)', main = 'NPREBOT/NBOT ratio')
+abline(v = log10(mod6_ml_parameters$NPREBOT/mod6_ml_parameters$NBOT), col = 'tomato')
 
 # Boxplots of population size from simulated SFS & point estimates of the ML parameters
 png(file="~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/Ne_boxplots.png",width=6, height=5, res=300, units="in")
@@ -126,9 +126,9 @@ par(mar=c(4.5, 5, 1.5, 1), # panel magin size in "line number" units
 
 # boxplot(log10(cis$NANC), log10(cis$NBOT), log10(cis$NPOP08), ylab = expression('log'[10]*'(N'[e]* 'estimate)'), names = c('NANC', 'NBOT', 'NPOP08')) # haploid
 # points(c(1,2,3), c(log10(best$NANC), log10(best$NBOT), log10(best$NPOP08)), col = 'tomato', pch = 19)
-boxplot(log10(boot$NANC/2), log10(boot$NBOT/2), log10(boot$NPOP08/2), range = 0, ylab = expression('log'[10]*'('*italic(N[e])* ' estimate)'), names = c('NANC', 'NBOT', 'NPOP08')) # convert Ne to diploid by dividing haploid number by 2; italic Ne
+boxplot(log10(boot$NPREBOT/2), log10(boot$NBOT/2), log10(boot$NPOP08/2), range = 0, ylab = expression('log'[10]*'('*italic(N[e])* ' estimate)'), names = c('NPREBOT', 'NBOT', 'NPOP08')) # convert Ne to diploid by dividing haploid number by 2; italic Ne
 
-points(c(1,2,3), c(log10(mod6_ml_parameters$NANC/2), log10(mod6_ml_parameters$NBOT/2), log10(mod6_ml_parameters$NPOP08/2)), col = 'tomato', pch = 19)
+points(c(1,2,3), c(log10(mod6_ml_parameters$NPREBOT/2), log10(mod6_ml_parameters$NBOT/2), log10(mod6_ml_parameters$NPOP08/2)), col = 'tomato', pch = 19)
 
 dev.off()
 
@@ -138,8 +138,8 @@ dev.off()
 # mean(cis$NPOP08) - 1.960*(sd(cis$NPOP08)/sqrt(100))
 quantile(boot$NPOP08/2, c(0.025, 0.975)) # diploid
 
-# NANC
-quantile(boot$NANC/2, c(0.025, 0.975)) # diploid
+# NPREBOT
+quantile(boot$NPREBOT/2, c(0.025, 0.975)) # diploid
 
 # NBOT
 quantile(boot$NBOT/2, c(0.025, 0.975)) # diploid
@@ -153,20 +153,23 @@ quantile(boot$TLEN, c(0.025, 0.975))
 # RANC
 quantile(boot$RANC, c(0.025, 0.975))
 
-# NOLD
-quantile(boot$NOLD/2, c(0.025, 0.975)) # diploid
+# NANC
+quantile(boot$NANC/2, c(0.025, 0.975)) # diploid
+
+# R2008
+quantile(r, c(0.025, 0.975))
 
 # NPOP08/NBOT ratio
 mod6_ml_parameters$NPOP08/mod6_ml_parameters$NBOT # point estimate, same regardless of haploid or diploid
 quantile((boot$NPOP08/boot$NBOT), c(0.025, 0.975))
 
-# NBOT/NANC ratio
-mod6_ml_parameters$NBOT/mod6_ml_parameters$NANC # point estimate, same regardless of haploid or diploid
-quantile((boot$NBOT/boot$NANC), c(0.025, 0.975))
+# NBOT/NPREBOT ratio
+mod6_ml_parameters$NBOT/mod6_ml_parameters$NPREBOT # point estimate, same regardless of haploid or diploid
+quantile((boot$NBOT/boot$NPREBOT), c(0.025, 0.975))
 
-# NPOP08/NANC ratio
-mod6_ml_parameters$NPOP08/mod6_ml_parameters$NANC # point estimate, same regardless of haploid or diploid
-quantile((boot$NPOP08/boot$NANC), c(0.025, 0.975))
+# NPOP08/NPREBOT ratio
+mod6_ml_parameters$NPOP08/mod6_ml_parameters$NPREBOT # point estimate, same regardless of haploid or diploid
+quantile((boot$NPOP08/boot$NPREBOT), c(0.025, 0.975))
 
 #### Manipulate ML and bootstrapped data so that it can be plotted over time ####
 # Model 6 & convert haploid numbers to diploid by dividing by 2; check RANC by calculating log(N_0/N_t)/(t_0/t_t)
@@ -174,15 +177,9 @@ quantile((boot$NPOP08/boot$NANC), c(0.025, 0.975))
 r2008 <- (log(mod6_ml_parameters$NBOT/mod6_ml_parameters$NPOP08)/(mod6_ml_parameters$TBOT)) # check that this is correct; growth rate going back in time
 
 max <- data.frame(matrix(NA, nrow = 12, ncol = 4))
-# max[,1] <- c(0, mod6_ml_parameters$TBOT, mod6_ml_parameters$TBOT, (mod6_ml_parameters$TBOT+mod6_ml_parameters$TLEN), (mod6_ml_parameters$TBOT+mod6_ml_parameters$TLEN), (mod6_ml_parameters$TBOT+mod6_ml_parameters$TLEN+2), (mod6_ml_parameters$TBOT+mod6_ml_parameters$TLEN+5), (mod6_ml_parameters$TBOT+mod6_ml_parameters$TLEN+1000)) #generations going back in time, 5 and 1000 generations pre-bottleneck were chosen arbitrarily for plotting
-# max[,1] <- c(0, mod6_ml_parameters$TBOT-3, mod6_ml_parameters$TBOT-1, mod6_ml_parameters$TBOT, (mod6_ml_parameters$TBOT+mod6_ml_parameters$TLEN), (mod6_ml_parameters$TBOT+mod6_ml_parameters$TLEN), (mod6_ml_parameters$TBOT+mod6_ml_parameters$TLEN+2), (mod6_ml_parameters$TBOT+mod6_ml_parameters$TLEN+5), (mod6_ml_parameters$TBOT+mod6_ml_parameters$TLEN+1000)) #generations going back in time, 5 and 1000 generations pre-bottleneck were chosen arbitrarily for plotting
 max[,1] <- c(0, mod6_ml_parameters$TBOT-8, mod6_ml_parameters$TBOT-6, mod6_ml_parameters$TBOT-4, mod6_ml_parameters$TBOT-3, mod6_ml_parameters$TBOT-1, mod6_ml_parameters$TBOT, (mod6_ml_parameters$TBOT+mod6_ml_parameters$TLEN), (mod6_ml_parameters$TBOT+mod6_ml_parameters$TLEN), (mod6_ml_parameters$TBOT+mod6_ml_parameters$TLEN+2), (mod6_ml_parameters$TBOT+mod6_ml_parameters$TLEN+5), (mod6_ml_parameters$TBOT+mod6_ml_parameters$TLEN+1000)) #generations going back in time, 5 and 1000 generations pre-bottleneck were chosen arbitrarily for plotting
-
-# max[,2] <- c(2008, 2008-(2*mod6_ml_parameters$TBOT), 2008-(2*mod6_ml_parameters$TBOT), 2008-((2*mod6_ml_parameters$TBOT)+(2*mod6_ml_parameters$TLEN)), 2008-((2*mod6_ml_parameters$TBOT)+(2*mod6_ml_parameters$TLEN)), 2008-((2*mod6_ml_parameters$TBOT)+(2*mod6_ml_parameters$TLEN))-10, 2008-((2*mod6_ml_parameters$TBOT)+(2*mod6_ml_parameters$TLEN))-20, 2008-((2*mod6_ml_parameters$TBOT)+(2*mod6_ml_parameters$TLEN))-30) #convert to years assuming summer flounder generation time of 2 years
 max[,2] <- 2008 - 2*max[,1]
-# max[,3] <- c(mod6_ml_parameters$NPOP08, mod6_ml_parameters$NPOP08, mod6_ml_parameters$NBOT, mod6_ml_parameters$NBOT, mod6_ml_parameters$NANC, (mod6_ml_parameters$NANC*exp(mod6_ml_parameters$RANC * 2)), (mod6_ml_parameters$NANC*exp(mod6_ml_parameters$RANC * 5)), (mod6_ml_parameters$NANC*exp(mod6_ml_parameters$RANC * 1000))) #haploid; when t is replaced by 9000 generations, NOLD = 2877
-max[,3] <- c(mod6_ml_parameters$NPOP08, (mod6_ml_parameters$NPOP08*exp(r2008 * (mod6_ml_parameters$TBOT-8))), (mod6_ml_parameters$NPOP08*exp(r2008 * (mod6_ml_parameters$TBOT-6))), (mod6_ml_parameters$NPOP08*exp(r2008 * (mod6_ml_parameters$TBOT-4))), (mod6_ml_parameters$NPOP08*exp(r2008 * (mod6_ml_parameters$TBOT-3))), (mod6_ml_parameters$NPOP08*exp(r2008 * (mod6_ml_parameters$TBOT-1))), mod6_ml_parameters$NBOT, mod6_ml_parameters$NBOT, mod6_ml_parameters$NANC, (mod6_ml_parameters$NANC*exp(mod6_ml_parameters$RANC * 2)), (mod6_ml_parameters$NANC*exp(mod6_ml_parameters$RANC * 5)), (mod6_ml_parameters$NANC*exp(mod6_ml_parameters$RANC * 1000))) #haploid; when t is replaced by 9000 generations, NOLD = 2877
-
+max[,3] <- c(mod6_ml_parameters$NPOP08, (mod6_ml_parameters$NPOP08*exp(r2008 * (mod6_ml_parameters$TBOT-8))), (mod6_ml_parameters$NPOP08*exp(r2008 * (mod6_ml_parameters$TBOT-6))), (mod6_ml_parameters$NPOP08*exp(r2008 * (mod6_ml_parameters$TBOT-4))), (mod6_ml_parameters$NPOP08*exp(r2008 * (mod6_ml_parameters$TBOT-3))), (mod6_ml_parameters$NPOP08*exp(r2008 * (mod6_ml_parameters$TBOT-1))), mod6_ml_parameters$NBOT, mod6_ml_parameters$NBOT, mod6_ml_parameters$NPREBOT, (mod6_ml_parameters$NPREBOT*exp(mod6_ml_parameters$RANC * 2)), (mod6_ml_parameters$NPREBOT*exp(mod6_ml_parameters$RANC * 5)), (mod6_ml_parameters$NPREBOT*exp(mod6_ml_parameters$RANC * 1000))) #haploid; when t is replaced by 9000 generations, NANC = 2877
 max[,4] <- max[,3]/2 #diploid
 
 # Nonparametric bootstrapped data
@@ -195,23 +192,20 @@ for (i in 1:length(r)) {
 # Fewer discrete points, curve is rougher, but avoids plotting beyond 2008
 boot.max <- array(numeric(), c(10,4,100))
 for (i in 1:nrow(boot)) {
-  # boot.max[,1,i] <- c(0, boot$TBOT[i], boot$TBOT[i], (boot$TBOT[i]+boot$TLEN[i]), (boot$TBOT[i]+boot$TLEN[i]), (boot$TBOT[i]+boot$TLEN[i]+2), (boot$TBOT[i]+boot$TLEN[i]+5), (boot$TBOT[i]+boot$TLEN[i]+1000)) #generations going back in time
   boot.max[,1,i] <- c(0, boot$TBOT[i]-3, boot$TBOT[i]-2, boot$TBOT[i]-1, boot$TBOT[i], (boot$TBOT[i]+boot$TLEN[i]), (boot$TBOT[i]+boot$TLEN[i]), (boot$TBOT[i]+boot$TLEN[i]+2), (boot$TBOT[i]+boot$TLEN[i]+5), (boot$TBOT[i]+boot$TLEN[i]+1000)) #generations going back in time
   boot.max[,2,i] <- 2008 -2*boot.max[,1,i] #convert to years assuming summer flounder generation time is 2 years
-  #boot.max[,2,i] <- c(2008, 2008-(2*boot$TBOT[i]), 2008-(2*boot$TBOT[i]), 2008-((2*boot$TBOT[i])+(2*boot$TLEN[i])), 2008-((2*boot$TBOT[i])+(2*boot$TLEN[i])), 2008-((2*expgrowth_instant$TBOT)+(2*expgrowth_instant$TLEN))-10, 2008-((2*expgrowth_instant$TBOT)+(2*expgrowth_instant$TLEN))-20, 2008-((2*expgrowth_instant$TBOT)+(2*expgrowth_instant$TLEN))-30)
-  # boot.max[,3,i] <- c(boot$NPOP08[i], boot$NPOP08[i], boot$NBOT[i], boot$NBOT[i], boot$NANC[i], (boot$NANC[i]*exp(boot$RANC[i] * 2)), (boot$NANC[i]*exp(boot$RANC[i] * 5)), (boot$NANC[i]*exp(boot$RANC[i] * 1000))) #haploid
-  boot.max[,3,i] <- c(boot$NPOP08[i], (boot$NPOP08[i]*exp(r[i] * (boot$TBOT[i]-3))), (boot$NPOP08[i]*exp(r[i] * (boot$TBOT[i]-2))), (boot$NPOP08[i]*exp(r[i] * (boot$TBOT[i]-1))), boot$NBOT[i], boot$NBOT[i], boot$NANC[i], (boot$NANC[i]*exp(boot$RANC[i] * 2)), (boot$NANC[i]*exp(boot$RANC[i] * 5)), (boot$NANC[i]*exp(boot$RANC[i] * 1000))) #haploid
+  boot.max[,3,i] <- c(boot$NPOP08[i], (boot$NPOP08[i]*exp(r[i] * (boot$TBOT[i]-3))), (boot$NPOP08[i]*exp(r[i] * (boot$TBOT[i]-2))), (boot$NPOP08[i]*exp(r[i] * (boot$TBOT[i]-1))), boot$NBOT[i], boot$NBOT[i], boot$NPREBOT[i], (boot$NPREBOT[i]*exp(boot$RANC[i] * 2)), (boot$NPREBOT[i]*exp(boot$RANC[i] * 5)), (boot$NPREBOT[i]*exp(boot$RANC[i] * 1000))) #haploid
   boot.max[,4,i] <- boot.max[,3,i]/2 #diploid
 }
 
 # More discrete points for smoother exponential curve
-boot.max <- array(numeric(), c(14,4,100))
-for (i in 1:nrow(boot)) {
-  boot.max[,1,i] <- c(0, boot$TBOT[i]-12, boot$TBOT[i]-10, boot$TBOT[i]-8, boot$TBOT[i]-6, boot$TBOT[i]-4, boot$TBOT[i]-2, boot$TBOT[i]-1, boot$TBOT[i], (boot$TBOT[i]+boot$TLEN[i]), (boot$TBOT[i]+boot$TLEN[i]), (boot$TBOT[i]+boot$TLEN[i]+2), (boot$TBOT[i]+boot$TLEN[i]+5), (boot$TBOT[i]+boot$TLEN[i]+1000)) #generations going back in time
-  boot.max[,2,i] <- 2008 -2*boot.max[,1,i] #convert to years assuming summer flounder generation time is 2 years
-  boot.max[,3,i] <- c(boot$NPOP08[i], (boot$NPOP08[i]*exp(r[i] * (boot$TBOT[i]-12))), (boot$NPOP08[i]*exp(r[i] * (boot$TBOT[i]-10))), (boot$NPOP08[i]*exp(r[i] * (boot$TBOT[i]-8))), (boot$NPOP08[i]*exp(r[i] * (boot$TBOT[i]-6))), (boot$NPOP08[i]*exp(r[i] * (boot$TBOT[i]-4))), (boot$NPOP08[i]*exp(r[i] * (boot$TBOT[i]-2))), (boot$NPOP08[i]*exp(r[i] * (boot$TBOT[i]-1))), boot$NBOT[i], boot$NBOT[i], boot$NANC[i], (boot$NANC[i]*exp(boot$RANC[i] * 2)), (boot$NANC[i]*exp(boot$RANC[i] * 5)), (boot$NANC[i]*exp(boot$RANC[i] * 1000))) #haploid
-  boot.max[,4,i] <- boot.max[,3,i]/2 #diploid
-}
+# boot.max <- array(numeric(), c(14,4,100))
+# for (i in 1:nrow(boot)) {
+#   boot.max[,1,i] <- c(0, boot$TBOT[i]-12, boot$TBOT[i]-10, boot$TBOT[i]-8, boot$TBOT[i]-6, boot$TBOT[i]-4, boot$TBOT[i]-2, boot$TBOT[i]-1, boot$TBOT[i], (boot$TBOT[i]+boot$TLEN[i]), (boot$TBOT[i]+boot$TLEN[i]), (boot$TBOT[i]+boot$TLEN[i]+2), (boot$TBOT[i]+boot$TLEN[i]+5), (boot$TBOT[i]+boot$TLEN[i]+1000)) #generations going back in time
+#   boot.max[,2,i] <- 2008 -2*boot.max[,1,i] #convert to years assuming summer flounder generation time is 2 years
+#   boot.max[,3,i] <- c(boot$NPOP08[i], (boot$NPOP08[i]*exp(r[i] * (boot$TBOT[i]-12))), (boot$NPOP08[i]*exp(r[i] * (boot$TBOT[i]-10))), (boot$NPOP08[i]*exp(r[i] * (boot$TBOT[i]-8))), (boot$NPOP08[i]*exp(r[i] * (boot$TBOT[i]-6))), (boot$NPOP08[i]*exp(r[i] * (boot$TBOT[i]-4))), (boot$NPOP08[i]*exp(r[i] * (boot$TBOT[i]-2))), (boot$NPOP08[i]*exp(r[i] * (boot$TBOT[i]-1))), boot$NBOT[i], boot$NBOT[i], boot$NPREBOT[i], (boot$NPREBOT[i]*exp(boot$RANC[i] * 2)), (boot$NPREBOT[i]*exp(boot$RANC[i] * 5)), (boot$NPREBOT[i]*exp(boot$RANC[i] * 1000))) #haploid
+#   boot.max[,4,i] <- boot.max[,3,i]/2 #diploid
+# }
 
 
 # Set up plot and plot bootstrapped data
