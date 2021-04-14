@@ -5,11 +5,11 @@
 //#isInt?	#name	#dist.	#min	#max
 //all N are in number of haploid individuals
 1 NPOP08 logunif 100 100000 output
-1 NANC logunif 100 100000 output
+1 NPREBOT logunif 100 100000 output
 1 NBOT logunif 100 100000 output
 1 TBOT unif 1 12 output
 1 TLEN unif 1 5 output
-1 NOLD logunif 100 100000 output
+1 NANC logunif 100 100000 output
 
 [RULES]
 
@@ -18,8 +18,8 @@
 0 logRat2008 = log(Ratio2008) hide
 0 R2008 = logRat2008/TBOT hide
 0 RESBOT = NBOT/NPOP08 hide
-0 RESSTARBOT = NANC/NBOT hide
+0 RESSTARBOT = NPREBOT/NBOT hide
 1 TSTARBOT = TBOT+TLEN hide
-0 RatioANC = NOLD/NANC hide
+0 RatioANC = NANC/NPREBOT hide
 0 logRatANC = log(RatioANC) hide
 0 RANC = logRatANC/9000 output
