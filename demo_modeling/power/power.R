@@ -183,78 +183,20 @@ mtext('Count', side = 3, cex = 1, line = 0.5, adj = 1)
 
 dev.off()
 
-#### Probability of recovery for the models with a bottleneck? ####
-# Model 2
-mod2.recov <- vector()
-for (k in 1:10) {
-  if (mod2_files_array_sub[as.numeric(paste0(mod2.ass[k])),1,k] > mod2_files_array_sub[as.numeric(paste0(mod2.ass[k])),3,k]) { # if NBOT < NPOP08, then TRUE (recovered)
-    mod2.recov[k] <- 'T'
-  } else {
-      mod2.recov[k] <- 'F'
-  }
-}
-
-mod2.recov[which(mod2.ass == 2)]
-
-mod2.recov.count <- table(mod2.recov)
-
-
-# Model 3
-mod3.recov <- vector()
-for (k in 1:10) {
-  if (mod3_files_array_sub[as.numeric(paste0(mod3.ass[k])),1,k] > mod3_files_array_sub[as.numeric(paste0(mod3.ass[k])),3,k]) { # if NBOT < NPOP08, then TRUE (recovered)
-    mod3.recov[k] <- 'T'
-  } else {
-    mod3.recov[k] <- 'F'
-  }
-}
-
-mod3.recov[which(mod3.ass == 3)]
-
-mod3.recov.count <- table(mod3.recov)
-
-# Model 4
-mod4.recov <- vector()
-for (k in 1:10) {
-  if (mod4_files_array_sub[as.numeric(paste0(mod4.ass[k])),1,k] > mod4_files_array_sub[as.numeric(paste0(mod4.ass[k])),3,k]) { # if NBOT < NPOP08, then TRUE (recovered)
-    mod4.recov[k] <- 'T'
-  } else {
-    mod4.recov[k] <- 'F'
-  }
-}
-
-mod4.recov[which(mod4.ass == 4)]
-
-mod4.recov.count <- table(mod4.recov)
-mod4.recov.count2 <- append(mod4.recov.count, c('F' = 0), 0)
-
-# Model 5
-mod5.recov <- vector()
-for (k in 1:10) {
-  if (mod5_files_array_sub[as.numeric(paste0(mod5.ass[k])),1,k] > mod5_files_array_sub[as.numeric(paste0(mod5.ass[k])),3,k]) { # if NBOT < NPOP08, then TRUE (recovered)
-    mod5.recov[k] <- 'T'
-  } else {
-    mod5.recov[k] <- 'F'
-  }
-}
-
-mod5.recov[which(mod5.ass == 5)]
-
-mod5.recov.count <- table(mod5.recov)
-mod5.recov.count2 <- append(mod5.recov.count, c('F' = 0), 0)
-
+#### Probability of recovery for the Model 6 PODs correctly ID'ed as Model 6 ####
 # Model 6
 mod6.recov <- vector()
 for (k in 1:10) {
-  if (mod6_files_array_sub[as.numeric(paste0(mod6.ass[k])),1,k] > mod6_files_array_sub[as.numeric(paste0(mod6.ass[k])),3,k]) { # if NBOT < NPOP08, then TRUE (recovered)
+  if (mod6_files_array_sub[as.numeric(paste0(mod6.ass[k])),1,k]/mod6_files_array_sub[as.numeric(paste0(mod6.ass[k])),2,k] >= 1) { # if NPOP08/NPREPOT > 1, then TRUE (fully recovered); point estimate for Model 6 NPOP08/NPREBOT = 0.927
     mod6.recov[k] <- 'T'
   } else {
     mod6.recov[k] <- 'F'
   }
 }
 
+
 mod6.recov[which(mod6.ass == 6)]
 
-mod6.recov.count <- table(mod6.recov)
-mod6.recov.count2 <- append(mod6.recov.count, c('F' = 0), 0)
+table(mod6.recov)
+table(mod6.recov[which(mod6.ass == 6)])
 
