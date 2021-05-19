@@ -1,5 +1,17 @@
 This repository contains data, scripts and figures for a project investigating how genetic diversity and effective population size have changed over time for summer flounder
 
+## Data
+
+• **PADE_stock_assessment16.xlsx** number of fish at age, estimated fishing mortality at age, natural mortality at age & proportion mature at age for 1982-2015
+
+• **Ne280_1196loci_nomaf_MAFpop0.obs** msfs for 2008 cohort
+
+• **Ne280_1196loci_nomaf_MAFpop1.obs** msfs for 1997 cohort
+
+• **Ne280_1196loci_nomaf_MAFpop2.obs** msfs for 1994 cohort
+
+• **SNP.DP3g95nomaf.FIL.FIL.recode.140trimmed.280fish.firstsnp.genepop.gen** genepop file containing full datset of 3821 SNPs for 280 larvae
+
 ## Scripts
 
 • **best_lhoods.R** script for determining maximum-likelihood of each demographic scenario, calculating AIC and plotting demographic modeling results
@@ -15,7 +27,7 @@ This repository contains data, scripts and figures for a project investigating h
 • **Ne_genotyping_results.R** script for calculating coverage statistics
 
 ### **demo_modeling** directory
-This directory contains the input and output files from demographic modeling using the fastsimcoal program. Additional scripts used for data preparation and the script to submit the job to a slurm scheduler on a shared computing cluster is also provided.
+This directory contains the input (including the multiSFS of 1196 SNPs across 280 larvae) and output files from demographic modeling using the fastsimcoal program. Additional scripts used for data preparation and the script to submit the job to a slurm scheduler on a shared computing cluster is also provided.
 
    • **Ne_boxplots.png** shows ML point estimates and CIs for the best model  
    • **Ne_observedSFS.R** plots observed SFS and expected SFSs from demographic modeling  
