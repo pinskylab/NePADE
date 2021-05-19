@@ -38,7 +38,7 @@ Contains the .est and .tpl files necessary to run each of the six models in fast
 Contains the fastsimcoal results for each model and the CIs for the best model 
 
 ``` power ```
-Contains a script to read in and plot the results of simulations using pseudo-observed datasets
+Contains a script to read in and plot the results of simulations using pseudo-observed datasets. Also contains the model fits for each of the PODs simulated using the ML parameters of each model.
 
 ``` sim_sfs ```
 Contains a figure comparing the observed SFS to those of the best demographic models, with SFSs comparisons broken out by larval fish cohort. An example slurm script is also provived for generating parametric bootstrapped SFSs from the ML parameters of a model
