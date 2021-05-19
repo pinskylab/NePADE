@@ -12,6 +12,8 @@ This repository contains data, scripts and figures for a project investigating h
 
 • **SNP.DP3g95nomaf.FIL.FIL.recode.140trimmed.280fish.firstsnp.genepop.gen**: genepop file containing full datset of 3821 SNPs for 280 larvae
 
+• **Ne_PADE_1196loci_complete.gen**: genepop file containing subset of full dataset with no missing data, 1196 SNPs across 280 larvae, used for demographic modeling
+
 ## Scripts
 
 • **best_lhoods.R** script for determining maximum-likelihood of each demographic scenario, calculating AIC and plotting demographic modeling results
