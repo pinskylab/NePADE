@@ -45,14 +45,14 @@ for (i in 1:length(unlist(N))){
   N_atmonth[i] <- unlist(N)[i]*(exp(1))^(-(p/12)*unlist(Z)[i]) #e=2.718282
 }
 
-N_atmonth_matrix <- matrix(N_atmonth, nrow = 34, ncol = 8) # this is Nc
+N_atmonth_matrix <- matrix(N_atmonth, nrow = 34, ncol = 8) # this is estimated total abundance
 N_atmonth_matrix_year <- rowSums(N_atmonth_matrix)
 
 # Now calculate proportion mature for a given age in November based on N
 prop_Nov <- as.vector(N_atmonth * unlist(prop))
 
 # Convert this to matrix of appropriate dimensions
-N_spawners <- matrix(prop_Nov, nrow = 34, ncol = 8) # this is Nb
+N_spawners <- matrix(prop_Nov, nrow = 34, ncol = 8) # this is estimated number of mature spawners in each age class
 colnames(N_spawners) <- colnames(N)
 rownames(N_spawners) <- rownames(N)
 
