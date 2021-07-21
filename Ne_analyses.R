@@ -170,7 +170,13 @@ eig_percent [1:3]
 # ne_data_nomaf <- read.genepop("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/Ne_PADE_1256loci_complete.gen", ncode = 3L) # troubleshooting the Ne dataset, these are SNPs called from the new larval reference and all mapped reads have been trimmed to 140; dataset where no MAF filter applied, and only sites with no missing data: 1256 loci
 # ne_data_nomaf <- read.genepop("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/newref_alltrimmed140/SNP.DP3g95nomaf.FIL.FIL.recode.firstsnp.genepop.gen", ncode = 3L) # troubleshooting the Ne dataset, these are SNPs called from the new larval reference and all mapped reads have been trimmed to 140; no MAF filter applied and some missing data allowed: 3979 loci
 # ne281_3721_nomaf <- read.genepop("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/newref_alltrimmed140/SNP.DP3g95nomaf.FIL.FIL.recode.281fish.firstsnp.genepop.gen", ncode = 3L) # 281 larvae and 3721 loci
-ne280_3821_nomaf <- read.genepop("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/newref_alltrimmed140/SNP.DP3g95nomaf.FIL.FIL.recode.140trimmed.280fish.firstsnp.genepop.gen", ncode = 3L) # 280 larvae and 3821 loci
+# ne280_3821_nomaf <- read.genepop("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/newref_alltrimmed140/SNP.DP3g95nomaf.FIL.FIL.recode.140trimmed.280fish.firstsnp.genepop.gen", ncode = 3L) # 280 larvae and 3821 loci
+ne280_3821_nomaf@tab <- ne280_3821_nomaf@tab[-c(40,116,139,145),]
+ne280_3821_nomaf@pop <- ne280_3821_nomaf@pop[-c(40,116,139,145)]
+
+ne284_3905_nomaf_nomac <- read.genepop("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/newref_alltrimmed140/SNP.DP3g95nomafnomac.FIL.FIL.recode.140trimmed.284fish.firstsnp.genepop.gen", ncode = 3L) #SNPs called from the new larval reference and all mapped reads have been trimmed to 140, no maf or mac filters
+ne284_3905_nomaf_nomac@tab <- ne284_3905_nomaf_nomac@tab[-c(118,147,194),]
+ne284_3905_nomaf_nomac@pop <- ne284_3905_nomaf_nomac@pop[-c(118,147,194)]
 
 # what fish are different between SNP.DP3g95nomaf.FIL.FIL.recode.firstsnp.genepop.gen (285) and SNP.DP3g95nomaf.FIL.FIL.recode.140trimmed.280fish.firstsnp.genepop.gen (280)? I removed 7 fish but there is only a numerical difference of 5 fish
 setdiff(rownames(ne_data_nomaf@tab), rownames(ne280_3821_nomaf@tab)) # these are the 7 fish that were removed
@@ -182,8 +188,10 @@ pval <- hwe[hwe[,"Pr.exact"] < 0.0100,] # p<0.01, exact test
 length(pval[,"Pr.exact"]) 
 
 #### Do PCA & plot ####
-sum(is.na(ne280_3821_nomaf$tab)) #26050
-X <- scaleGen(ne280_3821_nomaf, NA.method = "mean")
+# sum(is.na(ne280_3821_nomaf$tab)) #26050
+# X <- scaleGen(ne280_3821_nomaf, NA.method = "mean")
+sum(is.na(ne284_3905_nomaf_nomac$tab)) #27833
+X <- scaleGen(ne284_3905_nomaf_nomac, NA.method = "mean")
 dim(X)
 class (X)
 
@@ -197,14 +205,28 @@ loadingplot(pca1$c1^2)
 # Plot PCA based on three time periods
 col <- wes_palette("Darjeeling1", 5, type = "discrete")
 palette(col)
-s.class(pca1$li, pop(ne280_3821_nomaf), xax=1,yax=2, col = transp(col,0.7), axesell=TRUE, cellipse=1.5, cstar=1,cpoint=1.75, grid=FALSE, addaxes = FALSE, clabel = 0, xlim = c(-40,100), ylim = c(-80,100))
-axis(1, at=seq(-20,100, by=10), labels=seq(-20,100, by= 10), line = 2)
-axis(2, at=seq(-50,60, by = 10), labels=seq(-50,60, by= 10), line = 0, las = 2)
-mtext("PC1 (0.84%)", side = 1, line = 4)
-mtext("PC2 (0.82%)", side = 2, line = 2)
+# s.class(pca1$li, pop(ne280_3821_nomaf), xax=1,yax=2, col = transp(col,0.7), axesell=TRUE, cellipse=1.5, cstar=1,cpoint=1.75, grid=FALSE, addaxes = FALSE, clabel = 0, xlim = c(-40,100), ylim = c(-80,100))
+# axis(1, at=seq(-20,100, by=10), labels=seq(-20,100, by= 10), line = 2)
+# axis(2, at=seq(-50,60, by = 10), labels=seq(-50,60, by= 10), line = 0, las = 2)
+# mtext("PC1 (0.84%)", side = 1, line = 4)
+# mtext("PC2 (0.82%)", side = 2, line = 2)
+# 
+# legend(20, 40,
+#        legend=c("2008-2009 (n = 153)", "1994-1995 (n = 24)", "1997-1998 (n = 103)"),
+#        pch=c(19, 19, 19),
+#        col = col,
+#        bty = "n",
+#        y.intersp = 0.8,
+#        cex = 0.85)
 
-legend(20, 40,
-       legend=c("2008-2009 (n = 153)", "1994-1995 (n = 24)", "1997-1998 (n = 103)"),
+s.class(pca1$li, pop(ne284_3905_nomaf_nomac), xax=1,yax=2, col = transp(col,0.7), axesell=TRUE, cellipse=1.5, cstar=1,cpoint=1.75, grid=FALSE, addaxes = FALSE, clabel = 0, xlim = c(-100,40), ylim = c(-150,30))
+axis(1, at=seq(-120,40, by=10), labels=seq(-120,40, by= 10), line = 2)
+axis(2, at=seq(-120,20, by = 10), labels=seq(-120,20, by= 10), line = 0, las = 2)
+mtext("PC1 (0.79%)", side = 1, line = 4)
+mtext("PC2 (0.71%)", side = 2, line = 2.5)
+
+legend(-100, -40,
+       legend=c("2008-2009 (n = 155)", "1994-1995 (n = 26)", "1997-1998 (n = 103)"),
        pch=c(19, 19, 19),
        col = col,
        bty = "n",
