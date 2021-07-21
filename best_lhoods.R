@@ -297,4 +297,95 @@ for (i in 1:length(aic)) {
   w[i] <- (exp(-0.5*(aic[i]-max(aic))))/sum(exp(-0.5*(aic[1]-max(aic))), exp(-0.5*(aic[2]-max(aic))), exp(-0.5*(aic[3]-max(aic))), exp(-0.5*(aic[4]-max(aic))), exp(-0.5*(aic[5]-max(aic))), exp(-0.5*(aic[6]-max(aic))))
 }
 
+##########################################################################################################
+#### Using a SFS that summarizes 284 larvae across three cohorts, 1084 loci and no MAF or MAC filters ####
+# Read in the estimated parameters for each model
+mod1 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/nomac_models/model1.bestlhoods.txt", header = TRUE) # constant population size for comparison to all the bottlenecks, but only estimating NPOP08
+mod2 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/nomac_models/model2.bestlhoods.txt", header = TRUE)
+mod3 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/nomac_models/model3.bestlhoods.txt", header = TRUE)
+mod4 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/nomac_models/model4.bestlhoods.txt", header = TRUE)
+mod5 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/nomac_models/model5.bestlhoods.txt", header = TRUE)
+mod6 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/nomac_models/model6.bestlhoods.txt", header = TRUE)
+
+# Now find the ML run for each model
+mod1_ml <- max(mod1$MaxEstLhood)
+mod2_ml <- max(mod2$MaxEstLhood)
+mod3_ml <- max(mod3$MaxEstLhood)
+mod4_ml <- max(mod4$MaxEstLhood)
+mod5_ml <- max(mod5$MaxEstLhood)
+mod6_ml <- max(mod6$MaxEstLhood)
+
+# AIC calculation
+a <- c(mod1_ml, mod2_ml, mod3_ml, mod4_ml, mod5_ml, mod6_ml) # MaxEstLhood. These are log10 likelihoods
+aa <- c(mod1_ml, mod2_ml, mod3_ml, mod4_ml, mod5_ml, mod6_ml)*2.303 # Convert from log10 to ln
+b <- c(1,5,5,6,9,6) # number of estimated parameters
+
+aic <- 2*b-2*aa
+
+delta_aic <-round(aic,0) - min(round(aic,0))
+
+# Akaike weight = provides relative weight of evidence for each model. Probability that model i is the best model for the observed data, given the candidate set of models
+w <- vector()
+
+for (i in 1:length(aic)) {
+  w[i] <- (exp(-0.5*(aic[i]-max(aic))))/sum(exp(-0.5*(aic[1]-max(aic))), exp(-0.5*(aic[2]-max(aic))), exp(-0.5*(aic[3]-max(aic))), exp(-0.5*(aic[4]-max(aic))), exp(-0.5*(aic[5]-max(aic))), exp(-0.5*(aic[6]-max(aic))))
+}
+
+#### Plot all fsc runs from nonparametric bootstrapping, plus the best fit model ####
+# Read in ML and nonparametric bootstrapped parameters from exponential growth of NANC, then bottleneck & instantaneous recovery model (Model 4)
+boot <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/nomac_models/model6.nonparametric.ci.summary.txt', header = TRUE) # Read in ML nonparametric bootstrapped parameters following 30 runs for each simulated SFS
+mod6 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/nomac_models/model6.bestlhoods.txt", header = TRUE) # Read in ML parameters from Model 6
+
+# Find maximum from best model
+max(mod6$MaxEstLhood)
+mod6_ml_parameters <- mod6[which(mod6$MaxEstLhood == max(mod6$MaxEstLhood)),]
+
+#### Examine parameter point estimates and CIs ####
+# Histograms of parameters estimated from simulated SFS, plus a line for the point estimates
+hist(log10(boot$NPOP08), main = 'Population size in 2008', xlab = 'log10(NPOP08)')
+abline(v = log10(mod6_ml_parameters$NPOP08), col = 'tomato')
+hist(log10(boot$NPREBOT), main = 'Pre-bottleneck population size', xlab = 'log10(NPREBOT)')
+abline(v=log10(mod6_ml_parameters$NPREBOT), col = 'tomato')
+hist(log10(boot$NBOT), main = 'Population size during bottleneck', xlab = 'log10(NBOT)')
+abline(v=log10(mod6_ml_parameters$NBOT), col = 'tomato')
+hist(boot$TBOT, main = 'Time after bottleneck', xlab = 'Generations (2 years/generation)')
+abline(v=mod6_ml_parameters$TBOT, col = 'tomato')
+hist(boot$TLEN, main = 'Length of bottleneck', xlab = 'Generations (2 years/generation)', breaks = 4)
+abline(v=mod6_ml_parameters$TLEN, col = 'tomato')
+hist(boot$RANC, main = 'NANC growth rate', xlab = 'Growth rate of NANC going back in time\n(Negative means positive growth)')
+abline(v=mod6_ml_parameters$RANC, col = 'tomato')
+hist(log10(boot$NANC), main = 'Population size prior to pre-bottleneck growth', xlab = 'log10(NANC))')
+abline(v=log10(mod6_ml_parameters$NANC), col = 'tomato')
+hist(log10(boot$NBOT/boot$NPOP08), xlab = 'log10(NBOT/NPOP08)', main = 'NBOT/NPOP08 ratio') # same as hist(log10(boot$NBOT)-log10(boot$NPOP08))
+abline(v = log10(mod6_ml_parameters$NBOT/mod6_ml_parameters$NPOP08), col = 'tomato')
+hist(log10(boot$NPREBOT/boot$NBOT), xlab = 'log10(NPREBOT/NBOT)', main = 'NPREBOT/NBOT ratio')
+abline(v = log10(mod6_ml_parameters$NPREBOT/mod6_ml_parameters$NBOT), col = 'tomato')
+
+# Calculate 95% confidence intervals
+# NPOP08
+quantile(boot$NPOP08/2, c(0.025, 0.975)) # diploid
+
+# NPREBOT
+quantile(boot$NPREBOT/2, c(0.025, 0.975)) # diploid
+
+# NBOT
+quantile(boot$NBOT/2, c(0.025, 0.975)) # diploid
+
+# TBOT
+quantile(boot$TBOT, c(0.025, 0.975))
+
+# TLEN
+quantile(boot$TLEN, c(0.025, 0.975))
+
+# NANC
+quantile(boot$NANC/2, c(0.025, 0.975)) # diploid
+
+# NBOT/NPOP08
+quantile((boot$NBOT/2)/(boot$NPOP08/2), c(0.025, 0.975))
+
+# PREBOT/NBOT
+quantile((boot$NPREBOT/2)/(boot$NBOT/2), c(0.025, 0.975))
+
+# PREBOT/NPOP08
+quantile((boot$NPREBOT/2)/(boot$NPOP08/2), c(0.025, 0.975))
 
