@@ -200,3 +200,9 @@ mod6.recov[which(mod6.ass == 6)]
 table(mod6.recov)
 table(mod6.recov[which(mod6.ass == 6)])
 
+# Estimate of the error around that true recovery from the ML estimates of Model 6 fit to the PODS
+prop.recovery <- mod6_files_array_sub[6,1,]/mod6_files_array_sub[6,2,] # NPOP08/NPREBOT
+
+quantile(prop.recovery, c(0.025, 0.975)) # 95% CIs
+quantile(prop.recovery, c(0.05, 0.95)) # 90% CIs
+quantile(prop.recovery, c(0.10, 0.90)) # 80% CIs
