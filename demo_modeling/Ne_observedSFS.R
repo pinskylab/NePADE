@@ -323,3 +323,126 @@ barplot(m, legend = c('1994-1995 cohort', '1997-1998 cohort','2008-2009 cohort')
 
 dev.off()
 
+#######################################################################################
+#### No MAF or MAC filters have been applied to these data: 284 larvae & 3905 loci ####
+ne284_3905_nomaf_nomac <- read.genepop("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/newref_alltrimmed140/SNP.DP3g95nomafnomac.FIL.FIL.recode.140trimmed.284fish.firstsnp.genepop.gen", ncode = 3L) #SNPs called from the new larval reference and all mapped reads have been trimmed to 140, no maf or mac filters
+
+# Remove loci with 3 or 4 alleles because I think it's causing a problem
+ToKeep <- which(ne284_3905_nomaf_nomac@loc.n.all == 2) #3657 loci
+ne284_3905_nomaf_nomac_biallelic <- ne284_3905_nomaf_nomac[loc = ToKeep]
+
+pops <- as.data.frame(ne284_3905_nomaf_nomac_biallelic@pop)
+data <- as.data.frame(ne284_3905_nomaf_nomac_biallelic@tab)
+
+na.count <- sapply(data, function(y) sum(length(which(is.na(y)))))
+na.count <- data.frame(na.count)
+na.count
+
+# Histogram of SNPs with missing data
+counts <- data.matrix(na.count)
+hist(counts)
+
+na.count$names <- rownames(na.count)
+
+# Creating a list of SNP names that have no missing data
+keeps <- which(na.count$na.count == '0')
+keepers <- na.count[keeps,]
+
+# Now subsetting the data to only allels with SNP names in the keep list
+data_sub <- data[,keepers$names]
+dim(data_sub) # 284 x 2168 (1084 SNPs)
+
+# Check to see if all SNPs having no missing data & write str file 
+test <- sapply(data_sub, function(y) sum(length(which(is.na(y)))))
+test <- data.frame(test) # all zeros
+test <- data.matrix(test)
+summary(test)
+
+data_sub <- as.genind(data_sub)
+data_sub@pop <- as.factor(pops[,1])
+
+writeGenPop(data_sub, "~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/Ne_PADE_1084loci_complete.gen", comment = '1084 loci with no missing data across 284 PADE, no MAF or MAC')
+
+# Perform PCA & plot
+sum(is.na(data_sub$tab)) #should be 0, yes!
+X <- scaleGen(data_sub, NA.method = "mean")
+dim(X)
+class (X)
+
+# make PCA
+pca1 <- dudi.pca(X,cent=FALSE,scale=FALSE,scannf=FALSE,nf=3)
+barplot(pca1$eig[1:50],main="PCA eigenvalues", col=heat.colors(50))
+
+pca1
+loadingplot(pca1$c1^2)
+
+# Plot PCA based on three time periods
+col <- wes_palette("Darjeeling1", 5, type = "discrete")
+palette(col)
+
+s.class(pca1$li, pop(data_sub), xax=1,yax=2, col = transp(col,0.7), axesell=TRUE, cellipse=1.5, cstar=1,cpoint=1.75, grid=FALSE, addaxes = FALSE, clabel = 0, xlim = c(-50,40), ylim = c(-60,50))
+axis(1, at=seq(-50,40, by=10), labels=seq(-50,40, by= 10), line = 2)
+axis(2, at=seq(-40,40, by = 10), labels=seq(-40,40, by= 10), line = 0, las = 2)
+mtext("PC1 (0.86%)", side = 1, line = 4)
+mtext("PC2 (0.83%)", side = 2, line = 2.5)
+
+legend(-50, 35,
+       legend=c("2008-2009 (n = 155)", "1994-1995 (n = 26)", "1997-1998 (n = 103)"),
+       pch=c(19, 19, 19),
+       col = col,
+       bty = "n",
+       y.intersp = 0.8,
+       cex = 0.85)
+
+eig_percent <- round((pca1$eig/(sum(pca1$eig)))*100,2)
+eig_percent [1:3]
+
+#### Plot observed SFS when no maf or mac filters applied ####
+nomac.msfs <- fread("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/Ne284_1084loci_nomaformac.res/Ne284_1084loci_nomaformac_MSFS.obs", skip = 2) # Read in MSFS and check that there are 1084 loci
+dim(nomac.msfs)
+sum(nomac.msfs[1,]) #1084 snps, yes
+table(t(nomac.msfs)) #the number of snps in each of the categories
+
+# Okay, now read in single population observed SFSs for plotting
+pop08.obs <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/Ne284_1084loci_nomaformac.res/Ne284_1084loci_nomaformac_MAFpop0.obs', skip = 1, header = TRUE)
+pop97.obs <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/Ne284_1084loci_nomaformac.res/Ne284_1084loci_nomaformac_MAFpop1.obs', skip = 1, header = TRUE)
+pop94.obs <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/Ne284_1084loci_nomaformac.res/Ne284_1084loci_nomaformac_MAFpop2.obs', skip = 1, header = TRUE)
+
+hist(as.numeric(pop08.obs))
+hist(as.numeric(pop97.obs))
+hist(as.numeric(pop94.obs))
+
+# All the populations are different sizes, so need to convert to proportion of SNPs & then add zeros so that all cohorts have same number of columns
+pop08.obs.prop <- t(pop08.obs[-1]/sum(pop08.obs[-1])) # denominator is number of SNPs (only polymorphic sites)
+pop97.obs.prop <- t(pop97.obs[-1]/sum(pop97.obs[-1]))
+pop94.obs.prop <- t(pop94.obs[-1]/sum(pop94.obs[-1]))
+
+n <- max(length(pop08.obs[-1]), length(pop97.obs[-1]), length(pop94.obs[-1])) # determines max vector length (310) and then makes all shorter vectors 310 when including only polymorphic sites
+pop08.obs.prop <- as.numeric(pop08.obs.prop)
+length(pop97.obs.prop) <- n # adds NAs to the end of the vector
+length(pop94.obs.prop) <- n # adds NAs to the end of the vector
+
+pop97.obs.prop[is.na(pop97.obs.prop)] <- 0
+pop94.obs.prop[is.na(pop94.obs.prop)] <- 0
+
+m <- rbind(pop94.obs.prop, pop97.obs.prop, pop08.obs.prop)
+colnames(m) <- 1:310 # only polymorphic sites
+
+# Plot
+col.palette <- wes_palette("FantasticFox1", 5, type = "discrete")
+palette(col.palette)
+
+png(file="~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/obs_sfs_polyonly_nomafnomac.png", width=11, height=3, res=300, units="in")
+
+par(
+  mar=c(4.5, 5, 1.5, 1), # panel magin size in "line number" units
+  mgp=c(3, 1, 0), # default is c(3,1,0); line number for axis label, tick label, axis
+  tcl=-0.5, # size of tick marks as distance INTO figure (negative means pointing outward)
+  cex=1, # character expansion factor; keep as 1; if you have a many-panel figure, they start changing the default!
+  ps=12
+)
+
+barplot(m, legend = c('1994-1995 cohort', '1997-1998 cohort','2008-2009 cohort'), beside = TRUE, xlab = 'Number of minor alleles', ylab = 'Proportion of SNPs', main = 'Observed SFS', xlim = c(0, 105), col = col.palette[1:3])
+
+dev.off()
+
