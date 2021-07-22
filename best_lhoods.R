@@ -83,12 +83,12 @@ for (i in 1:length(aic)) {
 }
 
 #### Plot all fsc runs from nonparametric bootstrapping, plus the best fit model ####
-# Read in ML and nonparametric bootstrapped parameters from exponential growth of NANC, then bottleneck & instantaneous recovery model (Model 4)
+# Read in ML and nonparametric bootstrapped parameters from exponential growth of NANC, then bottleneck & exponential recovery model (Model 6)
 boot <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/model_results/model6.nonparametric.ci.summary.txt', header = TRUE) # Read in ML nonparametric bootstrapped parameters following 10 runs for each simulated SFS
 mod6 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/model_results/model6.bestlhoods.summary.txt", header = TRUE) # Read in ML parameters from Model 6
 
 # Find maximum from best model
-# Exponential growth of NANC, then bottleneck & instantaneous recovery (Model 4)
+# Exponential growth of NANC, then bottleneck & exponential recovery (Model 6)
 max(mod6$MaxEstLhood)
 mod6_ml_parameters <- mod6[which(mod6$MaxEstLhood == max(mod6$MaxEstLhood)),]
 
@@ -332,7 +332,7 @@ for (i in 1:length(aic)) {
 }
 
 #### Plot all fsc runs from nonparametric bootstrapping, plus the best fit model ####
-# Read in ML and nonparametric bootstrapped parameters from exponential growth of NANC, then bottleneck & instantaneous recovery model (Model 4)
+# Read in ML and nonparametric bootstrapped parameters from exponential growth of NANC, then bottleneck & exponential recovery model (Model 6)
 boot <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/nomac_models/model6.nonparametric.ci.summary.txt', header = TRUE) # Read in ML nonparametric bootstrapped parameters following 30 runs for each simulated SFS
 mod6 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/nomac_models/model6.bestlhoods.txt", header = TRUE) # Read in ML parameters from Model 6
 
