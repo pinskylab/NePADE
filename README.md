@@ -16,6 +16,10 @@ This repository contains data, scripts and figures for a project investigating h
 
 • **Ne_PADE_1196loci_complete.gen**: genepop file containing subset of full dataset with no missing data, 1196 SNPs across 280 larvae, used for demographic modeling
 
+### Sensitivity analyses: no putative siblings or half-siblings
+
+• **Ne276_1196loci_nomaf_nosibs.arp**: input file for Arlequin to generate multi-SFS for demographic modeling, putative siblings and half-siblings removed
+
 ### Sensitivity analyses: no minor allele count (--mac) filter
 
 • **Ne_PADE_1084loci_complete.gen**: genepop file containing subset of full dataset with no missing data, 1084 SNPs across 284 larvae, used for sensitivity analysis of demographic modeling
