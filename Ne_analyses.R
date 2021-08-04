@@ -437,6 +437,9 @@ axis(1, at=c(0.7,1.9,3.1), labels = c('1994', '1997', '2008'))
 # Read in data containing all loci across 280 fish
 data <- read.genepop("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/newref_alltrimmed140/SNP.DP3g95nomaf.FIL.FIL.recode.140trimmed.280fish.gen", ncode = 3L)
 
+contig_names <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/newref_alltrimmed140/all_contigs3821.txt")
+contig_names$index <- rownames(contig_names)
+
 # subset the genind object by population, so I can see if loci for which pi wasn't calculated are monomorphic
 early.genind.all <- popsub(data, sublist = 'PADE_95011L2524') # early
 mid.genind.all <- popsub(data, sublist = 'PADE_98027L2146') # mid
@@ -446,6 +449,11 @@ late.genind.all <- popsub(data, sublist = 'PADE_09151L2330') # late
 early.win.pi.all <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/newref_alltrimmed140/names94_95_allsites.windowed.pi", header = TRUE) #3685 x 5
 mid.win.pi.all <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/newref_alltrimmed140/names97_98_allsites.windowed.pi", header = TRUE) #3997 x 5
 late.win.pi.all <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/newref_alltrimmed140/names08_09_allsites.windowed.pi", header = TRUE) #3985 x 5
+
+# VCFtools only outputs pi when there is at least one SNP, so sites that are invariant will get dropped from the file. Which contigs are not in vcftools pi calc file? Spot check in the cohort genind object to make sure that site is invariant
+early.missing <- contig_names$V1[!contig_names$V1 %in% early.win.pi.all$CHROM]
+mid.missing <- contig_names$V1[!contig_names$V1 %in% mid.win.pi.all$CHROM]
+late.missing <- contig_names$V1[!contig_names$V1 %in% late.win.pi.all$CHROM]
 
 # Keeping only one entry per contig
 early.win.pi.all.140 <- early.win.pi.all[!duplicated(early.win.pi.all[,1]),] #3534 x 5
