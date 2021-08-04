@@ -63,9 +63,11 @@ Contains the .est and .tpl files necessary to run each of the six models for the
    • **cat_bestlhoods.sh** an example of how to concatenate fsc results for downstream model selection   
    • **cat_cis.sh** an example of how to concatenate fsc results when fsc is run on many simulated SFSs  
    • **cat_max_summary.sh** an example of how to select the ML run for many simulated SFSs and concatenate for CI estimation  
+   • **model6_MSFS.obs** the observed multiSFS    
    • **run_fsc_Ne_CI_singlethread.sh** an example slurm script for running fsc on many simulated SFSs for CI estimation    
    • **run_model6_singlethread.sh** an example of how to submit a fastsimcoal run to a shared computing cluster with each job on a single thread (this is faster than multithreading)  
-   • **run_model6_multithread.sh** an example of how to submit a fastsimcoal run to a shared computing cluster (this can be slow) 
+   • **run_model6_multithread.sh** an example of how to submit a fastsimcoal run to a shared computing cluster (this can be slow)   
+   • **run_sbatch_Ne.sh** helper script to submit a script to SLURM many times
 
 ``` model_results/ ```
 Contains the fastsimcoal results for each model and the CIs for the best model resulting from the main demographic modeling analyses.
@@ -92,6 +94,8 @@ Contains a figure comparing the observed SFS to those of the best demographic mo
 
 • [Ne_boxplots.png](https://github.com/pinskylab/NePADE/blob/master/demo_modeling/Ne_boxplots.png) shows ML point estimates and CIs for the best model (Figure S1)
 
-• [sfs.comparison.top3.png](https://github.com/pinskylab/NePADE/blob/master/demo_modeling/sim_sfs/sfs.comparison.top3.png) shows SFSs by cohort comparing observed vs simulated SFSs of three best-fit models (Figure S2)
+• [/demo_modeling/power/model_confusion_matrix.png](https://github.com/pinskylab/NePADE/blob/master/demo_modeling/power/model_confusion_matrix.png) confusion matrix showing the power in the dataset to differentiate between demographic models (Figure S3)  
 
-• [/demo_modeling/power/model_confusion_matrix.png](https://github.com/pinskylab/NePADE/blob/master/demo_modeling/power/model_confusion_matrix.png) confusion matrix showing the power in the dataset to differentiate between demographic models (Figure S4)
+• [sfs.comparison.top3.png](https://github.com/pinskylab/NePADE/blob/master/demo_modeling/sim_sfs/sfs.comparison.top3.png) shows SFSs by cohort comparing observed vs simulated SFSs of three best-fit models using the main dataset (Figure S4a)
+
+• [sfs.comparison.top3.nomac.png](https://github.com/pinskylab/NePADE/blob/master/demo_modeling/sim_sfs/sfs.comparison.top3.nomac.png) shows SFSs by cohort comparing observed vs simulated SFSs of three best-fit models using a dataset generated for sensitivity analyses that did not employ at minor allele count filter (Figure S4b)
