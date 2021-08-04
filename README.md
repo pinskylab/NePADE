@@ -12,7 +12,9 @@ This repository contains data, scripts and figures for a project investigating h
 
 • **Ne280_1196loci_nomaf_MAFpop2.obs**: msfs for 1994 cohort
 
-• **SNP.DP3g95nomaf.FIL.FIL.recode.140trimmed.280fish.firstsnp.genepop.gen**: genepop file containing full datset of 3821 SNPs for 280 larvae
+• **SNP.DP3g95nomaf.FIL.FIL.recode.140trimmed.280fish.gen**: genepop file containing all available SNPs on contig
+
+• **SNP.DP3g95nomaf.FIL.FIL.recode.140trimmed.280fish.firstsnp.genepop.gen**: genepop file generated from SNP.DP3g95nomaf.FIL.FIL.recode.140trimmed.280fish.gen by retaining only first SNP on a contig, full datset is composed of 3821 SNPs for 280 larvae
 
 • **Ne_PADE_1196loci_complete.gen**: genepop file containing subset of full dataset with no missing data, 1196 SNPs across 280 larvae, used for demographic modeling
 
