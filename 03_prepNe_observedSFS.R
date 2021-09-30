@@ -92,3 +92,26 @@ data_sub@pop <- as.factor(pops[,1])
 
 writeGenPop(data_sub, "~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/Ne_278PADE_1070loci_complete.gen", comment = '1070 biallelic loci with no missing data across 278 PADE, no MAF or MAC filters, all loci in HWE, 6 highly heterozygous PADE removed')
 
+# Test to make sure that the proportion of heterozygous loci within individuals is reasonable
+ne_278fish_1070loci <- read.genepop("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/Ne_278PADE_1070loci_complete.gen", ncode = 3L)
+
+# Calculate Hi, which is the proportion of heterozygous loci within an individual
+# Split data into odd and even row dataframes
+ne_278fish_1070loci.df.allele <- data.frame(ne_278fish_1070loci@tab)
+
+even_indexes<-seq(2,2140,2)
+odd_indexes<-seq(1,2139,2)
+
+allele.odds <- data.frame(ne_278fish_1070loci.df.allele[,odd_indexes]) # 278 x 1070
+allele.evens <- data.frame(ne_278fish_1070loci.df.allele[,even_indexes]) # 278 x 1070
+
+het <- vector()
+for (i in 1:nrow(allele.odds)) {
+  het[i] <- length(which(allele.odds[i,] == allele.evens[i,]))/ncol(allele.odds)
+}
+
+hist(het, main = "", xlab = 'Proportion of heterozygous loci within individuals')
+summary(het)
+rownames(allele.odds[which(het > 0.10),])
+
+
