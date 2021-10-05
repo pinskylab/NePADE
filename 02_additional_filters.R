@@ -18,9 +18,9 @@ pop(nomac_missing_remove6fish) <- pop(nomac_missing)[-match(sibs2, rownames(noma
 # There are multiple ways to do this
 # Using permuted p-values
 hwe <- hw.test(nomac_missing_remove6fish,res="matrix")
-pval <- hwe[hwe[,"Pr.exact"] < 0.001,]
-dim(pval) #166 x 4; variable depending on the iteration
-write.table(pval, "~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/newref_alltrimmed140/Ne_not_in_HWP.txt")
+pval <- hwe[hwe[,"Pr.exact"] < 0.001,] # This filter is used by the HapMap data set
+dim(pval) #153 x 4; variable depending on the iteration
+write.table(hwe, "~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/newref_alltrimmed140/Ne_HWP_test.txt")
 
 #### Now get genind object ready to remove SNPs not in HWE ####
 cols <- colnames(nomac_missing_remove6fish@tab)
@@ -35,10 +35,10 @@ colnames(nomac_missing_remove6fish@tab) <- cols.split$X1
 
 # Remove loci not in HWE, add new column names & make into genind object
 nomac_missing_remove6fish_hwe <- nomac_missing_remove6fish@tab[, -which(colnames(nomac_missing_remove6fish@tab) %in% rownames(pval))] 
-dim(nomac_missing_remove6fish_hwe) # 278 x 7705
+dim(nomac_missing_remove6fish_hwe) # 278 x 7735
 colnames(nomac_missing_remove6fish_hwe) <- cols.hwe.joined
 
-nomac_missing_remove6fish_hwe_genind <- as.genind(nomac_missing_remove6fish_hwe) #278 x 3739 loci
+nomac_missing_remove6fish_hwe_genind <- as.genind(nomac_missing_remove6fish_hwe) #278 x 3752 loci
 pop(nomac_missing_remove6fish_hwe_genind) <- pop(nomac_missing_remove6fish)
 
 #### Now let's look at a PCA ####
@@ -57,7 +57,7 @@ axis(2, at=seq(-100,80, by = 10), labels=seq(-100,80, by= 10), line = -7, las = 
 
 eig_percent <- round((pcaA$eig/(sum(pcaA$eig)))*100,2)
 eig_percent [1:3]
-mtext("PC1 (0.72%)", side = 1, line = 3)
+mtext("PC1 (0.71%)", side = 1, line = 3)
 mtext("PC2 (0.70%)", side = 2, line = -4.5)
 legend(15, -20,
        legend=levels(nomac_missing_remove6fish_hwe_genind@pop),
@@ -113,5 +113,5 @@ writeGenPop <- function(gi, file.name, comment) {
         return(NULL)
 }
 
-writeGenPop(nomac_missing_remove6fish_hwe_genind, "~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/newref_alltrimmed140/Ne_278PADE_3739loci_missingallowed.gen", comment = '3739 loci with no missing data across 278 PADE, no MAF or MAC, putative siblings/contamination removed, loci in HWE only')
+writeGenPop(nomac_missing_remove6fish_hwe_genind, "~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/newref_alltrimmed140/Ne_278PADE_3752loci_missingallowed.gen", comment = '3752 loci with no missing data across 278 PADE, no MAF or MAC, putative siblings/contamination removed, loci in HWE only')
 
