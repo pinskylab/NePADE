@@ -1,4 +1,4 @@
-#### This script starts with the first SNP on a contig with missing data allowed (3905 loci across 284 summer flounder) & removes loci not in HWE using an exact test. Then removes 9 fish that represent potential contamination/were previously ID as putative siblings by Colony ####
+#### This script starts with the first SNP on a contig with missing data allowed (3905 loci across 284 summer flounder). Then removes 6 fish that represent potential contamination/were previously ID as putative siblings by Colony. Then removes loci not in HWP ####
 
 library(ade4)
 library(adegenet)
@@ -7,15 +7,23 @@ library(pegas)
 
 nomac_missing <- read.genepop("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/newref_alltrimmed140/SNP.DP3g95nomafnomac.FIL.FIL.recode.140trimmed.284fish.firstsnp.genepop.gen", ncode = 3L) #3905 loci x 284 fish
 
+#### Remove fish that were previously found to be highly heterozygous
+# sibs <- c('PADE_08115L2219','PADE_09137L2222','PADE_08127L2235','PADE_09079L2317','PADE_09113L2284','PADE_09143L2374','PADE_08008L2204','PADE_08133L2209','PADE_09138L2213') # these are all the putative sibs
+sibs2 <- c('PADE_08115L2219','PADE_09137L2222','PADE_08127L2235','PADE_09143L2374','PADE_08008L2204','PADE_09138L2213') # these are the 6 that are especially heterozygous
+
+nomac_missing_remove6fish <- as.genind(nomac_missing@tab[! rownames(nomac_missing@tab) %in% sibs2,]) # 278 fish across 3905 loci
+pop(nomac_missing_remove6fish) <- pop(nomac_missing)[-match(sibs2, rownames(nomac_missing@tab))] # removes the appropriate fish from the population section of genind object
+
 # ID loci that are not in HWE
 # There are multiple ways to do this
 # Using permuted p-values
-hwe <- hw.test(nomac_missing,res="matrix")
+hwe <- hw.test(nomac_missing_remove6fish,res="matrix")
 pval <- hwe[hwe[,"Pr.exact"] < 0.001,]
-dim(pval) #153 x 4
+dim(pval) #166 x 4; variable depending on the iteration
+write.table(pval, "~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/newref_alltrimmed140/Ne_not_in_HWP.txt")
 
 #### Now get genind object ready to remove SNPs not in HWE ####
-cols <- colnames(nomac_missing@tab)
+cols <- colnames(nomac_missing_remove6fish@tab)
 cols.split <- data.frame(do.call('rbind', strsplit(as.character(cols),'.',fixed=TRUE)))
 
 # Make column names for loci in HWE only
@@ -23,34 +31,27 @@ cols.split.hwe <- cols.split[-which(cols.split$X1 %in% rownames(pval)),]
 cols.hwe.joined <- paste(cols.split.hwe$X1, cols.split.hwe$X2, sep = '.')
 
 # Replace genind object column names with new names
-colnames(nomac_missing@tab) <- cols.split$X1
+colnames(nomac_missing_remove6fish@tab) <- cols.split$X1
 
 # Remove loci not in HWE, add new column names & make into genind object
-nomac_missing_hwe <- nomac_missing@tab[, -which(colnames(nomac_missing@tab) %in% rownames(pval))] 
-dim(nomac_missing_hwe) # 284 x 7737
-colnames(nomac_missing_hwe) <- cols.hwe.joined
+nomac_missing_remove6fish_hwe <- nomac_missing_remove6fish@tab[, -which(colnames(nomac_missing_remove6fish@tab) %in% rownames(pval))] 
+dim(nomac_missing_remove6fish_hwe) # 278 x 7705
+colnames(nomac_missing_remove6fish_hwe) <- cols.hwe.joined
 
-nomac_missing_hwe_genind <- as.genind(nomac_missing_hwe) #284 x 3752 loci
-pop(nomac_missing_hwe_genind) <- pop(nomac_missing)
-
-#### Remove fish that were previously found to be highly heterozygous
-sibs <- c('PADE_08115L2219','PADE_09137L2222','PADE_08127L2235','PADE_09079L2317','PADE_09113L2284','PADE_09143L2374','PADE_08008L2204','PADE_08133L2209','PADE_09138L2213') # these are all the putative sibs
-sibs2 <- c('PADE_08115L2219','PADE_09137L2222','PADE_08127L2235','PADE_09143L2374','PADE_08008L2204','PADE_09138L2213') # these are the 6 that are especially heterozygous
-
-nomac_missing_hwe_genind_remove9fish <- as.genind(nomac_missing_hwe_genind@tab[! rownames(nomac_missing_hwe_genind@tab) %in% sibs2,]) # 275 fish across 3752 loci or 278 fish across 3752 loci
-pop(nomac_missing_hwe_genind_remove9fish) <- pop(nomac_missing_hwe_genind)[-match(sibs2, rownames(nomac_missing_hwe_genind@tab))] # removes the appropriate fish from the population section of genind object
+nomac_missing_remove6fish_hwe_genind <- as.genind(nomac_missing_remove6fish_hwe) #278 x 3739 loci
+pop(nomac_missing_remove6fish_hwe_genind) <- pop(nomac_missing_remove6fish)
 
 #### Now let's look at a PCA ####
-dim(nomac_missing_hwe_genind_remove9fish@tab)
-sum(is.na(nomac_missing_hwe_genind_remove9fish@tab)) 
-A <- scaleGen(nomac_missing_hwe_genind_remove9fish, NA.method = "mean")
+dim(nomac_missing_remove6fish_hwe_genind@tab)
+sum(is.na(nomac_missing_remove6fish_hwe_genind@tab)) 
+A <- scaleGen(nomac_missing_remove6fish_hwe_genind, NA.method = "mean")
 pcaA <- dudi.pca(A,cent=FALSE,scale=FALSE,scannf=FALSE,nf=3)
 barplot(pcaA$eig[1:50],main="PCA eigenvalues", col=heat.colors(50))
 
 col <- wes_palette("Darjeeling1", 5, type = "discrete")
 palette(col)
 
-s.class(pcaA$li, nomac_missing_hwe_genind_remove9fish@pop, xax=1,yax=2, col = transp(col,0.7), axesell=TRUE, cellipse=1.5, cstar=1,cpoint=1.75, grid=FALSE, addaxes = FALSE, clabel = 0, xlim = c(-10,0), ylim = c(-150,100))
+s.class(pcaA$li, nomac_missing_remove6fish_hwe_genind@pop, xax=1,yax=2, col = transp(col,0.7), axesell=TRUE, cellipse=1.5, cstar=1,cpoint=1.75, grid=FALSE, addaxes = FALSE, clabel = 0, xlim = c(-10,0), ylim = c(-150,100))
 axis(1, at=seq(-20,30, by=10), labels=seq(-20,30, by= 10), line = 1)
 axis(2, at=seq(-100,80, by = 10), labels=seq(-100,80, by= 10), line = -7, las = 2)
 
@@ -59,7 +60,7 @@ eig_percent [1:3]
 mtext("PC1 (0.72%)", side = 1, line = 3)
 mtext("PC2 (0.70%)", side = 2, line = -4.5)
 legend(15, -20,
-       legend=levels(nomac_missing_hwe_genind_remove9fish@pop),
+       legend=levels(nomac_missing_remove6fish_hwe_genind@pop),
        pch=19,
        col = col,
        bty = "n",
@@ -112,5 +113,5 @@ writeGenPop <- function(gi, file.name, comment) {
         return(NULL)
 }
 
-writeGenPop(nomac_missing_hwe_genind_remove9fish, "~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/newref_alltrimmed140/Ne_278PADE_3752loci_missingallowed.gen", comment = '3752 loci with no missing data across 278 PADE, no MAF or MAC, loci in HWE only, putative siblings/contamination removed')
+writeGenPop(nomac_missing_remove6fish_hwe_genind, "~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/newref_alltrimmed140/Ne_278PADE_3739loci_missingallowed.gen", comment = '3739 loci with no missing data across 278 PADE, no MAF or MAC, putative siblings/contamination removed, loci in HWE only')
 
