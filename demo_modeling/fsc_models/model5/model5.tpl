@@ -5,9 +5,9 @@ NPOP08
 0
 0
 //Sample sizes
-306
+298
 206 5.5
-48 7
+52 7
 //Growth rates	: negative growth implies population expansion
 0
 0
@@ -18,10 +18,10 @@ NPOP08
 6 historical event
 5.5 1 0 1 1 0 0
 7 2 0 1 1 0 0 
-TBOT 0 0 0 RESBOT 0 0
-TSTARBOT 0 0 0 RESSTARBOT 0 0
-TENDEARLY 0 0 0 RESBOTEARLY 0 0
-TSTARBOTEARLY 0 0 0 RESSTARBOTEARLY 0 0 
+TBOTTWO 0 0 0 RESBOTTWO 0 0
+TSTARBOTTWO 0 0 0 RESSTARBOTTWO 0 0
+TENDONE 0 0 0 RESBOTONE 0 0
+TSTARBOTONE 0 0 0 RESSTARBOTONE 0 0 
 //Number of independent loci [chromosome] 
 1 0
 //Per chromosome: Number of linkage blocks

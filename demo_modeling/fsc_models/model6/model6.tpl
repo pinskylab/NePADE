@@ -5,9 +5,9 @@ NPOP08
 0
 0
 //Sample sizes
-306
+298
 206 5.5
-48 7
+52 7
 //Growth rates	: negative growth implies population expansion
 R2008
 0
@@ -20,7 +20,7 @@ R2008
 7 2 0 1 1 0 0 
 TBOT 0 0 0 1 0 0
 TSTARBOT 0 0 0 RESSTARBOT RANC 0
-9000 0 0 0 1 0 0
+10000 0 0 0 1 0 0
 //Number of independent loci [chromosome] 
 1 0
 //Per chromosome: Number of linkage blocks
