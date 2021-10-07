@@ -1,5 +1,5 @@
 #### Fsc26 has been run 50 times and the maximum likelihoods and associated parameters have been concatenated ####
-# Using a SFS that summarizes 280 larvae across three cohorts, 1196 loci and no MAF filter
+# Using a SFS that summarizes 278 larvae across three cohorts, 1070 loci and no MAF or MAC filter, 6 putative sibs/contamination/high FIS removed, HW filter applied to SNPs
 # Read in the estimated parameters for each model
 mod1 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/model_results/model1.bestlhoods.summary.txt", header = TRUE) # constant population size for comparision to all the bottlenecks, but only estimating NPOP08
 mod2 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/model_results/model2.bestlhoods.summary.txt", header = TRUE)
@@ -12,47 +12,47 @@ mod6 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis
 # Model 1, no bottleneck
 mod1_ml <- max(mod1$MaxEstLhood)
 mod1[which(mod1$MaxEstLhood == max(mod1$MaxEstLhood)),]
-mod1[19,]$MaxEstLhood - mod1[19,]$MaxObsLhood
+mod1[33,]$MaxEstLhood - mod1[33,]$MaxObsLhood
 mod1_param_no <- 1 #should be hard-coded because complex parameters are sometimes reported. Number of parameters can be found in .est files
 
 # Model 2, instantaneous bottleneck
 mod2_ml <- max(mod2$MaxEstLhood)
 mod2[which(mod2$MaxEstLhood == max(mod2$MaxEstLhood)),]
-mod2[21,]$MaxEstLhood - mod2[21,]$MaxObsLhood # difference between MaxEst and MaxObs
+mod2[6,]$MaxEstLhood - mod2[6,]$MaxObsLhood # difference between MaxEst and MaxObs
 mod2_param_no <- 5
 
 # Model 3, exponential change after bottleneck
 mod3_ml <- max(mod3$MaxEstLhood)
 mod3[which(mod3$MaxEstLhood == max(mod3$MaxEstLhood)),]
-mod3[34,]$MaxEstLhood - mod3[34,]$MaxObsLhood # difference between MaxEst and MaxObs
+mod3[49,]$MaxEstLhood - mod3[49,]$MaxObsLhood # difference between MaxEst and MaxObs
 mod3_param_no <- 5
 
 # Model 4, exponential growth, then bottleneck, then instantaneous recovery
 mod4_ml <- max(mod4$MaxEstLhood)
 mod4[which(mod4$MaxEstLhood == max(mod4$MaxEstLhood)),]
-mod4[41,]$MaxEstLhood - mod4[41,]$MaxObsLhood # difference between MaxEst and MaxObs
+mod4[39,]$MaxEstLhood - mod4[39,]$MaxObsLhood # difference between MaxEst and MaxObs
 mod4_param_no <- 6
 
 # Model 5, two bottlenecks
 mod5_ml <- max(mod5$MaxEstLhood)
 mod5[which(mod5$MaxEstLhood == max(mod5$MaxEstLhood)),]
-mod5[37,]$MaxEstLhood - mod5[37,]$MaxObsLhood # difference between MaxEst and MaxObs
+mod5[40,]$MaxEstLhood - mod5[40,]$MaxObsLhood # difference between MaxEst and MaxObs
 mod5_param_no <- 9
 
 # Model 6, exponential change in pop size before and after bottleneck
 mod6_ml <- max(mod6$MaxEstLhood)
 mod6[which(mod6$MaxEstLhood == max(mod6$MaxEstLhood)),]
-mod6[2,]$MaxEstLhood - mod6[2,]$MaxObsLhood
+mod6[18,]$MaxEstLhood - mod6[18,]$MaxObsLhood
 mod6_param_no <- 6
 
 #### Plot ML for parameters over fsc iterations ####
 plot(mod6$MaxEstLhood, ylab = 'Maximum likelihood', xlab = 'Iteration')
 lines(mod6$MaxEstLhood)
-points(2,-3703.332, col = 'tomato', pch = 19)
+points(18,-3081.606, col = 'tomato', pch = 19)
 
 plot(mod6)
 
-mod6$ML_diff <- mod6$MaxEstLhood - (-3703.332)
+mod6$ML_diff <- mod6$MaxEstLhood - (-3081.606)
 plot(mod6$ML_diff)
 lines(mod6$ML_diff)
 barplot(mod6$ML_diff, xlab = 'Iteration', ylab = "Difference from ML")
@@ -280,6 +280,45 @@ mod3_ml <- max(mod3$MaxEstLhood)
 mod4_ml <- max(mod4$MaxEstLhood)
 mod5_ml <- max(mod5$MaxEstLhood)
 mod6_ml <- max(mod6$MaxEstLhood)
+
+# AIC calculation
+a <- c(mod1_ml, mod2_ml, mod3_ml, mod4_ml, mod5_ml, mod6_ml) # MaxEstLhood. These are log10 likelihoods
+aa <- c(mod1_ml, mod2_ml, mod3_ml, mod4_ml, mod5_ml, mod6_ml)*2.303 # Convert from log10 to ln
+b <- c(1,5,5,6,9,6) # number of estimated parameters
+
+aic <- 2*b-2*aa
+
+delta_aic <-round(aic,0) - min(round(aic,0))
+
+# Akaike weight = provides relative weight of evidence for each model. Probability that model i is the best model for the observed data, given the candidate set of models
+w <- vector()
+
+for (i in 1:length(aic)) {
+  w[i] <- (exp(-0.5*(aic[i]-max(aic))))/sum(exp(-0.5*(aic[1]-max(aic))), exp(-0.5*(aic[2]-max(aic))), exp(-0.5*(aic[3]-max(aic))), exp(-0.5*(aic[4]-max(aic))), exp(-0.5*(aic[5]-max(aic))), exp(-0.5*(aic[6]-max(aic))))
+}
+
+#### Using a SFS that summarizes 276 larvae across three cohorts (4 potential outlier fish from 2008/2009 cohort removed), 1196 loci and no MAF filter ####
+# Read in the estimated parameters for each model
+mod1 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/noouts_models (1196 loci & 276 fish)/model1.bestlhoods.txt", header = TRUE) # constant population size for comparision to all the bottlenecks, but only estimating NPOP08
+mod2 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/noouts_models (1196 loci & 276 fish)/model2.bestlhoods.txt", header = TRUE)
+mod3 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/noouts_models (1196 loci & 276 fish)/model3.bestlhoods.txt", header = TRUE)
+mod4 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/noouts_models (1196 loci & 276 fish)/model4.bestlhoods.txt", header = TRUE)
+mod5 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/noouts_models (1196 loci & 276 fish)/model5.bestlhoods.txt", header = TRUE)
+mod6 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/noouts_models (1196 loci & 276 fish)/model6.bestlhoods.txt", header = TRUE)
+
+# Now find the ML run for each model
+mod1_ml <- max(mod1$MaxEstLhood)
+mod1[which(mod1$MaxEstLhood == max(mod1$MaxEstLhood)),]
+mod2_ml <- max(mod2$MaxEstLhood)
+mod2[which(mod2$MaxEstLhood == max(mod2$MaxEstLhood)),]
+mod3_ml <- max(mod3$MaxEstLhood)
+mod3[which(mod3$MaxEstLhood == max(mod3$MaxEstLhood)),]
+mod4_ml <- max(mod4$MaxEstLhood)
+mod4[which(mod4$MaxEstLhood == max(mod4$MaxEstLhood)),]
+mod5_ml <- max(mod5$MaxEstLhood)
+mod5[which(mod5$MaxEstLhood == max(mod5$MaxEstLhood)),]
+mod6_ml <- max(mod6$MaxEstLhood)
+mod6[which(mod6$MaxEstLhood == max(mod6$MaxEstLhood)),]
 
 # AIC calculation
 a <- c(mod1_ml, mod2_ml, mod3_ml, mod4_ml, mod5_ml, mod6_ml) # MaxEstLhood. These are log10 likelihoods
