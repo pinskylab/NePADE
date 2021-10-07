@@ -8,19 +8,19 @@ library(data.table)
 library(wesanderson)
 
 #### Examine observed SFS ####
-Ne278_1070loci.msfs <- fread("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/Ne278_1070loci_nomaformac.res/Ne278_1070loci_nomaformac_MSFS.obs", skip = 2) # Read in MSFS and check that there are 1070 loci
+Ne278_1070loci.msfs <- fread("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/Ne278_1070loci.res/Ne278_1070loci_MSFS.obs", skip = 2) # Read in MSFS and check that there are 1070 loci
 dim(Ne278_1070loci.msfs)
 sum(Ne278_1070loci.msfs[1,]) #1070 snps, yes
 table(t(Ne278_1070loci.msfs)) #the number of snps in each of the categories
 
 #### Plot only observed SFSs for each larval cohort ####
 # Okay, now read in single population observed SFSs for plotting
-pop08.obs <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/Ne278_1070loci_nomaformac.res/Ne278_1070loci_nomaformac_MAFpop0.obs', skip = 1, header = TRUE)
-pop97.obs <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/Ne278_1070loci_nomaformac.res/Ne278_1070loci_nomaformac_MAFpop1.obs', skip = 1, header = TRUE)
-pop94.obs <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/Ne278_1070loci_nomaformac.res/Ne278_1070loci_nomaformac_MAFpop2.obs', skip = 1, header = TRUE)
+pop08.obs <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/Ne278_1070loci.res/Ne278_1070loci_MAFpop0.obs', skip = 1, header = TRUE)
+pop97.obs <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/Ne278_1070loci.res/Ne278_1070loci_MAFpop1.obs', skip = 1, header = TRUE)
+pop94.obs <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/Ne278_1070loci.res/Ne278_1070loci_MAFpop2.obs', skip = 1, header = TRUE)
 
-hist(as.numeric(pop08.obs)) # 980 polymorphic snps
-hist(as.numeric(pop97.obs)) # 943 polymorphic snps
+hist(as.numeric(pop08.obs)) # 981 polymorphic snps
+hist(as.numeric(pop97.obs)) # 944 polymorphic snps
 hist(as.numeric(pop94.obs)) # 552 polymorphic snps
 
 # All the populations are different sizes, so need to convert to proportion of SNPs & then add zeros so that all cohorts have same number of columns
