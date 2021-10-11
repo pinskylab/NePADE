@@ -8,27 +8,27 @@ library(data.table)
 library(wesanderson)
 
 #### Examine observed SFS ####
-Ne278_1070loci.msfs <- fread("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/Ne278_1070loci.res/Ne278_1070loci_MSFS.obs", skip = 2) # Read in MSFS and check that there are 1070 loci
-dim(Ne278_1070loci.msfs)
-sum(Ne278_1070loci.msfs[1,]) #1070 snps, yes
-table(t(Ne278_1070loci.msfs)) #the number of snps in each of the categories
+Ne279_1068loci.msfs <- fread("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/Ne279_1068loci.res/Ne279_1068loci_MSFS.obs", skip = 2) # Read in MSFS and check that there are 1068 loci
+dim(Ne279_1068loci.msfs)
+sum(Ne279_1068loci.msfs[1,]) #1068 snps, yes
+table(t(Ne279_1068loci.msfs)) #the number of snps in each of the categories
 
 #### Plot only observed SFSs for each larval cohort ####
 # Okay, now read in single population observed SFSs for plotting
-pop08.obs <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/Ne278_1070loci.res/Ne278_1070loci_MAFpop0.obs', skip = 1, header = TRUE)
-pop97.obs <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/Ne278_1070loci.res/Ne278_1070loci_MAFpop1.obs', skip = 1, header = TRUE)
-pop94.obs <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/Ne278_1070loci.res/Ne278_1070loci_MAFpop2.obs', skip = 1, header = TRUE)
+pop08.obs <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/Ne279_1068loci.res/Ne279_1068loci_MAFpop0.obs', skip = 1, header = TRUE)
+pop97.obs <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/Ne279_1068loci.res/Ne279_1068loci_MAFpop1.obs', skip = 1, header = TRUE)
+pop94.obs <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/Ne279_1068loci.res/Ne279_1068loci_MAFpop2.obs', skip = 1, header = TRUE)
 
 hist(as.numeric(pop08.obs)) # 981 polymorphic snps
-hist(as.numeric(pop97.obs)) # 944 polymorphic snps
-hist(as.numeric(pop94.obs)) # 552 polymorphic snps
+hist(as.numeric(pop97.obs)) # 941 polymorphic snps
+hist(as.numeric(pop94.obs)) # 551 polymorphic snps
 
 # All the populations are different sizes, so need to convert to proportion of SNPs & then add zeros so that all cohorts have same number of columns
 pop08.obs.prop <- t(pop08.obs[-1]/sum(pop08.obs[-1])) # denominator is number of SNPs (only polymorphic sites)
 pop97.obs.prop <- t(pop97.obs[-1]/sum(pop97.obs[-1]))
 pop94.obs.prop <- t(pop94.obs[-1]/sum(pop94.obs[-1]))
 
-n <- max(length(pop08.obs[-1]), length(pop97.obs[-1]), length(pop94.obs[-1])) # determines max vector length (298) and then makes all shorter vectors 298 when including only polymorphic sites
+n <- max(length(pop08.obs[-1]), length(pop97.obs[-1]), length(pop94.obs[-1])) # determines max vector length (300) and then makes all shorter vectors 300 when including only polymorphic sites
 pop08.obs.prop <- as.numeric(pop08.obs.prop)
 length(pop97.obs.prop) <- n # adds NAs to the end of the vector
 length(pop94.obs.prop) <- n # adds NAs to the end of the vector
@@ -37,7 +37,7 @@ pop97.obs.prop[is.na(pop97.obs.prop)] <- 0
 pop94.obs.prop[is.na(pop94.obs.prop)] <- 0
 
 m <- rbind(pop94.obs.prop, pop97.obs.prop, pop08.obs.prop)
-colnames(m) <- 1:298 # only polymorphic sites
+colnames(m) <- 1:n # only polymorphic sites
 
 # Plot
 col.palette <- wes_palette("FantasticFox1", 5, type = "discrete")
