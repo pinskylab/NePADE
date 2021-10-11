@@ -16,7 +16,7 @@ library(stringr)
 library(boot)
 
 # Read in genepop file  with population identifiers for each of the three time periods
-ne_data <- read.genepop("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/newref_alltrimmed140/Ne_278PADE_3752loci_missingallowed.gen", ncode = 3L) # 3739 loci across 278 larvae
+ne_data <- read.genepop("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/newref_alltrimmed140/Ne_279PADE_3749loci_missingallowed.gen", ncode = 3L) # 3749 loci across 279 larvae
 
 # Need to modify names in allele count data (genind object) so that I can match them up with names in the larval database
 freq_names <- as.vector(rownames(ne_data@tab))
@@ -33,7 +33,7 @@ ne_meta <- merge(meta, as.data.frame(meta2), by = c('PinskyID', 'Sampling.Date',
 
 # Subset metadata to fish being used in Ne project
 meta_sub <- ne_meta[ne_meta$PinskyID %in% rownames(ne_data$tab),]
-meta_sub2 <- meta_sub[,-c(16:46)] # Get rid of a bunch of irrelevent columns
+meta_sub2 <- meta_sub[,-c(16:46)] # Get rid of a bunch of irrelevant columns
 
 # Now order them so the names of the genind data are the same as the associated metadata
 ordered_meta_sub2 <- meta_sub2[match(rownames(ne_data@tab), meta_sub2$PinskyID),] # order them so they are the same as the genind object
@@ -45,7 +45,7 @@ pop_strata <- data.frame(cbind(ordered_meta_sub2$Year, ordered_meta_sub2$Place))
 strata(ne_data) <- pop_strata
 
 #### Do PCA & plot ####
-sum(is.na(ne_data$tab)) #25520
+sum(is.na(ne_data$tab)) #25395
 X <- scaleGen(ne_data, NA.method = "mean")
 dim(X)
 class (X)
@@ -59,14 +59,14 @@ pca1
 # Plot PCA based on three time periods
 col <- wes_palette("Darjeeling1", 5, type = "discrete")
 palette(col)
-s.class(pca1$li, pop(ne_data), xax=1,yax=2, col = transp(col,0.7), axesell=TRUE, cellipse=1.5, cstar=1,cpoint=1.75, grid=FALSE, addaxes = FALSE, clabel = 0, xlim = c(-70,30), ylim = c(-140,100))
-axis(1, at=seq(-100,40, by=10), labels=seq(-100,40, by= 10), line = 2)
-axis(2, at=seq(-100,60, by = 10), labels=seq(-100,60, by= 10), line = 0, las = 2)
-mtext("PC1 (0.71%)", side = 1, line = 4)
-mtext("PC2 (0.70%)", side = 2, line = 2.5)
+s.class(pca1$li, pop(ne_data), xax=1,yax=2, col = transp(col,0.7), axesell=TRUE, cellipse=1.5, cstar=1,cpoint=1.75, grid=FALSE, addaxes = FALSE, clabel = 0, xlim = c(-20,30), ylim = c(-140,100))
+axis(1, at=seq(-30,70, by=10), labels=seq(-30,70, by= 10), line = 0)
+axis(2, at=seq(-100,60, by = 10), labels=seq(-100,60, by= 10), line = -8, las = 2)
+mtext("PC1 (0.71%)", side = 1, line =2)
+mtext("PC2 (0.70%)", side = 2, line = -5.5)
 
-legend(-100, -30,
-       legend=c("2008-2009 (n = 149)", "1994-1995 (n = 26)", "1997-1998 (n = 103)"),
+legend(40, -30,
+       legend=c("2008-2009 (n = 150)", "1994-1995 (n = 26)", "1997-1998 (n = 103)"),
        pch=c(19, 19, 19),
        col = col,
        bty = "n",
@@ -78,13 +78,13 @@ eig_percent [1:3]
 
 # Plot PCA by Year
 col <- brewer.pal(6, "Paired")
-s.class(pca1$li, ne_data@strata$X1, xax=1,yax=2, col = transp(col,0.7), axesell=TRUE, cellipse=1.5, cstar=1,cpoint=1.75, grid=FALSE, addaxes = FALSE, clabel = 0, xlim = c(-70,30), ylim = c(-140,100))
-axis(1, at=seq(-100,40, by=10), labels=seq(-100,40, by= 10), line = 2)
-axis(2, at=seq(-100,60, by = 10), labels=seq(-100,60, by= 10), line = 0, las = 2)
-mtext("PC1 (0.71%)", side = 1, line = 4)
-mtext("PC2 (0.70%)", side = 2, line = 2.5)
+s.class(pca1$li, ne_data@strata$X1, xax=1,yax=2, col = transp(col,0.7), axesell=TRUE, cellipse=1.5, cstar=1,cpoint=1.75, grid=FALSE, addaxes = FALSE, clabel = 0, xlim = c(-20,30), ylim = c(-140,100))
+axis(1, at=seq(-30,70, by=10), labels=seq(-30,70, by= 10), line = 0)
+axis(2, at=seq(-100,60, by = 10), labels=seq(-100,60, by= 10), line = -8, las = 2)
+mtext("PC1 (0.71%)", side = 1, line = 2)
+mtext("PC2 (0.70%)", side = 2, line = -5.5)
 
-legend(-100, -10,
+legend(40, -10,
        legend=levels(ne_data@strata$X1),
        pch=c(19, 19, 19),
        col = col,
@@ -94,11 +94,11 @@ legend(-100, -10,
 
 # Plot PCA by capture Location
 col <- brewer.pal(6, "Paired")
-s.class(pca1$li, ne_data@strata$X2, xax=1,yax=2, col = transp(col,0.7), axesell=TRUE, cellipse=1.5, cstar=1,cpoint=1.75, grid=FALSE, addaxes = FALSE, clabel = 0, xlim = c(-70,30), ylim = c(-140,100))
-axis(1, at=seq(-100,40, by=10), labels=seq(-100,40, by= 10), line = 2)
-axis(2, at=seq(-100,60, by = 10), labels=seq(-100,60, by= 10), line = 0, las = 2)
-mtext("PC1 (0.71%)", side = 1, line = 4)
-mtext("PC2 (0.70%)", side = 2, line = 2.5)
+s.class(pca1$li, ne_data@strata$X2, xax=1,yax=2, col = transp(col,0.7), axesell=TRUE, cellipse=1.5, cstar=1,cpoint=1.75, grid=FALSE, addaxes = FALSE, clabel = 0, xlim = c(-20,30), ylim = c(-140,100))
+axis(1, at=seq(-30,70, by=10), labels=seq(-30,70, by= 10), line = 0)
+axis(2, at=seq(-100,60, by = 10), labels=seq(-100,60, by= 10), line = -8, las = 2)
+mtext("PC1 (0.71%)", side = 1, line = 2)
+mtext("PC2 (0.70%)", side = 2, line = -5.5)
 
 legend(20, 40,
        legend=c('Little Egg Inlet, NJ', 'Beaufort, NC'),
@@ -117,32 +117,38 @@ pc_names <- names(which(rowSums(pca1$c1^2) > .005)) # these are the names of the
 
 #######################################################################
 #### Diversity metrics ####
-ne_data <- read.genepop("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/newref_alltrimmed140/Ne_278PADE_3752loci_missingallowed.gen", ncode = 3L) # 3752 loci across 278 larvae
+# Read/build two datasets to see how HWE filter affects diversity metrics
+# Dataset 1
+ne_data <- read.genepop("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/newref_alltrimmed140/Ne_279PADE_3749loci_missingallowed.gen", ncode = 3L) # 3749 loci across 279 larvae
 
-# # Test SNPs for HWE
-# hwe <- hw.test(ne_data,res="matrix")
-# pval <- hwe[hwe[,"Pr.exact"] < 0.001,] # p<0.001, exact test
-# length(pval[,"Pr.exact"]) 
-# 
-# #### Now get genind object ready to remove SNPs not in HWE ####
-# cols <- colnames(ne_data@tab)
-# cols.split <- data.frame(do.call('rbind', strsplit(as.character(cols),'.',fixed=TRUE)))
-# 
-# # Make column names for loci in HWE only
-# cols.split.hwe <- cols.split[-which(cols.split$X1 %in% rownames(pval)),] 
-# cols.hwe.joined <- paste(cols.split.hwe$X1, cols.split.hwe$X2, sep = '.')
-# 
-# # Replace genind object column names with new names
-# colnames(ne_data@tab) <- cols.split$X1
-# 
-# # Remove loci not in HWE, add new column names & make into genind object
-# ne_data_hwe <- ne_data@tab[, -which(colnames(ne_data@tab) %in% rownames(pval))] 
-# dim(ne_data_hwe) # 284 x 7737
-# colnames(ne_data_hwe) <- cols.hwe.joined
-# 
-# ne_data_hwe_genind <- as.genind(ne_data_hwe) #284 x 3752 loci
-# pop(ne_data_hwe_genind) <- pop(ne_data)
+# Dataset 2
+# Alt dataset to understand how a more stringent HWE filter might affect diversity calculations
+ne_data2 <- read.genepop("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/newref_alltrimmed140/Ne_279PADE_3905oci_missingallowed.gen", ncode = 3L) # 3905 loci across 279 larvae
 
+hwe <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/newref_alltrimmed140/Ne_HWP_test.txt")
+pval <- hwe[hwe[,"Pr.exact"] < 0.01,]
+length(pval[,"Pr.exact"])
+
+# Now get genind object ready to remove SNPs not in HWE
+cols <- colnames(ne_data2@tab)
+cols.split <- data.frame(do.call('rbind', strsplit(as.character(cols),'.',fixed=TRUE)))
+
+# Make column names for loci in HWE only
+cols.split.hwe <- cols.split[-which(cols.split$X1 %in% rownames(pval)),]
+cols.hwe.joined <- paste(cols.split.hwe$X1, cols.split.hwe$X2, sep = '.')
+
+# Replace genind object column names with new names
+colnames(ne_data2@tab) <- cols.split$X1
+
+# Remove loci not in HWE, add new column names & make into genind object
+ne_data2_hwe <- ne_data2@tab[, -which(colnames(ne_data2@tab) %in% rownames(pval))]
+dim(ne_data2_hwe) # 279 x 7320
+colnames(ne_data2_hwe) <- cols.hwe.joined
+
+ne_data2_hwe_genind <- as.genind(ne_data2_hwe) #279 x 3555 loci
+pop(ne_data2_hwe_genind) <- pop(ne_data2)
+
+#### Actual diversity metrics ####
 # diversity table using poppr
 poppr(ne_data) # He uses Nei's gene diversity
 
@@ -150,9 +156,13 @@ poppr(ne_data) # He uses Nei's gene diversity
 Hs(ne_data) # pretty similar between 3 time periods, but slightly different than using poppr function above
 Hs(ne_data, ne_data@strata$X1)
 
+Hs(ne_data2_hwe_genind)
+
 # Heterozygosity across all individuals
 div <- summary(ne_data)
+div2 <- summary(ne_data2_hwe_genind)
 
+# Dataset 1
 # subset the genind object by population, so heterozygosity can be calculated by population
 early.genind <- popsub(ne_data, sublist = 'PADE_95011L2524')
 mid.genind <- popsub(ne_data, sublist = 'PADE_98027L2146')
@@ -177,7 +187,26 @@ plot(div$Hobs, xlab = 'Loci number', ylab = 'Observed Heterozygosity', main = 'O
 plot(div$Hobs,div$Hexp, xlab="Hobs", ylab="Hexp", main="Expected heterozygosity as a function of observed heterozygosity per locus")
 bartlett.test(list(div$Hexp, div$Hobs))
 
+# Dataset 2
+# subset the genind object by population, so heterozygosity can be calculated by population
+early.genind2 <- popsub(ne_data2_hwe_genind, sublist = 'PADE_95011L2524')
+mid.genind2 <- popsub(ne_data2_hwe_genind, sublist = 'PADE_98027L2146')
+late.genind2 <- popsub(ne_data2_hwe_genind, sublist = 'PADE_09151L2330')
+
+early.he2 <- summary(early.genind2)
+mid.he2 <- summary(mid.genind2)
+late.he2 <- summary(late.genind2)
+
+mean(early.he2$Hobs)
+mean(early.he2$Hexp)
+mean(mid.he2$Hobs)
+mean(mid.he2$Hexp)
+mean(late.he2$Hobs)
+mean(late.he2$Hexp)
+
+
 # FIS by cohort
+# Dataset 1
 early.hier <- genind2hierfstat(early.genind) # convert to hierfstat format
 early.hier$pop <- as.numeric(early.hier$pop) # convert pop factor to numeric so that bastic.stats function works
 mid.hier <- genind2hierfstat(mid.genind)
@@ -188,6 +217,18 @@ late.hier$pop <- as.numeric(late.hier$pop)
 stats.early <- basic.stats(early.hier)
 stats.mid <- basic.stats(mid.hier)
 stats.late <- basic.stats(late.hier)
+
+# Dataset 2
+early.hier2 <- genind2hierfstat(early.genind2) # convert to hierfstat format
+early.hier2$pop <- as.numeric(early.hier2$pop) # convert pop factor to numeric so that bastic.stats function works
+mid.hier2 <- genind2hierfstat(mid.genind2)
+mid.hier2$pop <- as.numeric(mid.hier2$pop)
+late.hier2 <- genind2hierfstat(late.genind2)
+late.hier2$pop <- as.numeric(late.hier2$pop)
+
+stats.early2 <- basic.stats(early.hier2)
+stats.mid2 <- basic.stats(mid.hier2)
+stats.late2 <- basic.stats(late.hier2)
 
 #### Pi calculations for 3821 loci ####
 # Read in window pi calculations from vcftools on Amarel
