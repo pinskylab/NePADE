@@ -53,15 +53,15 @@ writeGenPop <- function(gi, file.name, comment) {
   return(NULL)
 }
 
-#### No MAF filter has been applied to these data: 280 larvae & 3821 loci ####
-ne_278fish_3752oci <- read.genepop("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/newref_alltrimmed140/Ne_278PADE_3752loci_missingallowed.gen", ncode = 3L)
+#### No MAF filter has been applied to these data: 279 larvae & 3749 loci ####
+ne_279fish_3749oci <- read.genepop("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/newref_alltrimmed140/Ne_279PADE_3749loci_missingallowed.gen", ncode = 3L)
 
 # Remove loci with 3 or 4 alleles because I think it's causing a problem
-ToKeep <- which(ne_278fish_3752oci@loc.n.all == 2) #3522 loci
-ne_278fish_3522_biallelic <- ne_278fish_3752oci[loc = ToKeep]
+ToKeep <- which(ne_279fish_3749oci@loc.n.all == 2) #3522 loci
+ne_279fish_3522loci_biallelic <- ne_279fish_3749oci[loc = ToKeep]
 
-pops <- as.data.frame(ne_278fish_3522_biallelic@pop)
-data <- as.data.frame(ne_278fish_3522_biallelic@tab)
+pops <- as.data.frame(ne_279fish_3522loci_biallelic@pop)
+data <- as.data.frame(ne_279fish_3522loci_biallelic@tab)
 
 na.count <- sapply(data, function(y) sum(length(which(is.na(y)))))
 na.count <- data.frame(na.count)
@@ -79,7 +79,7 @@ keepers <- na.count[keeps,]
 
 # Now subsetting the data to only alleles with SNP names in the keep list
 data_sub <- data[,keepers$names]
-dim(data_sub) # 278 x 2140
+dim(data_sub) # 279 x 2136
 
 # Check to see if all SNPs having no missing data & write str file 
 test <- sapply(data_sub, function(y) sum(length(which(is.na(y)))))
@@ -90,20 +90,20 @@ summary(test)
 data_sub <- as.genind(data_sub)
 data_sub@pop <- as.factor(pops[,1])
 
-writeGenPop(data_sub, "~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/Ne_278PADE_1070loci_complete.gen", comment = '1070 biallelic loci with no missing data across 278 PADE, no MAF or MAC filters, 6 highly heterozygous PADE removed, all loci in HWE')
+writeGenPop(data_sub, "~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/Ne_279PADE_1068loci_complete.gen", comment = '1068 biallelic loci with no missing data across 279 PADE, no MAF or MAC filters, highly heterozygous PADE removed, all loci in HWE')
 
 # Test to make sure that the proportion of heterozygous loci within individuals is reasonable
-ne_278fish_1070loci <- read.genepop("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/Ne_278PADE_1070loci_complete.gen", ncode = 3L)
+ne_279fish_1068loci <- read.genepop("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/Ne_279PADE_1068loci_complete.gen", ncode = 3L)
 
 # Calculate Hi, which is the proportion of heterozygous loci within an individual
 # Split data into odd and even row dataframes
-ne_278fish_1070loci.df.allele <- data.frame(ne_278fish_1070loci@tab)
+ne_279fish_1068loci.df.allele <- data.frame(ne_279fish_1068loci@tab)
 
-even_indexes<-seq(2,2140,2)
-odd_indexes<-seq(1,2139,2)
+even_indexes<-seq(2,2136,2)
+odd_indexes<-seq(1,2135,2)
 
-allele.odds <- data.frame(ne_278fish_1070loci.df.allele[,odd_indexes]) # 278 x 1070
-allele.evens <- data.frame(ne_278fish_1070loci.df.allele[,even_indexes]) # 278 x 1070
+allele.odds <- data.frame(ne_279fish_1068loci.df.allele[,odd_indexes]) # 279 x 1068
+allele.evens <- data.frame(ne_279fish_1068loci.df.allele[,even_indexes]) # 279 x 1068
 
 het <- vector()
 for (i in 1:nrow(allele.odds)) {
@@ -112,6 +112,6 @@ for (i in 1:nrow(allele.odds)) {
 
 hist(het, main = "", xlab = 'Proportion of heterozygous loci within individuals')
 summary(het)
-rownames(allele.odds[which(het > 0.10),])
+rownames(allele.odds[which(het > 0.09),])
 
 
