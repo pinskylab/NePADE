@@ -230,159 +230,164 @@ stats.early2 <- basic.stats(early.hier2)
 stats.mid2 <- basic.stats(mid.hier2)
 stats.late2 <- basic.stats(late.hier2)
 
+#######################################
 #### Pi calculations for 3821 loci ####
 # Read in window pi calculations from vcftools on Amarel
-early.win.pi <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/newref_alltrimmed140/namess94_95.windowed.pi", header = TRUE) #2090 x 5
-mid.win.pi <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/newref_alltrimmed140/namess97_98.windowed.pi", header = TRUE) #3348 x 5
-late.win.pi <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/newref_alltrimmed140/namess08_09.windowed.pi", header = TRUE) #3322 x 5
-
-# This was only for trouble shooting which loci were missing from the pi calculations. Code to acutally calculate pi is below.
-# Read in CHOM column from SNP.DP3g95nomaf.FIL.FIL.recode.firstsnp.vcf so I can figure out which ones are missing in the site pi files
-contig_names <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/newref_alltrimmed140/all_contigs3821.txt")
-contig_names$index <- rownames(contig_names)
-
-early.win.missing <- contig_names[!contig_names[,1] %in% early.win.pi$CHROM,] #names and indices of snps missing for window pi calculations
-early.win.missing$index <- paste('SNP', early.win.missing$index, sep = '_') # add 'SNP_' to the index number for easier matching with genind object
-mid.win.missing <- contig_names[!contig_names[,1] %in% mid.win.pi$CHROM,]
-mid.win.missing$index <- paste('SNP', mid.win.missing$index, sep = '_') # add 'SNP_' to the index number for easier matching with genind object
-late.win.missing <- contig_names[!contig_names[,1] %in% late.win.pi$CHROM,]
-late.win.missing$index <- paste('SNP', late.win.missing$index, sep = '_') # add 'SNP_' to the index number for easier matching with genind object
-
-# Subset genind objects to loci for which pi wasn't calculated
-# Early
-early.names <- colnames(early.genind@tab) # prep names
-early.names.split <- data.frame(do.call('rbind', strsplit(as.character(early.names),'.',fixed=TRUE)))
-colnames(early.genind@tab) <- early.names.split$X1 # replace SNPX_X.YYY with only SNP_X
-
-early.missing.genind <- early.genind@tab[,colnames(early.genind@tab) %in% early.win.missing$index] # these are all the alleles at loci for which pi wasn't calculated
-early.missing.genind.unique <- early.missing.genind[, !duplicated(colnames(early.missing.genind))]
-
-early.pi <- early.genind@tab[,!colnames(early.genind@tab) %in% early.win.missing$index] # these are all the alelles at loci for which pi WAS calculated
-early.pi.genind.unique <- early.pi[, !duplicated(colnames(early.pi))]
-early.source.table <- matrix(NA, nrow = 2153, ncol = 4, byrow = TRUE, dimnames = list(colnames(early.pi.genind.unique), c('0','1','2', 'NA')))
-for (i in 1:ncol(early.pi.genind.unique)){
-  early.source.table[i,] <- as.matrix(t(table(factor(early.pi.genind.unique[,i], levels = 0:2), useNA = 'always')))[1,]
-}
-early.source.table.pi <- cbind(early.source.table, early.win.pi$PI) # cbind pi values with allele counts
-early.source.table.pi.ordered <- early.source.table.pi[order(-early.source.table.pi[,'2']),]
-write.table(early.source.table.pi.ordered, '~/Desktop/early.source.table.pi.ordered.txt')
-
-early.lookup.table <- matrix(NA, nrow = 1826, ncol = 4, byrow = TRUE, dimnames = list(colnames(early.missing.genind.unique), c('0','1','2', 'NA'))) # these are the loci I have to assign a pi value to 
-for (i in 1:ncol(early.missing.genind.unique)){
-  early.lookup.table[i,] <- as.matrix(t(table(factor(early.missing.genind.unique[,i], levels = 0:2), useNA = 'always')))[1,] #0-2 = counts; NA = missing data
-}
-early.lookup.table.ordered <- early.lookup.table[order(-early.lookup.table[,'2']),]
-write.table(early.lookup.table.ordered, '~/Desktop/early.lookup.table.ordered.txt')
-
-# Mid
-mid.names <- colnames(mid.genind@tab) # prep names
-mid.names.split <- data.frame(do.call('rbind', strsplit(as.character(mid.names),'.',fixed=TRUE)))
-colnames(mid.genind@tab) <- mid.names.split$X1 # replace SNPX_X.YYY with only SNP_X
-
-mid.missing.genind <- mid.genind@tab[,colnames(mid.genind@tab) %in% mid.win.missing$index] # these are all the alleles at loci for which pi wasn't calculated
-mid.missing.genind.unique <- mid.missing.genind[, !duplicated(colnames(mid.missing.genind))]
-
-mid.pi <- mid.genind@tab[,!colnames(mid.genind@tab) %in% mid.win.missing$index] # these are all the alelles at loci for which pi WAS calculated
-mid.pi.genind.unique <- mid.pi[, !duplicated(colnames(mid.pi))]
-mid.source.table <- matrix(NA, nrow = 3475, ncol = 4, byrow = TRUE, dimnames = list(colnames(mid.pi.genind.unique), c('0','1','2', 'NA')))
-for (i in 1:ncol(mid.pi.genind.unique)){
-  mid.source.table[i,] <- as.matrix(t(table(factor(mid.pi.genind.unique[,i], levels = 0:2), useNA = 'always')))[1,]
-}
-mid.source.table.pi <- cbind(mid.source.table, mid.win.pi$PI) # cbind pi values with allele counts
-mid.source.table.pi.ordered <- mid.source.table.pi[order(-mid.source.table.pi[,'2']),]
-write.table(mid.source.table.pi.ordered, '~/Desktop/mid.source.table.pi.ordered.txt')
-
-mid.lookup.table <- matrix(NA, nrow = 504, ncol = 4, byrow = TRUE, dimnames = list(colnames(mid.missing.genind.unique), c('0','1','2', 'NA'))) # these are the loci I have to assign a pi value to 
-for (i in 1:ncol(mid.missing.genind.unique)){
-  mid.lookup.table[i,] <- as.matrix(t(table(factor(mid.missing.genind.unique[,i], levels = 0:2), useNA = 'always')))[1,] #0-2 = counts; NA = missing data
-}
-mid.lookup.table.ordered <- mid.lookup.table[order(-mid.lookup.table[,'2']),]
-write.table(mid.lookup.table.ordered, '~/Desktop/mid.lookup.table.ordered.txt')
-
-for (i in 1:ncol(mid.missing.genind.unique)){
-  print(table(mid.missing.genind.unique[,i], useNA = 'ifany'))
-}
-
-# Late
-late.names <- colnames(late.genind@tab) # prep names
-late.names.split <- data.frame(do.call('rbind', strsplit(as.character(late.names),'.',fixed=TRUE)))
-colnames(late.genind@tab) <- late.names.split$X1 # replace SNPX_X.YYY with only SNP_X
-
-late.missing.genind <- late.genind@tab[,colnames(late.genind@tab) %in% late.win.missing$index] # these are all the alleles at loci for which pi wasn't calculated
-late.missing.genind.unique <- late.missing.genind[, !duplicated(colnames(late.missing.genind))]
-
-late.pi <- late.genind@tab[,!colnames(late.genind@tab) %in% late.win.missing$index] # these are all the alelles at loci for which pi WAS calculated
-late.pi.genind.unique <- late.pi[, !duplicated(colnames(late.pi))]
-late.source.table <- matrix(NA, nrow = 3478, ncol = 4, byrow = TRUE, dimnames = list(colnames(late.pi.genind.unique), c('0','1','2', 'NA')))
-for (i in 1:ncol(late.pi.genind.unique)){
-  late.source.table[i,] <- as.matrix(t(table(factor(late.pi.genind.unique[,i], levels = 0:2), useNA = 'always')))[1,]
-}
-late.source.table.pi <- cbind(late.source.table, late.win.pi$PI) # cbind pi values with allele counts
-late.source.table.pi.ordered <- late.source.table.pi[order(-late.source.table.pi[,'2']),]
-
-late.lookup.table <- matrix(NA, nrow = 501, ncol = 4, byrow = TRUE, dimnames = list(colnames(late.missing.genind.unique), c('0','1','2', 'NA'))) # these are the loci I have to assign a pi value to 
-for (i in 1:ncol(late.missing.genind.unique)){
-  late.lookup.table[i,] <- as.matrix(t(table(factor(late.missing.genind.unique[,i], levels = 0:2), useNA = 'always')))[1,] #0-2 = counts; NA = missing data
-}
-late.lookup.table.ordered <- late.lookup.table[order(-late.lookup.table[,'2']),]
-
-for (i in 1:ncol(late.missing.genind.unique)){
-  print(table(late.missing.genind.unique[,i], useNA = 'ifany'))
-}
-
-which(apply(early.genind@tab, 2, function(x) length(unique(x))) == 1) # these are all loci with one unique value
-which(apply(mid.genind@tab, 2, function(x) length(unique(x))) == 1) 
-which(apply(late.genind@tab, 2, function(x) length(unique(x))) == 1)
-
-# Mean pi across 140bp windows
-mean(early.win.pi$PI)
-mean(mid.win.pi$PI)
-mean(late.win.pi$PI)
-
-# add zeros for all the loci that got dropped, then take mean
-early.pi3821 <- c(early.win.pi$PI, rep(0,1731))
-mid.pi3821 <- c(mid.win.pi$PI, rep(0,473))
-late.pi3821 <- c(late.win.pi$PI, rep(0,499))
-
-mean(early.pi3821)
-mean(mid.pi3821)
-mean(late.pi3821)
-
-# bootstrap pi to get CI
-samplemean <- function(x, d) {
-  return(mean(x[d]))
-}
-
-early.boot <- boot(early.pi3821, samplemean, 1000)
-plot(early.boot)
-early.ci <- boot.ci(early.boot, conf = 0.95, type = c('norm', 'basic', 'perc'))
-early.ci$normal # view 95% CIs
-
-mid.boot <- boot(mid.pi3821, samplemean, 1000)
-plot(mid.boot)
-mid.ci <- boot.ci(mid.boot, conf = 0.95, type = c('norm', 'basic', 'perc'))
-mid.ci$normal # view 95% CIs
-
-late.boot <- boot(late.pi3821, samplemean, 1000)
-plot(late.boot)
-late.ci <- boot.ci(late.boot, conf = 0.95, type = c('norm', 'basic', 'perc'))
-late.ci$normal # view 95% CIs
-
-# Plot average pi
-error.bar <- function(x, y, upper, lower=upper, length=0.1,...){
-  arrows(x,y+upper, x, y-lower, angle=90, code=3, length=length, ...)
-} # error bar function
-
-options(scipen = 5)
-barplot(c(early.boot$t0, mid.boot$t0, late.boot$t0), ylim = c(0,0.0006), xlab = 'Larval cohort', ylab = 'Average nucleotide diversity (π)')
-error.bar(c(0.7,1.9,3.1), c(early.boot$t0, mid.boot$t0, late.boot$t0), c(early.ci$normal[3]-early.boot$t0, mid.ci$normal[3]-mid.boot$t0, late.ci$normal[3]-late.boot$t0), c(early.boot$t0-early.ci$normal[2], mid.boot$t0-mid.ci$normal[2], late.boot$t0-late.ci$normal[2]))
-axis(1, at=c(0.7,1.9,3.1), labels = c('1994', '1997', '2008'))
+# early.win.pi <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/newref_alltrimmed140/namess94_95.windowed.pi", header = TRUE) #2090 x 5
+# mid.win.pi <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/newref_alltrimmed140/namess97_98.windowed.pi", header = TRUE) #3348 x 5
+# late.win.pi <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/newref_alltrimmed140/namess08_09.windowed.pi", header = TRUE) #3322 x 5
+# 
+# # This was only for trouble shooting which loci were missing from the pi calculations. Code to acutally calculate pi is below.
+# # Read in CHOM column from SNP.DP3g95nomaf.FIL.FIL.recode.firstsnp.vcf so I can figure out which ones are missing in the site pi files
+# contig_names <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/newref_alltrimmed140/all_contigs3821.txt")
+# contig_names$index <- rownames(contig_names)
+# 
+# early.win.missing <- contig_names[!contig_names[,1] %in% early.win.pi$CHROM,] #names and indices of snps missing for window pi calculations
+# early.win.missing$index <- paste('SNP', early.win.missing$index, sep = '_') # add 'SNP_' to the index number for easier matching with genind object
+# mid.win.missing <- contig_names[!contig_names[,1] %in% mid.win.pi$CHROM,]
+# mid.win.missing$index <- paste('SNP', mid.win.missing$index, sep = '_') # add 'SNP_' to the index number for easier matching with genind object
+# late.win.missing <- contig_names[!contig_names[,1] %in% late.win.pi$CHROM,]
+# late.win.missing$index <- paste('SNP', late.win.missing$index, sep = '_') # add 'SNP_' to the index number for easier matching with genind object
+# 
+# # Subset genind objects to loci for which pi wasn't calculated
+# # Early
+# early.names <- colnames(early.genind@tab) # prep names
+# early.names.split <- data.frame(do.call('rbind', strsplit(as.character(early.names),'.',fixed=TRUE)))
+# colnames(early.genind@tab) <- early.names.split$X1 # replace SNPX_X.YYY with only SNP_X
+# 
+# early.missing.genind <- early.genind@tab[,colnames(early.genind@tab) %in% early.win.missing$index] # these are all the alleles at loci for which pi wasn't calculated
+# early.missing.genind.unique <- early.missing.genind[, !duplicated(colnames(early.missing.genind))]
+# 
+# early.pi <- early.genind@tab[,!colnames(early.genind@tab) %in% early.win.missing$index] # these are all the alelles at loci for which pi WAS calculated
+# early.pi.genind.unique <- early.pi[, !duplicated(colnames(early.pi))]
+# early.source.table <- matrix(NA, nrow = 2153, ncol = 4, byrow = TRUE, dimnames = list(colnames(early.pi.genind.unique), c('0','1','2', 'NA')))
+# for (i in 1:ncol(early.pi.genind.unique)){
+#   early.source.table[i,] <- as.matrix(t(table(factor(early.pi.genind.unique[,i], levels = 0:2), useNA = 'always')))[1,]
+# }
+# early.source.table.pi <- cbind(early.source.table, early.win.pi$PI) # cbind pi values with allele counts
+# early.source.table.pi.ordered <- early.source.table.pi[order(-early.source.table.pi[,'2']),]
+# write.table(early.source.table.pi.ordered, '~/Desktop/early.source.table.pi.ordered.txt')
+# 
+# early.lookup.table <- matrix(NA, nrow = 1826, ncol = 4, byrow = TRUE, dimnames = list(colnames(early.missing.genind.unique), c('0','1','2', 'NA'))) # these are the loci I have to assign a pi value to 
+# for (i in 1:ncol(early.missing.genind.unique)){
+#   early.lookup.table[i,] <- as.matrix(t(table(factor(early.missing.genind.unique[,i], levels = 0:2), useNA = 'always')))[1,] #0-2 = counts; NA = missing data
+# }
+# early.lookup.table.ordered <- early.lookup.table[order(-early.lookup.table[,'2']),]
+# write.table(early.lookup.table.ordered, '~/Desktop/early.lookup.table.ordered.txt')
+# 
+# # Mid
+# mid.names <- colnames(mid.genind@tab) # prep names
+# mid.names.split <- data.frame(do.call('rbind', strsplit(as.character(mid.names),'.',fixed=TRUE)))
+# colnames(mid.genind@tab) <- mid.names.split$X1 # replace SNPX_X.YYY with only SNP_X
+# 
+# mid.missing.genind <- mid.genind@tab[,colnames(mid.genind@tab) %in% mid.win.missing$index] # these are all the alleles at loci for which pi wasn't calculated
+# mid.missing.genind.unique <- mid.missing.genind[, !duplicated(colnames(mid.missing.genind))]
+# 
+# mid.pi <- mid.genind@tab[,!colnames(mid.genind@tab) %in% mid.win.missing$index] # these are all the alelles at loci for which pi WAS calculated
+# mid.pi.genind.unique <- mid.pi[, !duplicated(colnames(mid.pi))]
+# mid.source.table <- matrix(NA, nrow = 3475, ncol = 4, byrow = TRUE, dimnames = list(colnames(mid.pi.genind.unique), c('0','1','2', 'NA')))
+# for (i in 1:ncol(mid.pi.genind.unique)){
+#   mid.source.table[i,] <- as.matrix(t(table(factor(mid.pi.genind.unique[,i], levels = 0:2), useNA = 'always')))[1,]
+# }
+# mid.source.table.pi <- cbind(mid.source.table, mid.win.pi$PI) # cbind pi values with allele counts
+# mid.source.table.pi.ordered <- mid.source.table.pi[order(-mid.source.table.pi[,'2']),]
+# write.table(mid.source.table.pi.ordered, '~/Desktop/mid.source.table.pi.ordered.txt')
+# 
+# mid.lookup.table <- matrix(NA, nrow = 504, ncol = 4, byrow = TRUE, dimnames = list(colnames(mid.missing.genind.unique), c('0','1','2', 'NA'))) # these are the loci I have to assign a pi value to 
+# for (i in 1:ncol(mid.missing.genind.unique)){
+#   mid.lookup.table[i,] <- as.matrix(t(table(factor(mid.missing.genind.unique[,i], levels = 0:2), useNA = 'always')))[1,] #0-2 = counts; NA = missing data
+# }
+# mid.lookup.table.ordered <- mid.lookup.table[order(-mid.lookup.table[,'2']),]
+# write.table(mid.lookup.table.ordered, '~/Desktop/mid.lookup.table.ordered.txt')
+# 
+# for (i in 1:ncol(mid.missing.genind.unique)){
+#   print(table(mid.missing.genind.unique[,i], useNA = 'ifany'))
+# }
+# 
+# # Late
+# late.names <- colnames(late.genind@tab) # prep names
+# late.names.split <- data.frame(do.call('rbind', strsplit(as.character(late.names),'.',fixed=TRUE)))
+# colnames(late.genind@tab) <- late.names.split$X1 # replace SNPX_X.YYY with only SNP_X
+# 
+# late.missing.genind <- late.genind@tab[,colnames(late.genind@tab) %in% late.win.missing$index] # these are all the alleles at loci for which pi wasn't calculated
+# late.missing.genind.unique <- late.missing.genind[, !duplicated(colnames(late.missing.genind))]
+# 
+# late.pi <- late.genind@tab[,!colnames(late.genind@tab) %in% late.win.missing$index] # these are all the alelles at loci for which pi WAS calculated
+# late.pi.genind.unique <- late.pi[, !duplicated(colnames(late.pi))]
+# late.source.table <- matrix(NA, nrow = 3478, ncol = 4, byrow = TRUE, dimnames = list(colnames(late.pi.genind.unique), c('0','1','2', 'NA')))
+# for (i in 1:ncol(late.pi.genind.unique)){
+#   late.source.table[i,] <- as.matrix(t(table(factor(late.pi.genind.unique[,i], levels = 0:2), useNA = 'always')))[1,]
+# }
+# late.source.table.pi <- cbind(late.source.table, late.win.pi$PI) # cbind pi values with allele counts
+# late.source.table.pi.ordered <- late.source.table.pi[order(-late.source.table.pi[,'2']),]
+# 
+# late.lookup.table <- matrix(NA, nrow = 501, ncol = 4, byrow = TRUE, dimnames = list(colnames(late.missing.genind.unique), c('0','1','2', 'NA'))) # these are the loci I have to assign a pi value to 
+# for (i in 1:ncol(late.missing.genind.unique)){
+#   late.lookup.table[i,] <- as.matrix(t(table(factor(late.missing.genind.unique[,i], levels = 0:2), useNA = 'always')))[1,] #0-2 = counts; NA = missing data
+# }
+# late.lookup.table.ordered <- late.lookup.table[order(-late.lookup.table[,'2']),]
+# 
+# for (i in 1:ncol(late.missing.genind.unique)){
+#   print(table(late.missing.genind.unique[,i], useNA = 'ifany'))
+# }
+# 
+# which(apply(early.genind@tab, 2, function(x) length(unique(x))) == 1) # these are all loci with one unique value
+# which(apply(mid.genind@tab, 2, function(x) length(unique(x))) == 1) 
+# which(apply(late.genind@tab, 2, function(x) length(unique(x))) == 1)
+# 
+# # Mean pi across 140bp windows
+# mean(early.win.pi$PI)
+# mean(mid.win.pi$PI)
+# mean(late.win.pi$PI)
+# 
+# # add zeros for all the loci that got dropped, then take mean
+# early.pi3821 <- c(early.win.pi$PI, rep(0,1731))
+# mid.pi3821 <- c(mid.win.pi$PI, rep(0,473))
+# late.pi3821 <- c(late.win.pi$PI, rep(0,499))
+# 
+# mean(early.pi3821)
+# mean(mid.pi3821)
+# mean(late.pi3821)
+# 
+# # bootstrap pi to get CI
+# samplemean <- function(x, d) {
+#   return(mean(x[d]))
+# }
+# 
+# early.boot <- boot(early.pi3821, samplemean, 1000)
+# plot(early.boot)
+# early.ci <- boot.ci(early.boot, conf = 0.95, type = c('norm', 'basic', 'perc'))
+# early.ci$normal # view 95% CIs
+# 
+# mid.boot <- boot(mid.pi3821, samplemean, 1000)
+# plot(mid.boot)
+# mid.ci <- boot.ci(mid.boot, conf = 0.95, type = c('norm', 'basic', 'perc'))
+# mid.ci$normal # view 95% CIs
+# 
+# late.boot <- boot(late.pi3821, samplemean, 1000)
+# plot(late.boot)
+# late.ci <- boot.ci(late.boot, conf = 0.95, type = c('norm', 'basic', 'perc'))
+# late.ci$normal # view 95% CIs
+# 
+# # Plot average pi
+# error.bar <- function(x, y, upper, lower=upper, length=0.1,...){
+#   arrows(x,y+upper, x, y-lower, angle=90, code=3, length=length, ...)
+# } # error bar function
+# 
+# options(scipen = 5)
+# barplot(c(early.boot$t0, mid.boot$t0, late.boot$t0), ylim = c(0,0.0006), xlab = 'Larval cohort', ylab = 'Average nucleotide diversity (π)')
+# error.bar(c(0.7,1.9,3.1), c(early.boot$t0, mid.boot$t0, late.boot$t0), c(early.ci$normal[3]-early.boot$t0, mid.ci$normal[3]-mid.boot$t0, late.ci$normal[3]-late.boot$t0), c(early.boot$t0-early.ci$normal[2], mid.boot$t0-mid.ci$normal[2], late.boot$t0-late.ci$normal[2]))
+# axis(1, at=c(0.7,1.9,3.1), labels = c('1994', '1997', '2008'))
 
 #### Pi calculations for all SNPs on contigs ####
 # Read in data containing all loci across 280 fish
-data <- read.genepop("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/newref_alltrimmed140/SNP.DP3g95nomaf.FIL.FIL.recode.140trimmed.280fish.gen", ncode = 3L)
+data <- read.genepop("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/newref_alltrimmed140/SNP.DP3g95nomafnomac.FIL.FIL.recode.140trimmed.284fish.gen", ncode = 3L)
 
-contig_names <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/newref_alltrimmed140/all_contigs3821.txt")
+nomac_missing <- read.genepop("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/newref_alltrimmed140/SNP.DP3g95nomafnomac.FIL.FIL.recode.140trimmed.284fish.firstsnp.genepop.gen", ncode = 3L) #3905 loci x 284 fish
+rownames(data@tab)==rownames(nomac_missing$tab)
+pop(data) <- nomac_missing@pop
+
+contig_names <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/newref_alltrimmed140/all_contigs3905.txt") #3905 contigs
 contig_names$index <- rownames(contig_names)
 
 # subset the genind object by population, so I can see if loci for which pi wasn't calculated are monomorphic
@@ -391,19 +396,19 @@ mid.genind.all <- popsub(data, sublist = 'PADE_98027L2146') # mid
 late.genind.all <- popsub(data, sublist = 'PADE_09151L2330') # late
 
 # Read in window pi calculations from vcftools on Amarel
-early.win.pi.all <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/newref_alltrimmed140/names94_95_allsites.windowed.pi", header = TRUE) #3685 x 5
-mid.win.pi.all <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/newref_alltrimmed140/names97_98_allsites.windowed.pi", header = TRUE) #3997 x 5
-late.win.pi.all <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/newref_alltrimmed140/names08_09_allsites.windowed.pi", header = TRUE) #3986 x 5
+early.win.pi.all <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/newref_alltrimmed140/names94_95_279PADE_allsites.windowed.pi", header = TRUE) #
+mid.win.pi.all <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/newref_alltrimmed140/names97_98_279PADE_allsites.windowed.pi", header = TRUE) #
+late.win.pi.all <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/newref_alltrimmed140/names08_09_279PADE_allsites.windowed.pi", header = TRUE) #
 
 # VCFtools only outputs pi when there is at least one SNP, so sites that are invariant will get dropped from the file. Which contigs are not in vcftools pi calc file? Spot check in the cohort genind object to make sure that site is invariant
-early.missing <- contig_names$V1[!contig_names$V1 %in% early.win.pi.all$CHROM] #287 contigs missing
-mid.missing <- contig_names$V1[!contig_names$V1 %in% mid.win.pi.all$CHROM] #59
-late.missing <- contig_names$V1[!contig_names$V1 %in% late.win.pi.all$CHROM] #75
+early.missing <- contig_names$V1[!contig_names$V1 %in% early.win.pi.all$CHROM] #323 contigs missing
+mid.missing <- contig_names$V1[!contig_names$V1 %in% mid.win.pi.all$CHROM] #73
+late.missing <- contig_names$V1[!contig_names$V1 %in% late.win.pi.all$CHROM] #138
 
 # Keeping only one entry per contig
-early.win.pi.all.140 <- early.win.pi.all[!duplicated(early.win.pi.all[,1]),] #3534 x 5
-mid.win.pi.all.140 <- mid.win.pi.all[!duplicated(mid.win.pi.all[,1]),] #3762 x 5
-late.win.pi.all.140 <- late.win.pi.all[!duplicated(late.win.pi.all[,1]),] #3746 x 5
+early.win.pi.all.140 <- early.win.pi.all[!duplicated(early.win.pi.all[,1]),] #3582 x 5
+mid.win.pi.all.140 <- mid.win.pi.all[!duplicated(mid.win.pi.all[,1]),] #3832 x 5
+late.win.pi.all.140 <- late.win.pi.all[!duplicated(late.win.pi.all[,1]),] #3767 x 5
 
 # add zeros for all the loci that got dropped, then take mean
 early.pi.all <- c(early.win.pi.all.140$PI, rep(0,length(contig_names$V1)-length(early.win.pi.all.140$CHROM)))

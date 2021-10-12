@@ -13,3 +13,5 @@ dim(vcf_firstsnps) # 3905 x 293 SNP.DP3g95nomafnomac.FIL.FIL.recode.140trimmed.2
 write.table(vcf_firstsnps, "~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/newref_alltrimmed140/SNP.DP3g95nomafmac.FIL.FIL.recode.140trimmed.284fish.firstsnp.vcf", sep="\t", col.names = FALSE, row.names = FALSE)
 
 # Manually removed all the " and replaced with nothing. Add header columns back in too prior to converting to genepop format.
+
+write.table(vcf_firstsnps$V1, "~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/newref_alltrimmed140/all_contigs3905.txt", col.names = FALSE, row.names = FALSE) # list of unique contig names
