@@ -1,4 +1,4 @@
-#### This script plots the genepop file resulting from 02_additional_filters.R in various ways & calculates population genetic statistics for data set composed of 3752 loci across 278 larvae (missing data allowed) ####
+#### This script plots the genepop file resulting from 02_additional_filters.R in various ways & calculates population genetic statistics for data set composed of 3749 loci across 279 larvae (missing data allowed) ####
 
 library(ade4)
 library(adegenet)
@@ -14,6 +14,7 @@ library(RColorBrewer)
 library(plotly)
 library(stringr)
 library(boot)
+library(HWxtest)
 
 # Read in genepop file  with population identifiers for each of the three time periods
 ne_data <- read.genepop("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/newref_alltrimmed140/Ne_279PADE_3749loci_missingallowed.gen", ncode = 3L) # 3749 loci across 279 larvae
@@ -117,11 +118,11 @@ pc_names <- names(which(rowSums(pca1$c1^2) > .005)) # these are the names of the
 
 #######################################################################
 #### Diversity metrics ####
-# Read/build two datasets to see how HWE filter affects diversity metrics
-# Dataset 1
+# Read/build two datasets to see how HWE filter and missing data affects diversity metrics
+# Dataset 1: HW p < 0.001
 ne_data <- read.genepop("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/newref_alltrimmed140/Ne_279PADE_3749loci_missingallowed.gen", ncode = 3L) # 3749 loci across 279 larvae
 
-# Dataset 2
+# Dataset 2: HW p < 0.01
 # Alt dataset to understand how a more stringent HWE filter might affect diversity calculations
 ne_data2 <- read.genepop("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/newref_alltrimmed140/Ne_279PADE_3905oci_missingallowed.gen", ncode = 3L) # 3905 loci across 279 larvae
 
@@ -148,6 +149,9 @@ colnames(ne_data2_hwe) <- cols.hwe.joined
 ne_data2_hwe_genind <- as.genind(ne_data2_hwe) #279 x 3555 loci
 pop(ne_data2_hwe_genind) <- pop(ne_data2)
 
+# Dataset 3: same as dataset 1 (HW p<0.001), plus no missing data
+ne_279fish_1068loci <- read.genepop("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/Ne_279PADE_1068loci_complete.gen", ncode = 3L)
+
 #### Actual diversity metrics ####
 # diversity table using poppr
 poppr(ne_data) # He uses Nei's gene diversity
@@ -158,9 +162,12 @@ Hs(ne_data, ne_data@strata$X1)
 
 Hs(ne_data2_hwe_genind)
 
+Hs(ne_279fish_1068loci)
+
 # Heterozygosity across all individuals
 div <- summary(ne_data)
 div2 <- summary(ne_data2_hwe_genind)
+div3 <- summary(ne_279fish_1068loci)
 
 # Dataset 1
 # subset the genind object by population, so heterozygosity can be calculated by population
@@ -204,8 +211,24 @@ mean(mid.he2$Hexp)
 mean(late.he2$Hobs)
 mean(late.he2$Hexp)
 
+# Dataset 3
+early.genind3 <- popsub(ne_279fish_1068loci, sublist = 'PADE_95011L2524')
+mid.genind3 <- popsub(ne_279fish_1068loci, sublist = 'PADE_98027L2146')
+late.genind3 <- popsub(ne_279fish_1068loci, sublist = 'PADE_09151L2330')
 
-# FIS by cohort
+early.he3 <- summary(early.genind3)
+mid.he3 <- summary(mid.genind3)
+late.he3 <- summary(late.genind3)
+
+mean(early.he3$Hobs)
+mean(early.he3$Hexp)
+mean(mid.he3$Hobs)
+mean(mid.he3$Hexp)
+mean(late.he3$Hobs)
+mean(late.he3$Hexp)
+
+
+#### FIS by cohort ####
 # Dataset 1
 early.hier <- genind2hierfstat(early.genind) # convert to hierfstat format
 early.hier$pop <- as.numeric(early.hier$pop) # convert pop factor to numeric so that bastic.stats function works
@@ -218,6 +241,10 @@ stats.early <- basic.stats(early.hier)
 stats.mid <- basic.stats(mid.hier)
 stats.late <- basic.stats(late.hier)
 
+stats.early$overall # FIS 0.0581
+stats.mid$overall # FIS 0.0543
+stats.late$overall # FIS 0.0415
+
 # Dataset 2
 early.hier2 <- genind2hierfstat(early.genind2) # convert to hierfstat format
 early.hier2$pop <- as.numeric(early.hier2$pop) # convert pop factor to numeric so that bastic.stats function works
@@ -229,6 +256,26 @@ late.hier2$pop <- as.numeric(late.hier2$pop)
 stats.early2 <- basic.stats(early.hier2)
 stats.mid2 <- basic.stats(mid.hier2)
 stats.late2 <- basic.stats(late.hier2)
+
+stats.early2$overall # FIS 0.0437 
+stats.mid2$overall # FIS 0.0390 
+stats.late2$overall # FIS 0.0271 
+
+# Dataset 3
+early.hier3 <- genind2hierfstat(early.genind3) # convert to hierfstat format
+early.hier3$pop <- as.numeric(early.hier3$pop) # convert pop factor to numeric so that bastic.stats function works
+mid.hier3 <- genind2hierfstat(mid.genind3)
+mid.hier3$pop <- as.numeric(mid.hier3$pop)
+late.hier3 <- genind2hierfstat(late.genind3)
+late.hier3$pop <- as.numeric(late.hier3$pop)
+
+stats.early3 <- basic.stats(early.hier3)
+stats.mid3 <- basic.stats(mid.hier3)
+stats.late3 <- basic.stats(late.hier3)
+
+stats.early3$overall # FIS 0.0252
+stats.mid3$overall # FIS 0.0198
+stats.late3$overall # FIS 0.0184
 
 #######################################
 #### Pi calculations for 3821 loci ####
@@ -471,7 +518,7 @@ late.ci$normal # view 95% CIs
 
 
 png(file="~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/newref_alltrimmed140/pi1296_barplots.png",width=6, height=5, res=300, units="in")
-par(mar=c(4.5, 5, 1.5, 1), # panel magin size in "line number" units
+par(mar=c(4.5, 5, 1.5, 1), # panel margin size in "line number" units
     mgp=c(3, 1, 0), # default is c(3,1,0); line number for axis label, tick label, axis
     tcl=-0.5, # size of tick marks as distance INTO figure (negative means pointing outward)
     cex=1, # character expansion factor; keep as 1; if you have a many-panel figure, they start changing the default!
@@ -481,6 +528,10 @@ par(mar=c(4.5, 5, 1.5, 1), # panel magin size in "line number" units
 options(scipen = 5)
 barplot(c(early.boot$t0, mid.boot$t0, late.boot$t0), ylim = c(0,0.005), xlab = 'Larval cohort', ylab = 'Average nucleotide diversity (π)')
 error.bar(c(0.7,1.9,3.1), c(early.boot$t0, mid.boot$t0, late.boot$t0), c(early.ci$normal[3]-early.boot$t0, mid.ci$normal[3]-mid.boot$t0, late.ci$normal[3]-late.boot$t0), c(early.boot$t0-early.ci$normal[2], mid.boot$t0-mid.ci$normal[2], late.boot$t0-late.ci$normal[2]))
+# arrows(c(0.7,1.9,3.1)), c(early.ci$normal[2], mid.ci$normal[2], late.ci$normal[2]), c(early.ci$normal[3], mid.ci$normal[3], late.ci$normal[3]))
+arrows(0.7, early.ci$normal[2], 0.7,early.ci$normal[3], angle = 90, code = 3)
+arrows(1.9, mid.ci$normal[2], 1.9,mid.ci$normal[3], angle = 90, code = 3)
+arrows(3.1, late.ci$normal[2], 3.1,late.ci$normal[3], angle = 90, code = 3)
 axis(1, at=c(0.7,1.9,3.1), labels = c('1994', '1997', '2008'))
 
 dev.off()
