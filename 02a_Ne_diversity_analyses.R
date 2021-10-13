@@ -438,9 +438,9 @@ contig_names <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/
 contig_names$index <- rownames(contig_names)
 
 # subset the genind object by population, so I can see if loci for which pi wasn't calculated are monomorphic
-early.genind.all <- popsub(data, sublist = 'PADE_95011L2524') # early
-mid.genind.all <- popsub(data, sublist = 'PADE_98027L2146') # mid
-late.genind.all <- popsub(data, sublist = 'PADE_09151L2330') # late
+# early.genind.all <- popsub(data, sublist = 'PADE_95011L2524') # early
+# mid.genind.all <- popsub(data, sublist = 'PADE_98027L2146') # mid
+# late.genind.all <- popsub(data, sublist = 'PADE_09151L2330') # late
 
 # Read in window pi calculations from vcftools on Amarel
 early.win.pi.all <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/newref_alltrimmed140/names94_95_279PADE_allsites.windowed.pi", header = TRUE) #
@@ -462,9 +462,9 @@ early.pi.all <- c(early.win.pi.all.140$PI, rep(0,length(contig_names$V1)-length(
 mid.pi.all <- c(mid.win.pi.all.140$PI, rep(0,length(contig_names$V1)-length(mid.win.pi.all.140$CHROM)))
 late.pi.all <- c(late.win.pi.all.140$PI, rep(0,length(contig_names$V1)-length(late.win.pi.all.140$CHROM)))
 
-mean(early.pi.all)
-mean(mid.pi.all)
-mean(late.pi.all)
+mean(early.pi.all) # 0.004569971
+mean(mid.pi.all) # 0.004961619
+mean(late.pi.all) # 0.003989321
 
 # bootstrap pi to get CI
 samplemean <- function(x, d) {
@@ -488,13 +488,13 @@ late.ci$normal # view 95% CIs
 
 # How different is pi if all 140 bp windows are kept?
 # add zeros for all the loci that got dropped, then take mean
-early.pi.all140 <- c(early.win.pi.all$PI, rep(0,length(early.missing))) #3972
-mid.pi.all140 <- c(mid.win.pi.all$PI, rep(0,length(mid.missing))) #4056
-late.pi.all140 <- c(late.win.pi.all$PI, rep(0,length(late.missing))) #4061
+early.pi.all140 <- c(early.win.pi.all$PI, rep(0,length(early.missing))) #4062
+mid.pi.all140 <- c(mid.win.pi.all$PI, rep(0,length(mid.missing))) #4170
+late.pi.all140 <- c(late.win.pi.all$PI, rep(0,length(late.missing))) #4163
 
-mean(early.pi.all140)
-mean(mid.pi.all140)
-mean(late.pi.all140)
+mean(early.pi.all140) #0.00443281
+mean(mid.pi.all140) #0.004689742
+mean(late.pi.all140) #0.003782961
 
 # bootstrap pi to get CI
 samplemean <- function(x, d) {
@@ -516,8 +516,8 @@ plot(late.boot)
 late.ci <- boot.ci(late.boot, conf = 0.95, type = c('norm', 'basic', 'perc'))
 late.ci$normal # view 95% CIs
 
-
-png(file="~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/newref_alltrimmed140/pi1296_barplots.png",width=6, height=5, res=300, units="in")
+#### Plot mean pi/cohort and CIs ####
+png(file="~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/newref_alltrimmed140/pi3905_barplots.png",width=6, height=5, res=300, units="in")
 par(mar=c(4.5, 5, 1.5, 1), # panel margin size in "line number" units
     mgp=c(3, 1, 0), # default is c(3,1,0); line number for axis label, tick label, axis
     tcl=-0.5, # size of tick marks as distance INTO figure (negative means pointing outward)
@@ -526,9 +526,7 @@ par(mar=c(4.5, 5, 1.5, 1), # panel margin size in "line number" units
 )
 
 options(scipen = 5)
-barplot(c(early.boot$t0, mid.boot$t0, late.boot$t0), ylim = c(0,0.005), xlab = 'Larval cohort', ylab = 'Average nucleotide diversity (π)')
-error.bar(c(0.7,1.9,3.1), c(early.boot$t0, mid.boot$t0, late.boot$t0), c(early.ci$normal[3]-early.boot$t0, mid.ci$normal[3]-mid.boot$t0, late.ci$normal[3]-late.boot$t0), c(early.boot$t0-early.ci$normal[2], mid.boot$t0-mid.ci$normal[2], late.boot$t0-late.ci$normal[2]))
-# arrows(c(0.7,1.9,3.1)), c(early.ci$normal[2], mid.ci$normal[2], late.ci$normal[2]), c(early.ci$normal[3], mid.ci$normal[3], late.ci$normal[3]))
+barplot(c(early.boot$t0, mid.boot$t0, late.boot$t0), ylim = c(0,0.0055), xlab = 'Larval cohort', ylab = 'Average nucleotide diversity (π)')
 arrows(0.7, early.ci$normal[2], 0.7,early.ci$normal[3], angle = 90, code = 3)
 arrows(1.9, mid.ci$normal[2], 1.9,mid.ci$normal[3], angle = 90, code = 3)
 arrows(3.1, late.ci$normal[2], 3.1,late.ci$normal[3], angle = 90, code = 3)
@@ -536,58 +534,16 @@ axis(1, at=c(0.7,1.9,3.1), labels = c('1994', '1997', '2008'))
 
 dev.off()
 
+
+
+
+
+
+
+
+
+
 ####################
-# FST
-ne_data
-larvs <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/troubleshooting/newref_alltrimmed140/SNP.DP3g95maf05.FIL.FIL.recode.firstsnp.txt", sep="\t", header = TRUE) # STRUCTURE formatted input
-
-even_indexes<-seq(2,570,2)
-odd_indexes<-seq(1,569,2)
-
-odds <- data.frame(larvs[odd_indexes,]) # 285 x 3135
-odds2 <- odds[,-c(1:2)] # 285 x 3133
-evens <- data.frame(larvs[even_indexes,]) # 285 x 3135
-evens2 <- evens[,-c(1:2)] # 285 x 3133
-
-s <- 1:length(colnames(evens2))
-combo <- data.frame(matrix(nrow = 285, ncol = 3133))
-for (i in s){
-  combo[,i] <-paste(odds2[,i], evens2[,i], sep = '')
-}
-
-dim(combo) # 285 x 3133
-
-combo[] <- lapply(combo, function(x) as.numeric(as.character(x)))# Convert to numeric, gives warning because replaces character 'NANA' with NA
-
-pop.names <- as.numeric(as.character(evens$Pop)) #check to make sure correct number of individuals in each cohort
-
-# Combine the population numbers with the allele data
-combo2 <- cbind(pop.names, combo)
-dim(combo2) # 285 x 3134
-
-pairwise.WCfst(combo2,diploid=TRUE) 
-genet.dist(combo2, method = 'WC84')
-
-options("scipen"=100, "digits"=4) # forces output to not be in scientific notation
-
-# Tajima's D
-
-# Nucleotide diversity
-early <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/troubleshooting/newref_alltrimmed140/names94_95_pi.sites.pi", header = TRUE)
-mid <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/troubleshooting/newref_alltrimmed140/names97_98_pi.sites.pi", header = TRUE)
-late <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/troubleshooting/newref_alltrimmed140/names08_09_pi.sites.pi", header = TRUE)
-
-contigs <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/troubleshooting/newref_alltrimmed140/contig_names.txt", header = FALSE)
-
-early.excluded <- contigs[!contigs[,1] %in% as.character(early$CHROM),] # contigs/SNPs for which site-pi was not calculated
-mid.excluded <- contigs[!contigs[,1] %in% as.character(mid$CHROM),]
-late.excluded <- contigs[!contigs[,1] %in% as.character(late$CHROM),]
-
-
-hist(early$PI, col=rgb(1,0,0,0.5), main = "", xlab = "Log per-site pi (π)", ylim = c(0,900))
-hist(mid$PI, add = TRUE, col=rgb(0,0,1,0.5))
-hist(late$PI, add = TRUE, col=rgb(0,1,0,0.5))
-legend('topright', legend = c('1994-1995', '1997-1998', '2008-2009'), col = c(rgb(1,0,0,0.5), rgb(0,0,1,0.5), rgb(0,1,0,0.5)), pch = 15, cex = 0.8, title = 'Cohort', text.font = 1)
 
 #### Sort fish based on site of capture for pi calculation sensitivity analysis ####
 ordered_meta_sub2 # from top of script
