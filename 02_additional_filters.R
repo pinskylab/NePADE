@@ -12,9 +12,15 @@ allele.matrix <- data.frame(nomac_missing@tab[,-4881]) #284 x 8058 # remove one 
 num.homo.sites <- vector() # count of the number of homozygous loci in a given individual
 num.hetero.sites <- vector() # counts the number of alleles with a count of 1 in a given individual (heterozygous). Divide by 2 to get number of heterozygous loci.
 
+# Make sure number of 0's, 1's, 2's and NAs add up to the number of alleles (8058 alleles)
+allele.counts.sums <- vector()
+for (g in 1:nrow(allele.matrix)){
+        allele.counts.sums[g] <- sum(table(as.numeric(allele.matrix[g,]), useNA = 'always'))
+}
+
 # First calculate the number of homozygous and heterozygous sites within each individual
 for (i in 1:nrow(allele.matrix)) {
-        num.homo.sites[i] <- length(which(allele.matrix[i,] == 2))
+        num.homo.sites[i] <- length(which(allele.matrix[i,] == 2)) # best to use a count of 2 as homozygous (rather than 0) because some loci have more than 2 alleles. Because of this, the number of 2's in an individual will not equal the number of 0's, and number of 0's > number of 2's
         num.hetero.sites[i] <- length(which(allele.matrix[i,] == 1))/2
 }
 
