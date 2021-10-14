@@ -1,9 +1,9 @@
 #!/bin/bash
 
-for file in /home/$USER/Ne278_1070loci/model6/slurm-out/*/model6/model6.bestlhoods
+for file in /home/$USER/Ne279_1068loci/model1/slurm-out/*/model1/model1.bestlhoods
 do
 sed '1d' "$file" > "$file.trimmed"
 
-cat /home/$USER/Ne278_1070loci/model6/slurm-out/*/model6/model6.bestlhoods.trimmed > /home/$USER/Ne278_1070loci/model6/model6.bestlhoods
+cat /home/$USER/Ne279_1068loci/model1/slurm-out/*/model1/model1.bestlhoods.trimmed > /home/$USER/Ne279_1068loci/model1/model1.bestlhoods
 
 done
