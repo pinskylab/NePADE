@@ -1,5 +1,5 @@
 #### Fsc26 has been run 50 times and the maximum likelihoods and associated parameters have been concatenated ####
-# Using a SFS that summarizes 278 larvae across three cohorts, 1070 loci and no MAF or MAC filter, 6 putative sibs/contamination/high FIS removed, HW filter applied to SNPs
+# Using a SFS that summarizes 279 larvae across three cohorts, 1068 loci and no MAF or MAC filter, fish with individual heterozygosity greater than 3SD above mean removed (5 fish), HW filter applied to SNPs
 # Read in the estimated parameters for each model
 mod1 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/model_results/model1.bestlhoods.summary.txt", header = TRUE) # constant population size for comparision to all the bottlenecks, but only estimating NPOP08
 mod2 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/model_results/model2.bestlhoods.summary.txt", header = TRUE)
@@ -12,47 +12,47 @@ mod6 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis
 # Model 1, no bottleneck
 mod1_ml <- max(mod1$MaxEstLhood)
 mod1[which(mod1$MaxEstLhood == max(mod1$MaxEstLhood)),]
-mod1[33,]$MaxEstLhood - mod1[33,]$MaxObsLhood
+mod1[4,]$MaxEstLhood - mod1[4,]$MaxObsLhood
 mod1_param_no <- 1 #should be hard-coded because complex parameters are sometimes reported. Number of parameters can be found in .est files
 
 # Model 2, instantaneous bottleneck
 mod2_ml <- max(mod2$MaxEstLhood)
 mod2[which(mod2$MaxEstLhood == max(mod2$MaxEstLhood)),]
-mod2[6,]$MaxEstLhood - mod2[6,]$MaxObsLhood # difference between MaxEst and MaxObs
+mod2[17,]$MaxEstLhood - mod2[17,]$MaxObsLhood # difference between MaxEst and MaxObs
 mod2_param_no <- 5
 
 # Model 3, exponential change after bottleneck
 mod3_ml <- max(mod3$MaxEstLhood)
 mod3[which(mod3$MaxEstLhood == max(mod3$MaxEstLhood)),]
-mod3[49,]$MaxEstLhood - mod3[49,]$MaxObsLhood # difference between MaxEst and MaxObs
+mod3[8,]$MaxEstLhood - mod3[8,]$MaxObsLhood # difference between MaxEst and MaxObs
 mod3_param_no <- 5
 
 # Model 4, exponential growth, then bottleneck, then instantaneous recovery
 mod4_ml <- max(mod4$MaxEstLhood)
 mod4[which(mod4$MaxEstLhood == max(mod4$MaxEstLhood)),]
-mod4[39,]$MaxEstLhood - mod4[39,]$MaxObsLhood # difference between MaxEst and MaxObs
+mod4[49,]$MaxEstLhood - mod4[49,]$MaxObsLhood # difference between MaxEst and MaxObs
 mod4_param_no <- 6
 
 # Model 5, two bottlenecks
 mod5_ml <- max(mod5$MaxEstLhood)
 mod5[which(mod5$MaxEstLhood == max(mod5$MaxEstLhood)),]
-mod5[40,]$MaxEstLhood - mod5[40,]$MaxObsLhood # difference between MaxEst and MaxObs
+mod5[27,]$MaxEstLhood - mod5[27,]$MaxObsLhood # difference between MaxEst and MaxObs
 mod5_param_no <- 9
 
 # Model 6, exponential change in pop size before and after bottleneck
 mod6_ml <- max(mod6$MaxEstLhood)
 mod6[which(mod6$MaxEstLhood == max(mod6$MaxEstLhood)),]
-mod6[18,]$MaxEstLhood - mod6[18,]$MaxObsLhood
+mod6[48,]$MaxEstLhood - mod6[48,]$MaxObsLhood
 mod6_param_no <- 6
 
 #### Plot ML for parameters over fsc iterations ####
 plot(mod6$MaxEstLhood, ylab = 'Maximum likelihood', xlab = 'Iteration')
 lines(mod6$MaxEstLhood)
-points(18,-3081.606, col = 'tomato', pch = 19)
+points(48,-3078.262, col = 'tomato', pch = 19)
 
 plot(mod6)
 
-mod6$ML_diff <- mod6$MaxEstLhood - (-3081.606)
+mod6$ML_diff <- mod6$MaxEstLhood - (-3078.262)
 plot(mod6$ML_diff)
 lines(mod6$ML_diff)
 barplot(mod6$ML_diff, xlab = 'Iteration', ylab = "Difference from ML")
