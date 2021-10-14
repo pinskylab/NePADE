@@ -5,7 +5,7 @@ NPOP08
 0
 0
 //Sample sizes
-298
+300
 206 5.5
 52 7
 //Growth rates	: negative growth implies population expansion
