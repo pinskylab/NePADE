@@ -61,36 +61,27 @@ Contains output from Bayescan looking for temporal outlier loci in dataset used 
 • **Ne_genotyping_results.R** script for calculating coverage statistics
 
 ### **demo_modeling** directory
-This directory contains the input (including the observed multiSFS of 1196 SNPs across 280 larvae) and output files from demographic modeling using the fastsimcoal program. Additional scripts used for data preparation and the script to submit the job to a slurm scheduler on a shared computing cluster is also provided.
+This directory contains the input and output files from demographic modeling using the fastsimcoal program. Additional scripts used for data preparation and the script to submit the job to a slurm scheduler on a shared computing cluster are also provided.
 
    • **Ne_boxplots.png** shows ML point estimates and CIs for the best model  
-   • **Ne_observedSFS.R** plots observed SFS and expected SFSs from demographic modeling  
    • **all_demo_scenarios.pdf** figure of tested demographic scenarios  
    • **model6_lineplot_a_and_b.png** shows how point estimates and CIs of Ne from the fastsimcoal demographic modeling change over time for Model 6  
    • **obs_sfs_polyonly.png** observed SFS for each larval cohort  
-   • **obs_sfs_polyonly_nomafnomac.png** observed SFS for each larval cohort resulting from no --mac filter    
-   • **obs_sfs_polyonly_nosibs.png** observed SFS for each larval cohort with one individual from putative sibling pairs removed
 
 ``` fsc_models/ ```
-Contains the .est and .tpl files necessary to run each of the six models for the main analyses in fastsimcoal. Also contains the observed MSFS whose name must match the .est and .tpl file names when running fastsimcoal. Example slurm scripts for model selection and CI estimation, as well as helper scripts for concatenating fsc .bestlhoods files when fsc is run many times. These files can serve as templates for running the sensitivity analyses for dataset resulting from no --mac filter.
+Contains the .est and .tpl files necessary to run each of the six models for the main analyses in fastsimcoal. The observed MSFS whose name must match the .est and .tpl file names when running fastsimcoal is in the ``` data/ ``` directory. Example slurm scripts for model selection and CI estimation, as well as helper scripts for concatenating fsc .bestlhoods files when fsc is run many times.
 
    • **cat_bestlhoods.sh** an example of how to concatenate fsc results for downstream model selection   
    • **cat_cis.sh** an example of how to concatenate fsc results when fsc is run on many simulated SFSs  
-   • **cat_max_summary.sh** an example of how to select the ML run for many simulated SFSs and concatenate for CI estimation  
-   • **model6_MSFS.obs** the observed multiSFS    
+   • **cat_max_summary.sh** an example of how to select the ML run for many simulated SFSs and concatenate for CI estimation   
    • **run_fsc_Ne_CI_singlethread.sh** an example slurm script for running fsc on many simulated SFSs for CI estimation    
    • **run_model6_singlethread.sh** an example of how to submit a fastsimcoal run to a shared computing cluster with each job on a single thread (this is faster than multithreading)  
    • **run_model6_multithread.sh** an example of how to submit a fastsimcoal run to a shared computing cluster (this can be slow)   
+   • **run_model_Ne279_1068loci.sh** example slurm script for submitting fsc jobs based on the 1068 loci across 279 dataset
    • **run_sbatch_Ne.sh** helper script to submit a script to SLURM many times
 
 ``` model_results/ ```
 Contains the fastsimcoal results for each model and the CIs for the best model resulting from the main demographic modeling analyses.
-
-``` nomac_models/ ```
-Contains the fastsimcoal results for each model and the CIs for the best model resulting from sensitivity analyses using the dataset when no --mac filter was applied.
-
-``` nosibs_models/ ```
-Contains the fastsimcoal results for each model resulting from sensitivity analyses when putative sibs were removed from the dataset used in the main analyses.
 
 ``` power/ ```
 Contains a script to read in and plot the results of simulations using pseudo-observed datasets. Also contains the model fits for each of the PODs simulated using the ML parameters of each model. These simulations were based off of the dataset used in the main analyses.
