@@ -4,35 +4,51 @@ This repository contains data, scripts and figures for a project investigating h
 
 ### Main analyses
 
+``` bayescan_output/ ```
+Contains output from Bayescan looking for temporal outlier loci in dataset used for demographic modeling (1068 loci across 279 summer flounder)
+
+• **Ne279_1068loci.arp**: Arlequin input file for dataset of 1068 loci across 279 summer flounder
+
+• **Ne279_1068loci_MAFpop0.obs**: msfs for 2008 cohort
+
+• **Ne279_1068loci_MAFpop1.obs**: msfs for 1997 cohort
+
+• **Ne279_1068loci_MAFpop2.obs**: msfs for 1994 cohort
+
+• **Ne279_1068loci_MSFS.obs**: multi msfs used for demographic modeling in fastsimcoal
+
+• **Ne_279PADE_1068loci_complete.gen**: genepop file containing subset of full dataset with no missing data, 1068 SNPs across 279 larvae, used for demographic modeling
+
+• **Ne_279PADE_1068loci_complete_correctnot.txt**: same as **Ne_279PADE_1068loci_complete.gen**, but as a text file, used to generate .arp file for Arlequin
+
+• **Ne_279PADE_3749loci_missingallowed.gen**: genepop file after appling HW filter based on **Ne_HWP_test.txt**
+
+• **Ne_HWP_test.txt**: results of HW test in **02_additional_filters.R**
+
 • **PADE_stock_assessment16.xlsx**: number of fish at age, estimated fishing mortality at age, natural mortality at age & proportion mature at age for 1982-2015
 
-• **Ne280_1196loci_nomaf_MAFpop0.obs**: msfs for 2008 cohort
+• **SNP.DP3g95nomaf.FIL.FIL.recode.140trimmed.284fish.gen**: genepop file containing all available SNPs on a contig
 
-• **Ne280_1196loci_nomaf_MAFpop1.obs**: msfs for 1997 cohort
+• **SNP.DP3g95nomafnomac.FIL.FIL.recode.140trimmed.284fish.vcf**: vcf files containing all available SNPs on a contig
 
-• **Ne280_1196loci_nomaf_MAFpop2.obs**: msfs for 1994 cohort
+• **SNP.DP3g95nomafnomac.FIL.FIL.recode.140trimmed.284fish.firstsnp.genepop.gen**: genepop file generated from SNP.DP3g95nomafnomac.FIL.FIL.recode.140trimmed.284fish.gen by retaining only first SNP on a contig, full datset is composed of 3905 SNPs for 284 larvae
 
-• **SNP.DP3g95nomaf.FIL.FIL.recode.140trimmed.280fish.gen**: genepop file containing all available SNPs on a contig
-
-• **SNP.DP3g95nomaf.FIL.FIL.recode.140trimmed.280fish.vcf**: vcf files containing all available SNPs on a contig
-
-• **SNP.DP3g95nomaf.FIL.FIL.recode.140trimmed.280fish.firstsnp.genepop.gen**: genepop file generated from SNP.DP3g95nomaf.FIL.FIL.recode.140trimmed.280fish.gen by retaining only first SNP on a contig, full datset is composed of 3821 SNPs for 280 larvae
-
-• **Ne_PADE_1196loci_complete.gen**: genepop file containing subset of full dataset with no missing data, 1196 SNPs across 280 larvae, used for demographic modeling
-
-### Sensitivity analyses: no putative siblings or half-siblings
-
-• **Ne276_1196loci_nomaf_nosibs.arp**: input file for Arlequin to generate multi-SFS for demographic modeling, putative siblings and half-siblings removed
-
-### Sensitivity analyses: no minor allele count (--mac) filter
-
-• **Ne_PADE_1084loci_complete.gen**: genepop file containing subset of full dataset with no missing data, 1084 SNPs across 284 larvae, used for sensitivity analysis of demographic modeling
-
-• **SNP.DP3g95nomafnomac.FIL.FIL.recode.140trimmed.284fish.firstsnp.genepop.gen**: genepop file containing full dataset of 3905 SNPs for 284 larvae
 
 ## Scripts & Results
 
-• **best_lhoods.R** script for determining maximum-likelihood of each demographic scenario, calculating AIC and plotting demographic modeling results
+• **01_keepfirstsnponly.R**: Reads in full vcf and writes a new vcf containing only the first SNP on a contig
+
+• **02_additional_filters.R**: Removes several fish based on high individual heterozygosity. Then removes loci not in HWE.
+
+• **02a_Ne_diversity_analyses.R**: script for plotting PCAs and calculating diversity statistics
+
+• **03_prepNe_observedSFS.R**: additional filtering steps necessary for demographic modeling
+
+• **03a_bayescan_plot_R.R**: plots output from Bayescan analysis looking for temporal outlier loci
+
+• **03b_plot_observedSFS.R**: plots the observed msfs for each larval cohort
+
+• **04_best_lhoods.R** script for determining maximum-likelihood of each demographic scenario, calculating AIC and plotting demographic modeling results
 
 • **demo_modeling_allele_counts.R**: script to determine the allele counts of all alleles used in demographic modeling (main analyses & no --mac filter sensitivity analyses)
 
@@ -41,8 +57,6 @@ This repository contains data, scripts and figures for a project investigating h
 • **PADE_stock_assessment16.R** script imports data from 2016 summer flounder stock assessment, calculates the number of potential breeders at each age and year and plots census and breeding abundance over time
 
 • **Ne.R** script for figuring out which summer flounder to resequence
-
-• **Ne_analyses.R** exploratory script for plotting PCAs and calculating diversity statistics
 
 • **Ne_genotyping_results.R** script for calculating coverage statistics
 
