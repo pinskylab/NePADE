@@ -35,6 +35,9 @@ Contains output from Bayescan looking for temporal outlier loci in dataset used 
 
 
 ## Scripts & Results
+### The numbered scripts indicate the order of their usage for the demographic analysis in fastsimcoal
+
+• **00_Ne_genotyping_results.R** script for calculating coverage statistics
 
 • **01_keepfirstsnponly.R**: Reads in full vcf and writes a new vcf containing only the first SNP on a contig
 
@@ -57,8 +60,6 @@ Contains output from Bayescan looking for temporal outlier loci in dataset used 
 • **PADE_stock_assessment16.R** script imports data from 2016 summer flounder stock assessment, calculates the number of potential breeders at each age and year and plots census and breeding abundance over time
 
 • **Ne.R** script for figuring out which summer flounder to resequence
-
-• **Ne_genotyping_results.R** script for calculating coverage statistics
 
 ### **demo_modeling** directory
 This directory contains the input and output files from demographic modeling using the fastsimcoal program. Additional scripts used for data preparation and the script to submit the job to a slurm scheduler on a shared computing cluster are also provided.
