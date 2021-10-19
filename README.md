@@ -78,7 +78,7 @@ Contains the .est and .tpl files necessary to run each of the six models for the
    • **run_fsc_Ne_CI_singlethread.sh** an example slurm script for running fsc on many simulated SFSs for CI estimation    
    • **run_model6_singlethread.sh** an example of how to submit a fastsimcoal run to a shared computing cluster with each job on a single thread (this is faster than multithreading)  
    • **run_model6_multithread.sh** an example of how to submit a fastsimcoal run to a shared computing cluster (this can be slow)   
-   • **run_model_Ne279_1068loci.sh** example slurm script for submitting fsc jobs based on the 1068 loci across 279 dataset
+   • **run_model_Ne279_1068loci.sh** example slurm script for submitting fsc jobs based on the 1068 loci across 279 dataset   
    • **run_sbatch_Ne.sh** helper script to submit a script to SLURM many times
 
 ``` model_results/ ```
