@@ -7,6 +7,7 @@ mod3 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis
 mod4 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/model_results/model4.bestlhoods.summary.txt", header = TRUE)
 mod5 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/model_results/model5.bestlhoods.summary.txt", header = TRUE)
 mod6 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/model_results/model6.bestlhoods.summary.txt", header = TRUE)
+mod7 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/model_results/model7.bestlhoods.summary.txt", header = TRUE)
 
 # Now find the ML run for each model
 # Model 1, no bottleneck
@@ -27,10 +28,10 @@ mod3[which(mod3$MaxEstLhood == max(mod3$MaxEstLhood)),]
 mod3[8,]$MaxEstLhood - mod3[8,]$MaxObsLhood # difference between MaxEst and MaxObs
 mod3_param_no <- 5
 
-# Model 4, exponential growth, then bottleneck, then instantaneous recovery
+# Model 4, exponential change in population size, then bottleneck, then instantaneous recovery
 mod4_ml <- max(mod4$MaxEstLhood)
 mod4[which(mod4$MaxEstLhood == max(mod4$MaxEstLhood)),]
-mod4[49,]$MaxEstLhood - mod4[49,]$MaxObsLhood # difference between MaxEst and MaxObs
+ddmod4[49,]$MaxEstLhood - mod4[49,]$MaxObsLhood # difference between MaxEst and MaxObs
 mod4_param_no <- 6
 
 # Model 5, two bottlenecks
@@ -44,6 +45,12 @@ mod6_ml <- max(mod6$MaxEstLhood)
 mod6[which(mod6$MaxEstLhood == max(mod6$MaxEstLhood)),]
 mod6[48,]$MaxEstLhood - mod6[48,]$MaxObsLhood
 mod6_param_no <- 6
+
+# Model 7, ancestral change in population size up to carrying capacity
+mod7_ml <- max(mod7$MaxEstLhood)
+mod7[which(mod7$MaxEstLhood == max(mod7$MaxEstLhood)),]
+mod7[22,]$MaxEstLhood - mod6[22,]$MaxObsLhood
+mod7_param_no <- 3
 
 #### Plot ML for parameters over fsc iterations ####
 plot(mod6$MaxEstLhood, ylab = 'Maximum likelihood', xlab = 'Iteration')
@@ -63,9 +70,9 @@ barplot(mod6$ML_diff, xlab = 'Iteration', ylab = "Difference from ML")
 # b <- c(4, 6, 7, 7) # number of estimated parameters
 
 # Data from my models
-a <- c(mod1_ml, mod2_ml, mod3_ml, mod4_ml, mod5_ml, mod6_ml) # MaxEstLhood. These are log10 likelihoods
-aa <- c(mod1_ml, mod2_ml, mod3_ml, mod4_ml, mod5_ml, mod6_ml)*2.303 # Convert from log10 to ln
-b <- c(mod1_param_no, mod2_param_no, mod3_param_no, mod4_param_no, mod5_param_no, mod6_param_no) # number of estimated parameters
+a <- c(mod1_ml, mod2_ml, mod3_ml, mod4_ml, mod5_ml, mod6_ml, mod7_ml) # MaxEstLhood. These are log10 likelihoods
+aa <- c(mod1_ml, mod2_ml, mod3_ml, mod4_ml, mod5_ml, mod6_ml, mod7_ml)*2.303 # Convert from log10 to ln
+b <- c(mod1_param_no, mod2_param_no, mod3_param_no, mod4_param_no, mod5_param_no, mod6_param_no, mod7_param_no) # number of estimated parameters
 
 aic <- 2*b-2*aa
 
