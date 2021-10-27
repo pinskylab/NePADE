@@ -1,9 +1,5 @@
 #### This script is similar to 03b_plot_observedSFS.R, but compares the observed SFSs to those simulated under the best-fit models ####
 
-library(ade4)
-library(adegenet)
-library(hierfstat)
-library(pegas)
 library(data.table)
 library(wesanderson)
 
