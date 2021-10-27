@@ -18,9 +18,9 @@
 # standard output is saved in a file:  slurm-$SLURM_JOBID.out 
 ############################################################# 
 
-mkdir -p /home/$USER/boot_model6/slurm-out/$SLURM_JOBID
-cp /home/$USER/fsc26_linux64/fsc26 /home/$USER/boot_model6/model6_maxL.par /home/$USER/boot_model6/slurm-out/$SLURM_JOBID
-cd       /home/$USER/boot_model6/slurm-out/$SLURM_JOBID
+mkdir -p /home/$USER/boot_mod6_Ne279_1068loci/slurm-out/$SLURM_JOBID
+cp /home/$USER/fsc26_linux64/fsc26 /home/$USER/boot_mod6_Ne279_1068loci/model6_maxL.par /home/$USER/boot_mod6_Ne279_1068loci/slurm-out/$SLURM_JOBID
+cd       /home/$USER/boot_mod6_Ne279_1068loci/slurm-out/$SLURM_JOBID
 
 #Create a personal dirctory on the node scratch disk if needed.
 #mkdir -p /mnt/scratch/$USER/$SLURM_JOBID
@@ -37,8 +37,8 @@ echo $hostname
 # obtain the environment variables 
 # this is useful for reference and troubleshooting issues.
 
-env >               /home/$USER/boot_model6/slurm-out/$SLURM_JOBID/slurm-$SLURM_JOBID-env-all.out
-env | grep SLURM >  /home/$USER/boot_model6/slurm-out/$SLURM_JOBID/slurm-$SLURM_JOBID-env-SLURM.out
+env >               /home/$USER/boot_mod6_Ne279_1068loci/slurm-out/$SLURM_JOBID/slurm-$SLURM_JOBID-env-all.out
+env | grep SLURM >  /home/$USER/boot_mod6_Ne279_1068loci/slurm-out/$SLURM_JOBID/slurm-$SLURM_JOBID-env-SLURM.out
 
 
 # start time
@@ -46,7 +46,7 @@ date
 
 # start the simulation
 
-srun ./fsc26 -i model6_maxL.par -n 100 -m -j -s1196 -x -I -0 > /home/$USER/boot_model6/slurm-out/$SLURM_JOBID/$SLURM_JOBID-fastsimcoal26.$SLURM_NNODES.$SLURM_NODELIST.$date.a.txt
+srun ./fsc26 -i model6_maxL.par -n 100 -m -j -s1068 -x -I -0 > /home/$USER/boot_mod6_Ne279_1068loci/slurm-out/$SLURM_JOBID/$SLURM_JOBID-fastsimcoal26.$SLURM_NNODES.$SLURM_NODELIST.$date.a.txt
 
 #cp -R /mnt/scratch/$USER/$SLURM_JOBID/* /home/$USER/slurm-out/$SLURM_JOBID/
 
