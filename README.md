@@ -53,7 +53,7 @@ Contains output from Bayescan looking for temporal outlier loci in dataset used 
 
 • **04_best_lhoods.R** script for determining maximum-likelihood of each demographic scenario, calculating AIC and plotting demographic modeling results
 
-• **demo_modeling_allele_counts.R**: script to determine the allele counts of all alleles used in demographic modeling (main analyses & no --mac filter sensitivity analyses)
+• **04a_plot_SFScomparisions.R**: script to plot the observed msfs for each larval cohort against the top three demographic models
 
 • **generation_length.R** script calculates generation length for females and males over time using the 2016 stock assessment data, age-length relationships from Penttila et al. (1989) and age-fecundity curves from Morse (1981)
 
@@ -70,14 +70,12 @@ This directory contains the input and output files from demographic modeling usi
    • **obs_sfs_polyonly.png** observed SFS for each larval cohort  
 
 ``` fsc_models/ ```
-Contains the .est and .tpl files necessary to run each of the six models for the main analyses in fastsimcoal. The observed MSFS whose name must match the .est and .tpl file names when running fastsimcoal is in the ``` data/ ``` directory. Example slurm scripts for model selection and CI estimation, as well as helper scripts for concatenating fsc .bestlhoods files when fsc is run many times.
+Contains the .est and .tpl files necessary to run each of the demographic models for the main analyses in fastsimcoal. The observed MSFS whose name must match the .est and .tpl file names when running fastsimcoal is in the ``` data/ ``` directory. Example slurm scripts for model selection and CI estimation, as well as helper scripts for concatenating fsc .bestlhoods files when fsc is run many times.
 
    • **cat_bestlhoods.sh** an example of how to concatenate fsc results for downstream model selection   
-   • **cat_cis.sh** an example of how to concatenate fsc results when fsc is run on many simulated SFSs  
-   • **cat_max_summary.sh** an example of how to select the ML run for many simulated SFSs and concatenate for CI estimation   
-   • **run_fsc_Ne_CI_singlethread.sh** an example slurm script for running fsc on many simulated SFSs for CI estimation    
-   • **run_model6_singlethread.sh** an example of how to submit a fastsimcoal run to a shared computing cluster with each job on a single thread (this is faster than multithreading)  
-   • **run_model6_multithread.sh** an example of how to submit a fastsimcoal run to a shared computing cluster (this can be slow)   
+   • **cat_cis.sh** an example of how to concatenate fsc results when fsc is run on many simulated SFSs (this was done for CI estimation)  
+   • **cat_max_summary.sh** an example of how to select the ML run from many simulated SFSs and concatenate for CI estimation   
+   • **run_fsc_Ne_CI_singlethread.sh** an example slurm script for running a fsc job array on many simulated SFSs for CI estimation    
    • **run_model_Ne279_1068loci.sh** example slurm script for submitting fsc jobs based on the 1068 loci across 279 dataset   
    • **run_sbatch_Ne.sh** helper script to submit a script to SLURM many times
 
