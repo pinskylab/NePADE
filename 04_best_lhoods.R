@@ -31,7 +31,7 @@ mod3_param_no <- 5
 # Model 4, exponential change in population size, then bottleneck, then instantaneous recovery
 mod4_ml <- max(mod4$MaxEstLhood)
 mod4[which(mod4$MaxEstLhood == max(mod4$MaxEstLhood)),]
-ddmod4[49,]$MaxEstLhood - mod4[49,]$MaxObsLhood # difference between MaxEst and MaxObs
+mod4[49,]$MaxEstLhood - mod4[49,]$MaxObsLhood # difference between MaxEst and MaxObs
 mod4_param_no <- 6
 
 # Model 5, two bottlenecks
