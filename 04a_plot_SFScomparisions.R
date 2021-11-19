@@ -147,3 +147,52 @@ barplot(mid, legend = c('Model 4', 'Model 6', 'Model 7', 'Observed'), beside = T
 barplot(late, legend = c('Model 4', 'Model 6', 'Model 7', 'Observed'), beside = TRUE, xlab = 'Number of minor alleles', ylab = 'Proportion of polymorphic SNPs', main = '2008-2009 cohort', xlim = c(0, 133), col = col.palette[c(1:3,5)], ylim = c(0,0.20), las = 1)
 
 dev.off()
+
+#### Plots averaged SFSs simulated using ML parameters from Model 6 (best model) across sampling year/cohort
+# Need to first read in the simulated SFSs for Model 6 and calculate the proportion of polymorphic SNPs for each bin (starts at line 63)
+col.palette <- wes_palette("FantasticFox1", 5, type = "discrete")
+palette(col.palette)
+
+png(file="~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/exp_sfs_model6.png", width=11, height=3, res=300, units="in")
+
+par(
+    mar=c(4.5, 5, 1.5, 1), # panel margin size in "line number" units
+    mgp=c(3, 1, 0), # default is c(3,1,0); line number for axis label, tick label, axis
+    tcl=-0.5, # size of tick marks as distance INTO figure (negative means pointing outward)
+    cex=1, # character expansion factor; keep as 1; if you have a many-panel figure, they start changing the default!
+    ps=12
+)
+
+barplot(m, legend = c('1994-1995 cohort', '1997-1998 cohort','2008-2009 cohort'), beside = TRUE, xlab = 'Number of minor alleles', ylab = 'Proportion of SNPs', main = 'Averaged SFS based on Model 6 ML parameter values', xlim = c(0, 105), col = col.palette[1:3])
+
+dev.off()
+
+
+
+
+#### Trying stuff out ####
+
+# Reading in individual population SFSs simulated for Model 6 (exponential change in population size before and after bottleneck)
+pop08.mod6 <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/sim_sfs/model 6/mod6_pop0_sfs_summary.txt') #100x301
+pop97.mod6 <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/sim_sfs/model 6/mod6_pop1_sfs_summary.txt') #100x207
+pop94.mod6 <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/sim_sfs/model 6/mod6_pop2_sfs_summary.txt') #100x53
+
+# Take means across each bin of # of minor alleles
+pop08.mod6.avg <- colMeans(pop08.mod6)
+pop97.mod6.avg <- colMeans(pop97.mod6)
+pop94.mod6.avg <- colMeans(pop94.mod6)
+
+n <- max(length(pop08.mod6.avg), length(pop97.mod6.avg), length(pop94.mod6.avg)) # determines max vector length of only polymorphic sites (300) and then makes all shorter vectors 300 for easier plotting
+# pop08.mod6.avg <- as.numeric(pop08.mod6.avg[-1])
+length(pop97.mod6.avg) <- n # adds NAs to the end of the vector
+length(pop94.mod6.avg) <- n # adds NAs to the end of the vector
+
+pop97.mod6.avg[is.na(pop97.mod6.avg)] <- 0 # Replaces NAs with 0
+pop94.mod6.avg[is.na(pop94.mod6.avg)] <- 0
+
+m <- rbind(pop94.mod6.avg, pop97.mod6.avg, pop08.mod6.avg)
+colnames(m) <- 0:300
+
+barplot(m[,-1], legend = c('1994-1995 cohort', '1997-1998 cohort','2008-2009 cohort'), beside = TRUE, xlab = 'Number of minor alleles', ylab = 'Count', main = 'Averaged SFS based on Model 6 ML parameter values', xlim = c(0, 105), col = col.palette[1:3])
+
+
