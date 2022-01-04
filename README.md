@@ -100,6 +100,4 @@ Contains a figure comparing the observed SFS to those of the best demographic mo
 
 • [/demo_modeling/power/model_confusion_matrix.png](https://github.com/pinskylab/NePADE/blob/master/demo_modeling/power/model_confusion_matrix.png) confusion matrix showing the power in the dataset to differentiate between demographic models (Figure S3)  
 
-• [sfs.comparison.top3.png](https://github.com/pinskylab/NePADE/blob/master/demo_modeling/sim_sfs/sfs.comparison.top3.png) shows SFSs by cohort comparing observed vs simulated SFSs of three best-fit models using the main dataset (Figure S4a)
-
-• [sfs.comparison.top3.nomac.png](https://github.com/pinskylab/NePADE/blob/master/demo_modeling/sim_sfs/sfs.comparison.top3.nomac.png) shows SFSs by cohort comparing observed vs simulated SFSs of three best-fit models using a dataset generated for sensitivity analyses that did not employ at minor allele count filter (Figure S4b)
+• [sfs.comparison.top3.png](https://github.com/pinskylab/NePADE/blob/master/demo_modeling/sim_sfs/sfs.comparison.top3.png) shows SFSs by cohort comparing observed vs simulated SFSs of three best-fit models using the main dataset (Figure S4)
