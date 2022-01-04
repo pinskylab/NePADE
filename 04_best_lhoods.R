@@ -9,6 +9,9 @@ mod5 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis
 mod6 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/model_results/model6.bestlhoods.summary.txt", header = TRUE)
 mod7 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/model_results/model7.bestlhoods.summary.txt", header = TRUE)
 
+mod6_wider <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/model_results/model6_wider_priors.bestlhoods.summary.txt", header = TRUE)
+mod6_fixedTLEN <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/model_results/model6_fixTLEN.bestlhoods.summary.txt", header = TRUE)
+
 # Now find the ML run for each model
 # Model 1, no bottleneck
 mod1_ml <- max(mod1$MaxEstLhood)
@@ -51,6 +54,18 @@ mod7_ml <- max(mod7$MaxEstLhood)
 mod7[which(mod7$MaxEstLhood == max(mod7$MaxEstLhood)),]
 mod7[22,]$MaxEstLhood - mod6[22,]$MaxObsLhood
 mod7_param_no <- 3
+
+# Model 6 sensitivity analyses
+# Model 6, exponential change in pop size before and after bottleneck, wider priors
+mod6_wider_ml <- max(mod6_wider$MaxEstLhood)
+mod6_wider[which(mod6_wider$MaxEstLhood == max(mod6_wider$MaxEstLhood)),]
+mod6_wider[1,]$MaxEstLhood - mod6_wider[1,]$MaxObsLhood
+
+# Model 6, exponential change in pop size before and after bottleneck, TLEN fixed at 3 generations
+mod6_fixedTLEN_ml <- max(mod6_fixedTLEN$MaxEstLhood)
+mod6_fixedTLEN[which(mod6_fixedTLEN$MaxEstLhood == max(mod6_fixedTLEN$MaxEstLhood)),]
+mod6_fixedTLEN[48,]$MaxEstLhood - mod6_fixedTLEN[48,]$MaxObsLhood
+
 
 #### Plot ML for parameters over fsc iterations ####
 plot(mod6$MaxEstLhood, ylab = 'Maximum likelihood', xlab = 'Iteration')
