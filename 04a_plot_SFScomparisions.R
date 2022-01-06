@@ -71,9 +71,13 @@ pop97.mod6.avg <- colMeans(pop97.mod6)
 pop94.mod6.avg <- colMeans(pop94.mod6)
 
 # All the populations are different sizes, so need to convert to proportion of SNPs & then add zeros so that all cohorts have same number of columns
-pop08.mod6.avg.poly <- mean(rowSums(pop08.mod6[-1])) #avg number of polymorphic snps for pop08
-pop97.mod6.avg.poly <- mean(rowSums(pop97.mod6[-1])) #avg number of polymorphic snps for pop97
-pop94.mod6.avg.poly <- mean(rowSums(pop94.mod6[-1])) #avg number of polymorphic snps for pop94
+pop08.mod6.avg.poly <- mean(rowSums(pop08.mod6[-1])) #avg number of polymorphic snps for pop08 across all simulated SFS
+pop97.mod6.avg.poly <- mean(rowSums(pop97.mod6[-1])) #avg number of polymorphic snps for pop97 across all simulated SFS
+pop94.mod6.avg.poly <- mean(rowSums(pop94.mod6[-1])) #avg number of polymorphic snps for pop94 across all simulated SFS
+
+pop08.mod6.avg.poly.sd <- sd(rowSums(pop08.mod6[-1]))
+pop97.mod6.avg.poly.sd <- sd(rowSums(pop97.mod6[-1]))
+pop94.mod6.avg.poly.sd <- sd(rowSums(pop94.mod6[-1]))
 
 pop08.mod6.prop <- t(pop08.mod6.avg[-1]/pop08.mod6.avg.poly) #prop of polymorphic snps vs # of minor alleles
 pop97.mod6.prop <- t(pop97.mod6.avg[-1]/pop97.mod6.avg.poly)
@@ -153,7 +157,7 @@ dev.off()
 col.palette <- wes_palette("FantasticFox1", 5, type = "discrete")
 palette(col.palette)
 
-png(file="~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/exp_sfs_model6.png", width=11, height=3, res=300, units="in")
+png(file="~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/sim_sfs/exp_sfs_model6.png", width=11, height=3, res=300, units="in")
 
 par(
     mar=c(4.5, 5, 1.5, 1), # panel margin size in "line number" units
@@ -163,7 +167,7 @@ par(
     ps=12
 )
 
-barplot(m, legend = c('1994-1995 cohort', '1997-1998 cohort','2008-2009 cohort'), beside = TRUE, xlab = 'Number of minor alleles', ylab = 'Proportion of SNPs', main = 'Averaged SFS based on Model 6 ML parameter values', xlim = c(0, 105), col = col.palette[1:3])
+barplot(m, legend = c('1994-1995 cohort', '1997-1998 cohort','2008-2009 cohort'), beside = TRUE, xlab = 'Number of minor alleles', ylab = 'Proportion of polymorphic SNPs', main = 'Averaged SFS based on Model 6 ML parameter values', xlim = c(0, 105), col = col.palette[1:3])
 
 dev.off()
 
@@ -194,5 +198,43 @@ m <- rbind(pop94.mod6.avg, pop97.mod6.avg, pop08.mod6.avg)
 colnames(m) <- 0:300
 
 barplot(m[,-1], legend = c('1994-1995 cohort', '1997-1998 cohort','2008-2009 cohort'), beside = TRUE, xlab = 'Number of minor alleles', ylab = 'Count', main = 'Averaged SFS based on Model 6 ML parameter values', xlim = c(0, 105), col = col.palette[1:3])
+
+
+
+
+pop08.mod6.avg.poly <- data.frame(matrix(NA, nrow = 100, ncol = 300))
+pop97.mod6.avg.poly <- data.frame(matrix(NA, nrow = 100, ncol = 206))
+pop94.mod6.avg.poly <- data.frame(matrix(NA, nrow = 100, ncol = 52))
+for (i in 1:100) {
+    pop08.mod6.avg.poly[i,] <- pop08.mod6[i,-1]/rowSums(pop08.mod6[-1])[i] #avg number of polymorphic snps for pop08 per SFS
+    pop97.mod6.avg.poly[i,] <- pop97.mod6[i,-1]/rowSums(pop97.mod6[-1])[i] #avg number of polymorphic snps for pop97 per sfs
+    pop94.mod6.avg.poly[i,] <- pop94.mod6[i,-1]/rowSums(pop94.mod6[-1])[i] #avg number of polymorphic snps for pop94 per sfs
+}
+
+pop08.mod6.avg.poly2 <- colMeans(pop08.mod6.avg.poly)
+pop97.mod6.avg.poly2 <- colMeans(pop97.mod6.avg.poly)
+pop94.mod6.avg.poly2 <- colMeans(pop94.mod6.avg.poly)
+
+n <- max(length(pop08.mod6.avg.poly2), length(pop97.mod6.avg.poly2), length(pop94.mod6.avg.poly2)) # determines max vector length of only polymorphic sites (300) and then makes all shorter vectors 300 for easier plotting
+length(pop97.mod6.avg.poly2) <- n # adds NAs to the end of the vector
+length(pop94.mod6.avg.poly2) <- n # adds NAs to the end of the vector
+
+pop97.mod6.avg.poly2[is.na(pop97.mod6.avg.poly2)] <- 0 # Replaces NAs with 0
+pop94.mod6.avg.poly2[is.na((pop94.mod6.avg.poly2))] <- 0
+
+q <- rbind(pop94.mod6.avg.poly2, pop97.mod6.avg.poly2, pop08.mod6.avg.poly2)
+
+barplot(q, legend = c('1994-1995 cohort', '1997-1998 cohort','2008-2009 cohort'), beside = TRUE, xlab = 'Number of minor alleles', ylab = 'Proportion of polymorphic SNPs', main = 'Averaged SFS based on Model 6 ML parameter values', xlim = c(0, 105), col = col.palette[1:3])
+
+
+table(round(pop08.mod6.avg.poly2, 4) == round(m[3,],4))
+
+q == m
+
+test <- pop08.mod6[1,-1]/977 #avg number of polymorphic snps for pop08 per SFS
+test2 <- pop97.mod6[1,-1]/893 #avg number of polymorphic snps for pop97 per SFS
+test3 <- pop94.mod6[1,-1]/595 #avg number of polymorphic snps for pop97 per SFS
+
+table(pop08.mod6.avg.poly[1,] == test)
 
 
