@@ -77,7 +77,7 @@ lines(max.mod2$X2, max.mod2$X4, lwd = 1.8)
 mtext('Year', 1, 2.5, cex = 1.2)
 mtext(expression(italic('N'[e])), 2, 3.7, cex = 1.2)
 
-# Model 3
+#### Model 3 ####
 r2008 <- (log(mod3_ml_parameters$NBOT/mod3_ml_parameters$NPOP08)/(mod3_ml_parameters$TBOT)) # check that this is correct; growth rate going back in time
 
 max.mod3 <- data.frame(matrix(NA, nrow = 13, ncol = 4))
@@ -86,10 +86,134 @@ max.mod3[,2] <- 2008 - 2*max.mod3[,1]
 max.mod3[,3] <- c(mod3_ml_parameters$NPOP08, (mod3_ml_parameters$NPOP08*exp(r2008 * (mod3_ml_parameters$TBOT-10))), (mod3_ml_parameters$NPOP08*exp(r2008 * (mod3_ml_parameters$TBOT-8))), (mod3_ml_parameters$NPOP08*exp(r2008 * (mod3_ml_parameters$TBOT-6))), (mod3_ml_parameters$NPOP08*exp(r2008 * (mod3_ml_parameters$TBOT-4))), (mod3_ml_parameters$NPOP08*exp(r2008 * (mod3_ml_parameters$TBOT-3))), (mod3_ml_parameters$NPOP08*exp(r2008 * (mod3_ml_parameters$TBOT-1))), mod3_ml_parameters$NBOT, mod3_ml_parameters$NBOT, mod3_ml_parameters$NPREBOT, mod3_ml_parameters$NPREBOT, mod3_ml_parameters$NPREBOT, mod3_ml_parameters$NPREBOT) #haploid
 max.mod3[,4] <- max.mod3[,3]/2 #diploid
 
-plot(max.mod3$X2, max.mod3$X4, xlab = '', ylab = '', type = 'n', xlim = c(1976,2008), ylim = c(0,20000), las = 1)
+# Model 3 POD fits
+mod3pods_names <- list.files("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/power/mod3pods", pattern = "*summary.txt", full.names = TRUE)
+mod3_files <- lapply(mod3pods_names, function(x)read.table(x, header=F, fill = T))
+mod3_files_array <- array(as.numeric(unlist(mod3_files)), dim=c(7, 11, 10))
+
+mod3_files_array_sub <- array(0, dim = c(7,5,10))
+colnames(mod3_files_array_sub) <- c('NPOP08', 'NPREBOT', 'NBOT','MaxEstLhood', 'MaxObsLhood')
+for (i in 1:10) {
+  mod3_files_array_sub[1,,i] <- mod3_files_array[1,c(1,4:5,2:3),i]
+  mod3_files_array_sub[2,,i] <- mod3_files_array[2,c(1:3,6:7),i]
+  mod3_files_array_sub[3,,i] <- mod3_files_array[3,c(1:3,6:7),i]
+  mod3_files_array_sub[4,,i] <- mod3_files_array[4,c(1:3,8:9),i]
+  mod3_files_array_sub[5,,i] <- mod3_files_array[5,c(1:3,10:11),i]
+  mod3_files_array_sub[6,,i] <- mod3_files_array[6,c(1:3,8:9),i]
+  mod3_files_array_sub[7,,i] <- mod3_files_array[7,c(1,7:8,5:6),i]
+}
+
+mod3.aic <- 2*b-2*(mod3_files_array_sub[,4,]*2.303) # Convert from log10 to ln, first
+mod3.ass <- apply(mod3.aic,2,which.min)
+
+# Get ML parameter for each fit POD
+mod3_pods_mlfits <- data.frame(matrix(NA, ncol = 11, nrow = 10))
+for (i in 1:10) {
+  mod3_pods_mlfits[i,] <- mod3_files_array[mod3.ass[i],,i]
+}
+
+# Separate data frame best-fit model to POD
+mod3_pods_mod1_fit <- mod3_pods_mlfits[which(mod3.ass == 1),-c(4:11)]
+colnames(mod3_pods_mod1_fit) <- colnames(mod1_ml_parameters)
+mod3_pods_mod2_fit <- mod3_pods_mlfits[which(mod3.ass == 2),-c(8:11)]
+colnames(mod3_pods_mod2_fit) <- colnames(mod2_ml_parameters)
+mod3_pods_mod3_fit <- mod3_pods_mlfits[which(mod3.ass == 3),-c(8:11)]
+colnames(mod3_pods_mod3_fit) <- colnames(mod3_ml_parameters)
+mod3_pods_mod5_fit <- mod3_pods_mlfits[which(mod3.ass == 5),]
+colnames(mod3_pods_mod5_fit) <- colnames(mod5_ml_parameters)
+mod3_pods_mod6_fit <- mod3_pods_mlfits[which(mod3.ass == 6),-c(10:11)]
+colnames(mod3_pods_mod6_fit) <- colnames(mod6_ml_parameters)
+mod3_pods_mod7_fit <-mod3_pods_mlfits[which(mod3.ass == 7),-c(7:11)]
+colnames(mod3_pods_mod7_fit) <- colnames(mod7_ml_parameters)
+
+# Make curves for fitted PODs
+# Model 1
+mod3pod.mod1fit.coord <- array(numeric(), c(12,4,nrow(mod3_pods_mod1_fit)))
+for (i in 1:nrow(mod3_pods_mod1_fit)) {
+  mod3pod.mod1fit.coord[,1,i] <- c(seq(0, 21, 2),2000) #generations going back in time
+  mod3pod.mod1fit.coord[,2,i] <- 2008 - 2*mod3pod.mod1fit.coord[,1,i]
+  mod3pod.mod1fit.coord[,3,i] <- rep(mod3_pods_mod1_fit$NPOP08[i], 12)
+  mod3pod.mod1fit.coord[,4,i] <- mod3pod.mod1fit.coord[,3,i]/2 #diploid
+}
+
+# Model 2
+mod3pod.mod2fit.coord <- array(numeric(), c(10,4,nrow(mod3_pods_mod2_fit)))
+for (i in 1:nrow(mod3_pods_mod2_fit)) {
+  mod3pod.mod2fit.coord[,1,i] <- c(mod3_pods_mod2_fit$TBOT[i]-mod3_pods_mod2_fit$TBOT[i], mod3_pods_mod2_fit$TBOT[i]-3, mod3_pods_mod2_fit$TBOT[i]-2, mod3_pods_mod2_fit$TBOT[i]-1, mod3_pods_mod2_fit$TBOT[i], mod3_pods_mod2_fit$TBOT[i], (mod3_pods_mod2_fit$TBOT[i]+mod3_pods_mod2_fit$TLEN[i]), (mod3_pods_mod2_fit$TBOT[i]+mod3_pods_mod2_fit$TLEN[i]), (mod3_pods_mod2_fit$TBOT[i]+mod3_pods_mod2_fit$TLEN[i]+2), (mod3_pods_mod2_fit$TBOT[i]+mod3_pods_mod2_fit$TLEN[i]+50)) #generations going back in time
+  mod3pod.mod2fit.coord[,2,i] <- 2008 - 2*mod3pod.mod2fit.coord[,1,i]
+  mod3pod.mod2fit.coord[,3,i] <- c(mod3_pods_mod2_fit$NPOP08[i], mod3_pods_mod2_fit$NPOP08[i], mod3_pods_mod2_fit$NPOP08[i], mod3_pods_mod2_fit$NPOP08[i], mod3_pods_mod2_fit$NPOP08[i], mod3_pods_mod2_fit$NBOT[i], mod3_pods_mod2_fit$NBOT[i], mod3_pods_mod2_fit$PREBOT[i], mod3_pods_mod2_fit$NPREBOT[i], mod3_pods_mod2_fit$NPREBOT[i], mod3_pods_mod2_fit$NPREBOT[i]) #haploid
+  mod3pod.mod2fit.coord[,4,i] <- mod3pod.mod2fit.coord[,3,i]/2 #diploid
+}
+
+# Model 3
+r2008 <- (log(mod3_pods_mod3_fit$NBOT/mod3_pods_mod3_fit$NPOP08)/(mod3_pods_mod3_fit$TBOT)) # check that this is correct; growth rate going back in time
+
+mod3pod.mod3fit.coord <- array(numeric(), c(13,4,nrow(mod3_pods_mod3_fit)))
+for (i in 1:nrow(mod3_pods_mod3_fit)) {
+  mod3pod.mod3fit.coord[,1,i] <- c(mod3_pods_mod3_fit$TBOT[i]-mod3_pods_mod3_fit$TBOT[i], mod3_pods_mod3_fit$TBOT[i]-6, mod3_pods_mod3_fit$TBOT[i]-5, mod3_pods_mod3_fit$TBOT[i]-4, mod3_pods_mod3_fit$TBOT[i]-3, mod3_pods_mod3_fit$TBOT[i]-2, mod3_pods_mod3_fit$TBOT[i]-1, mod3_pods_mod3_fit$TBOT[i], (mod3_pods_mod3_fit$TBOT[i]+mod3_pods_mod3_fit$TLEN[i]), (mod3_pods_mod3_fit$TBOT[i]+mod3_pods_mod3_fit$TLEN[i]), (mod3_pods_mod3_fit$TBOT[i]+mod3_pods_mod3_fit$TLEN[i]+2), (mod3_pods_mod3_fit$TBOT[i]+mod3_pods_mod3_fit$TLEN[i]+5), (mod3_pods_mod3_fit$TBOT[i]+mod3_pods_mod3_fit$TLEN[i]+1000)) #generations going back in time, 5 and 1000 generations pre-bottleneck were chosen arbitrarily for plotting
+  mod3pod.mod3fit.coord[,2,i] <- 2008 - 2*mod3pod.mod3fit.coord[,1,i]
+  mod3pod.mod3fit.coord[,3,i] <- c(mod3_pods_mod3_fit$NPOP08[i], (mod3_pods_mod3_fit$NPOP08[i]*exp(r2008[i] * (mod3_pods_mod3_fit$TBOT[i]-6))), (mod3_pods_mod3_fit$NPOP08[i]*exp(r2008[i] * (mod3_pods_mod3_fit$TBOT[i]-5))), (mod3_pods_mod3_fit$NPOP08[i]*exp(r2008[i] * (mod3_pods_mod3_fit$TBOT[i]-4))), (mod3_pods_mod3_fit$NPOP08[i]*exp(r2008[i] * (mod3_pods_mod3_fit$TBOT[i]-3))), (mod3_pods_mod3_fit$NPOP08[i]*exp(r2008[i] * (mod3_pods_mod3_fit$TBOT[i]-2))), (mod3_pods_mod3_fit$NPOP08[i]*exp(r2008[i] * (mod3_pods_mod3_fit$TBOT[i]-1))), mod3_pods_mod3_fit$NBOT[i], mod3_pods_mod3_fit$NBOT[i], mod3_pods_mod3_fit$NPREBOT[i], mod3_pods_mod3_fit$NPREBOT[i], mod3_pods_mod3_fit$NPREBOT[i], mod3_pods_mod3_fit$NPREBOT[i]) #haploid
+  mod3pod.mod3fit.coord[,4,i] <- mod3pod.mod3fit.coord[,3,i]/2 #diploid
+}
+
+# Model 5
+mod3pod.mod5fit.coord <- array(numeric(), c(10,4,nrow(mod3_pods_mod5_fit)))
+for (i in 1:nrow(mod3_pods_mod5_fit)) {
+  mod3pod.mod5fit.coord[,1,i] <- c((mod3_pods_mod5_fit$TBOTTWO[i]-mod3_pods_mod5_fit$TBOTTWO[i]), mod3_pods_mod5_fit$TBOTTWO[i], mod3_pods_mod5_fit$TBOTTWO[i], (mod3_pods_mod5_fit$TBOTTWO[i] + mod3_pods_mod5_fit$TLENTWO[i]), (mod3_pods_mod5_fit$TBOTTWO[i] + mod3_pods_mod5_fit$TLENTWO[i]), (mod3_pods_mod5_fit$TBOTTWO[i] + mod3_pods_mod5_fit$TLENTWO[i] + mod3_pods_mod5_fit$TBOTONE[i]), (mod3_pods_mod5_fit$TBOTTWO[i] + mod3_pods_mod5_fit$TLENTWO[i] + mod3_pods_mod5_fit$TBOTONE[i]), (mod3_pods_mod5_fit$TBOTTWO[i] + mod3_pods_mod5_fit$TLENTWO[i] + mod3_pods_mod5_fit$TBOTONE[i] + mod3_pods_mod5_fit$TLENONE[i]), (mod3_pods_mod5_fit$TBOTTWO[i] + mod3_pods_mod5_fit$TLENTWO[i] + mod3_pods_mod5_fit$TBOTONE[i] + mod3_pods_mod5_fit$TLENONE[i]), (mod3_pods_mod5_fit$TBOTTWO[i] + mod3_pods_mod5_fit$TLENTWO[i] + mod3_pods_mod5_fit$TBOTONE[i] + mod3_pods_mod5_fit$TLENONE[i] + 100)) #generations going back in time
+  mod3pod.mod5fit.coord[,2,i] <- 2008 - 2*mod3pod.mod5fit.coord[,1,i]
+  mod3pod.mod5fit.coord[,3,i] <- c(mod3_pods_mod5_fit$NPOP08[i], mod3_pods_mod5_fit$NPOP08[i], mod3_pods_mod5_fit$NBOTTWO[i], mod3_pods_mod5_fit$NBOTTWO[i], mod3_pods_mod5_fit$NPREBOT[i], mod3_pods_mod5_fit$NPREBOT[i], mod3_pods_mod5_fit$NBOTONE[i], mod3_pods_mod5_fit$NBOTONE[i], mod3_pods_mod5_fit$NANC[i], mod3_pods_mod5_fit$NANC[i]) #haploid
+  mod3pod.mod5fit.coord[,4,i] <- mod3pod.mod5fit.coord[,3,i]/2 #diploid
+}
+
+# Model 6
+# First calculate recent r (R2008) for each SFS
+r <- vector(length = nrow(mod3_pods_mod6_fit))
+for (i in 1:length(r)) {
+  r[i] <- (log(mod3_pods_mod6_fit$NBOT[i]/mod3_pods_mod6_fit$NPOP08[i])/(mod3_pods_mod6_fit$TBOT[i])) # check a few to make sure they're correct
+}
+
+mod3pod.mod6fit.coord <- array(numeric(), c(10,4,nrow(mod3_pods_mod6_fit)))
+for (i in 1:nrow(mod3_pods_mod6_fit)) {
+  mod3pod.mod6fit.coord[,1,i] <- c(0, mod3_pods_mod6_fit$TBOT[i]-3, mod3_pods_mod6_fit$TBOT[i]-2, mod3_pods_mod6_fit$TBOT[i]-1, mod3_pods_mod6_fit$TBOT[i], (mod3_pods_mod6_fit$TBOT[i]+mod3_pods_mod6_fit$TLEN[i]), (mod3_pods_mod6_fit$TBOT[i]+mod3_pods_mod6_fit$TLEN[i]), (mod3_pods_mod6_fit$TBOT[i]+mod3_pods_mod6_fit$TLEN[i]+2), (mod3_pods_mod6_fit$TBOT[i]+mod3_pods_mod6_fit$TLEN[i]+5), (mod3_pods_mod6_fit$TBOT[i]+mod3_pods_mod6_fit$TLEN[i]+1000)) #generations going back in time
+  mod3pod.mod6fit.coord[,2,i] <- 2008 -2*mod3pod.mod6fit.coord[,1,i] #convert to years assuming summer flounder generation time is 2 years
+  mod3pod.mod6fit.coord[,3,i] <- c(mod3_pods_mod6_fit$NPOP08[i], (mod3_pods_mod6_fit$NPOP08[i]*exp(r[i] * (mod3_pods_mod6_fit$TBOT[i]-3))), (mod3_pods_mod6_fit$NPOP08[i]*exp(r[i] * (mod3_pods_mod6_fit$TBOT[i]-2))), (mod3_pods_mod6_fit$NPOP08[i]*exp(r[i] * (mod3_pods_mod6_fit$TBOT[i]-1))), mod3_pods_mod6_fit$NBOT[i], mod3_pods_mod6_fit$NBOT[i], mod3_pods_mod6_fit$NPREBOT[i], (mod3_pods_mod6_fit$NPREBOT[i]*exp(mod3_pods_mod6_fit$RANC[i] * 2)), (mod3_pods_mod6_fit$NPREBOT[i]*exp(mod3_pods_mod6_fit$RANC[i] * 5)), (mod3_pods_mod6_fit$NPREBOT[i]*exp(mod3_pods_mod6_fit$RANC[i] * 1000))) #haploid
+  mod3pod.mod6fit.coord[,4,i] <- mod3pod.mod6fit.coord[,3,i]/2 #diploid
+}
+
+# Model 7
+mod3pod.mod7fit.coord <- array(numeric(), c(4,4,nrow(mod3_pods_mod7_fit)))
+for (i in 1:nrow(mod3_pods_mod7_fit)) {
+  mod3pod.mod7fit.coord[,1,i] <- c(mod3_pods_mod7_fit$TCAR[i]-mod3_pods_mod7_fit$TCAR[i], mod3_pods_mod7_fit$TCAR[i], (mod3_pods_mod7_fit$TCAR[i]+5), (mod3_pods_mod7_fit$TCAR[i]+1000)) #generations going back in time
+  mod3pod.mod7fit.coord[,2,i] <- 2008 -2*mod3pod.mod7fit.coord[,1,i] #convert to years assuming summer flounder generation time is 2 years
+  mod3pod.mod7fit.coord[,3,i] <- c(mod3_pods_mod7_fit$NPOP08[i], mod3_pods_mod7_fit$NPOP08[i], (mod3_pods_mod7_fit$NANC[i]*exp(mod3_pods_mod7_fit$RANC[i] * 5)), (mod3_pods_mod7_fit$NANC[i]*exp(mod3_pods_mod7_fit$RANC[i] * 1000))) #haploid
+  mod3pod.mod7fit.coord[,4,i] <- mod3pod.mod7fit.coord[,3,i]/2 #diploid
+}
+
+# Plot true (ML model) & inferred model for each of 10 PODs
+plot(max.mod3$X2, max.mod3$X4, xlab = '', ylab = '', type = 'n', xlim = c(1900,2008), ylim = c(0,35000), las = 1)
 lines(max.mod3$X2, max.mod3$X4, lwd = 1.8)
 mtext('Year', 1, 2.5, cex = 1.2)
 mtext(expression(italic('N'[e])), 2, 3.7, cex = 1.2)
+
+cols <- adjustcolor('gray70', alpha.f = 0.5)
+for (l in 1:1) {
+  lines(jitter(mod3pod.mod1fit.coord[,2,l], factor = 0.2), mod3pod.mod1fit.coord[,4,l], col = cols) # plots 1 line: Model 1 fits to Model 3 PODs
+}
+for (l in 1:2) {
+  lines(jitter(mod3pod.mod2fit.coord[,2,l], factor = 0.2), mod3pod.mod2fit.coord[,4,l], col = cols) # plots 2 lines: Model 2 fits to Model 3 PODs
+}
+for (l in 1:4) {
+  lines(jitter(mod3pod.mod3fit.coord[,2,l], factor = 0.2), mod3pod.mod3fit.coord[,4,l], col = cols) # plots 4 lines: Model 3 fits to Model 3 PODs
+}
+for (l in 1:1) {
+  lines(jitter(mod3pod.mod5fit.coord[,2,l], factor = 0.2), mod3pod.mod5fit.coord[,4,l], col = cols) # plots 1 line: Model 5 fits to Model 3 PODs
+}
+for (l in 1:1) {
+  lines(jitter(mod3pod.mod6fit.coord[,2,l], factor = 0.2), mod3pod.mod6fit.coord[,4,l], col = cols) # plots 1 line: Model 6 fits to Model 3 PODs
+}
+for (l in 1:1) {
+  lines(jitter(mod3pod.mod7fit.coord[,2,l], factor = 0.2), mod3pod.mod7fit.coord[,4,l], col = cols) # plots 1 line: Model 7 fits to Model 3 PODs
+}
 
 #### Model 4 ####
 max.mod4 <- data.frame(matrix(NA, nrow = 12, ncol = 4))
@@ -133,6 +257,7 @@ mod4_pods_mod7_fit <-mod4_pods_mlfits[which(mod4.ass == 7),-c(7:11)]
 colnames( ) <- colnames(mod7_ml_parameters)
 
 # Make curves for fitted PODs
+# Model 4
 mod4pod.mod4fit.coord <- array(numeric(), c(12,4,nrow(mod4_pods_mod4_fit)))
 for (i in 1:nrow(mod4_pods_mod4_fit)) {
   mod4pod.mod4fit.coord[,1,i] <- c(mod4_pods_mod4_fit$TBOT[i]-mod4_pods_mod4_fit$TBOT[i], mod4_pods_mod4_fit$TBOT[i]-3, mod4_pods_mod4_fit$TBOT[i]-2, mod4_pods_mod4_fit$TBOT[i]-1, mod4_pods_mod4_fit$TBOT[i], mod4_pods_mod4_fit$TBOT[i], (mod4_pods_mod4_fit$TBOT[i]+mod4_pods_mod4_fit$TLEN[i]), (mod4_pods_mod4_fit$TBOT[i]+mod4_pods_mod4_fit$TLEN[i]), (mod4_pods_mod4_fit$TBOT[i]+mod4_pods_mod4_fit$TLEN[i]+2), (mod4_pods_mod4_fit$TBOT[i]+mod4_pods_mod4_fit$TLEN[i]+5), (mod4_pods_mod4_fit$TBOT[i]+mod4_pods_mod4_fit$TLEN[i]+10), (mod4_pods_mod4_fit$TBOT[i]+mod4_pods_mod4_fit$TLEN[i]+1000)) #generations going back in time
@@ -141,12 +266,13 @@ for (i in 1:nrow(mod4_pods_mod4_fit)) {
   mod4pod.mod4fit.coord[,4,i] <- mod4pod.mod4fit.coord[,3,i]/2 #diploid
 }
 
-max.mod4 <- data.frame(matrix(NA, nrow = 12, ncol = 4))
-max.mod4[,1] <- c(0, mod4_ml_parameters$TBOT-6, mod4_ml_parameters$TBOT-4, mod4_ml_parameters$TBOT-3, mod4_ml_parameters$TBOT-1, mod4_ml_parameters$TBOT, mod4_ml_parameters$TBOT, (mod4_ml_parameters$TBOT+mod4_ml_parameters$TLEN), (mod4_ml_parameters$TBOT+mod4_ml_parameters$TLEN), (mod4_ml_parameters$TBOT+mod4_ml_parameters$TLEN+2), (mod4_ml_parameters$TBOT+mod4_ml_parameters$TLEN+5), (mod4_ml_parameters$TBOT+mod4_ml_parameters$TLEN+1000)) #generations going back in time
-max.mod4[,2] <- 2008 - 2*max.mod4[,1]
-max.mod4[,3] <- c(mod4_ml_parameters$NPOP08, mod4_ml_parameters$NPOP08, mod4_ml_parameters$NPOP08, mod4_ml_parameters$NPOP08, mod4_ml_parameters$NPOP08, mod4_ml_parameters$NPOP08, mod4_ml_parameters$NBOT, mod4_ml_parameters$NBOT, mod4_ml_parameters$NPREBOT, (mod4_ml_parameters$NPREBOT*exp(mod4_ml_parameters$RANC * 2)), (mod4_ml_parameters$NPREBOT*exp(mod4_ml_parameters$RANC * 5)), (mod4_ml_parameters$NPREBOT*exp(mod4_ml_parameters$RANC * 1000))) #haploid
-max.mod4[,4] <- max.mod4[,3]/2 #diploid
+# max.mod4 <- data.frame(matrix(NA, nrow = 12, ncol = 4))
+# max.mod4[,1] <- c(0, mod4_ml_parameters$TBOT-6, mod4_ml_parameters$TBOT-4, mod4_ml_parameters$TBOT-3, mod4_ml_parameters$TBOT-1, mod4_ml_parameters$TBOT, mod4_ml_parameters$TBOT, (mod4_ml_parameters$TBOT+mod4_ml_parameters$TLEN), (mod4_ml_parameters$TBOT+mod4_ml_parameters$TLEN), (mod4_ml_parameters$TBOT+mod4_ml_parameters$TLEN+2), (mod4_ml_parameters$TBOT+mod4_ml_parameters$TLEN+5), (mod4_ml_parameters$TBOT+mod4_ml_parameters$TLEN+1000)) #generations going back in time
+# max.mod4[,2] <- 2008 - 2*max.mod4[,1]
+# max.mod4[,3] <- c(mod4_ml_parameters$NPOP08, mod4_ml_parameters$NPOP08, mod4_ml_parameters$NPOP08, mod4_ml_parameters$NPOP08, mod4_ml_parameters$NPOP08, mod4_ml_parameters$NPOP08, mod4_ml_parameters$NBOT, mod4_ml_parameters$NBOT, mod4_ml_parameters$NPREBOT, (mod4_ml_parameters$NPREBOT*exp(mod4_ml_parameters$RANC * 2)), (mod4_ml_parameters$NPREBOT*exp(mod4_ml_parameters$RANC * 5)), (mod4_ml_parameters$NPREBOT*exp(mod4_ml_parameters$RANC * 1000))) #haploid
+# max.mod4[,4] <- max.mod4[,3]/2 #diploid
 
+# Model 6
 # First calculate recent r (R2008) for Model 6 fits
 r <- vector(length = nrow(mod4_pods_mod6_fit))
 for (i in 1:length(r)) {
@@ -161,6 +287,7 @@ for (i in 1:nrow(mod4_pods_mod6_fit)) {
   mod4pod.mod6fit.coord[,4,i] <- mod4pod.mod6fit.coord[,3,i]/2 #diploid
 }
 
+# Model 7
 mod4pod.mod7fit.coord <- array(numeric(), c(4,4,nrow(mod4_pods_mod7_fit)))
 for (i in 1:nrow(mod4_pods_mod7_fit)) {
   mod4pod.mod7fit.coord[,1,i] <- c(mod4_pods_mod7_fit$TCAR[i]-mod4_pods_mod7_fit$TCAR[i], mod4_pods_mod7_fit$TCAR[i], (mod4_pods_mod7_fit$TCAR[i]+5), (mod4_pods_mod7_fit$TCAR[i]+1000)) #generations going back in time
