@@ -50,8 +50,8 @@ b <- c(1, 5, 5, 6, 9, 6, 3) # number of parameters in each of the models going f
 
 
 #### Plot ML parameters for each model as a line. Then plot the ML model for each of the 10 PODS ####
-png(file="~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/power/PODs_fit.png",width=8, height=11, res=300, units="in")
-par(mar=c(4.5, 5, 1.5, 1), # panel margin size in "line number" units
+png(file="~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/power/PODs_fit.png",width=9.5, height=11, res=300, units="in")
+par(mar=c(4.5, 6.5, 1.5, 1.5), # panel margin size in "line number" units
     mgp=c(3, 1, 0), # default is c(3,1,0); line number for axis label, tick label, axis
     tcl=-0.5, # size of tick marks as distance INTO figure (negative means pointing outward)
     cex=1, # character expansion factor; keep as 1; if you have a many-panel figure, they start changing the default!
@@ -158,6 +158,7 @@ plot(max.mod1$X2, max.mod1$X4, xlab = '', ylab = '', type = 'n', xlim = c(1965,2
 lines(max.mod1$X2, max.mod1$X4, lwd = 1.8)
 mtext('Year', 1, 2.5, cex = 1.2)
 mtext(expression(italic('N'[e])), 2, 3.7, cex = 1.2)
+mtext('(a)', 2,4.5, cex = 1.2, las = 1, at = 29000)
 
 cols <- adjustcolor('gray70', alpha.f = 0.5)
 for (l in 1:5) {
@@ -294,6 +295,7 @@ plot(max.mod2$X2, max.mod2$X4, xlab = '', ylab = '', type = 'n', xlim = c(1976,2
 lines(max.mod2$X2, max.mod2$X4, lwd = 1.8)
 mtext('Year', 1, 2.5, cex = 1.2)
 mtext(expression(italic('N'[e])), 2, 3.7, cex = 1.2)
+mtext('(b)', 2,4.5, cex = 1.2, las = 1, at = 29000)
 
 cols <- adjustcolor('gray70', alpha.f = 0.5)
 for (l in 1:1) {
@@ -435,6 +437,7 @@ plot(max.mod3$X2, max.mod3$X4, xlab = '', ylab = '', type = 'n', xlim = c(1900,2
 lines(max.mod3$X2, max.mod3$X4, lwd = 1.8)
 mtext('Year', 1, 2.5, cex = 1.2)
 mtext(expression(italic('N'[e])), 2, 3.7, cex = 1.2)
+mtext('(c)', 2,4.5, cex = 1.2, las = 1, at = 34000)
 
 cols <- adjustcolor('gray70', alpha.f = 0.5)
 for (l in 1:1) {
@@ -536,6 +539,7 @@ plot(max.mod4$X2, max.mod4$X4, xlab = '', ylab = '', type = 'n', xlim = c(1965,2
 lines(max.mod4$X2, max.mod4$X4, lwd = 1.8)
 mtext('Year', 1, 2.5, cex = 1.2)
 mtext(expression(italic('N'[e])), 2, 3.7, cex = 1.2)
+mtext('(d)', 2,4.5, cex = 1.2, las = 1, at = 69000)
 
 cols <- adjustcolor('gray70', alpha.f = 0.5)
 for (l in 1:2) {
@@ -652,6 +656,7 @@ plot(max.mod5$X2, max.mod5$X4, xlab = '', ylab = '', type = 'n', xlim = c(1976,2
 lines(max.mod5$X2, max.mod5$X4, lwd = 1.8)
 mtext('Year', 1, 2.5, cex = 1.2)
 mtext(expression(italic('N'[e])), 2, 3.7, cex = 1.2)
+mtext('(e)', 2,4.5, cex = 1.2, las = 1, at = 31000)
 
 cols <- adjustcolor('gray70', alpha.f = 0.5)
 for (l in 1:2) {
@@ -741,6 +746,7 @@ plot(max.mod6$X2, max.mod6$X4, xlab = '', ylab = '', type = 'n', xlim = c(1976,2
 lines(max.mod6$X2, max.mod6$X4, lwd = 1.8)
 mtext('Year', 1, 2.5, cex = 1.2)
 mtext(expression(italic('N'[e])), 2, 3.7, cex = 1.2)
+mtext('(f)', 2,4.5, cex = 1.2, las = 1, at = 69000)
 
 cols <- adjustcolor('gray70', alpha.f = 0.5)
 for (l in 1:9) {
@@ -820,6 +826,7 @@ plot(max.mod7$X2, max.mod7$X4, xlab = '', ylab = '', type = 'n', xlim = c(1950,2
 lines(max.mod7$X2, max.mod7$X4, lwd = 1.8)
 mtext('Year', 1, 2.5, cex = 1.2)
 mtext(expression(italic('N'[e])), 2, 3.7, cex = 1.2)
+mtext('(g)', 2,4.5, cex = 1.2, las = 1, at = 69000)
 
 cols <- adjustcolor('gray70', alpha.f = 0.5)
 for (l in 1:2) {
@@ -828,7 +835,6 @@ for (l in 1:2) {
 for (l in 1:8) {
 lines(jitter(mod7pod.mod7fit.coord[,2,l], factor = 0.2), mod7pod.mod7fit.coord[,4,l], col = cols) # plots 8 line: Model 7 fits to Model 7 POD
 }  
-mtext('Year', 1, 2.5, cex = 1.2)
 
 
 dev.off()
