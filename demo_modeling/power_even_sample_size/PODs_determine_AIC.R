@@ -28,6 +28,13 @@ mod6.ass.count <- table(mod6.ass)
 mod6.ass.count7 <- append(mod6.ass.count, c('2' = 0, '3'= 0, '5' = 0), 2)
 mod6.ass.count7 <- mod6.ass.count7[order(names(mod6.ass.count7))]
 
+
+
+
+
+
+
+
 #### Assemble confusion matrix ####
 mat <- rbind(mod1.ass.count7, mod2.ass.count7, mod3.ass.count7, mod4.ass.count7, mod5.ass.count7, mod6.ass.count7, mod7.ass.count7)
 rownames(mat) <- c('Model 1', 'Model 2', 'Model 3', 'Model 4', 'Model 5', 'Model 6', 'Model 7')
