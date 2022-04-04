@@ -73,15 +73,6 @@ mod6_pods_mod7_fit <-mod6_pods_mlfits[which(mod6.ass == 7),-c(7:11)]
 colnames(mod6_pods_mod7_fit) <- c("NPOP08", "TCAR", "NANC", "RANC", "MaxEstLhood", "MaxObsLhood")
 
 # Make curves for fitted PODs
-# Model 1
-mod6pod.mod1fit.coord <- array(numeric(), c(12,4,nrow(mod6_pods_mod1_fit)))
-for (i in 1:nrow(mod6_pods_mod1_fit)) {
-  mod6pod.mod1fit.coord[,1,i] <- c(seq(0, 21, 2),2000) #generations going back in time
-  mod6pod.mod1fit.coord[,2,i] <- 2008 - 2*mod6pod.mod1fit.coord[,1,i]
-  mod6pod.mod1fit.coord[,3,i] <- rep(mod6_pods_mod1_fit$NPOP08[i], 12)
-  mod6pod.mod1fit.coord[,4,i] <- mod6pod.mod1fit.coord[,3,i]/2 #diploid
-}
-
 # Model 4
 mod6pod.mod4fit.coord <- array(numeric(), c(12,4,nrow(mod6_pods_mod4_fit)))
 for (i in 1:nrow(mod6_pods_mod4_fit)) {
