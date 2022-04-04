@@ -19,7 +19,7 @@ mod6_ml_parameters <- mod6[which(mod6$MaxEstLhood == max(mod6$MaxEstLhood)),]
 b <- c(1, 5, 5, 6, 9, 6, 3) # number of parameters in each of the models going from model 1 to model 7
 
 #### Plot ML parameters for Model 6 as a line. Then plot the ML model for each of the 50 Model 6 PODS ####
-png(file="~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/power_even_sample_size/PODs_fit_even_sampling.png",width=9.5, height=11, res=300, units="in")
+png(file="~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/power_even_sample_size/PODs_fit_even_sampling.png",width=6, height=5, res=300, units="in")
 par(mar=c(4.5, 6.5, 1.5, 1.5), # panel margin size in "line number" units
     mgp=c(3, 1, 0), # default is c(3,1,0); line number for axis label, tick label, axis
     tcl=-0.5, # size of tick marks as distance INTO figure (negative means pointing outward)
@@ -116,8 +116,8 @@ for (i in 1:nrow(mod6_pods_mod7_fit)) {
 }
 
 # Plot true (ML model) & inferred model for each of 50 PODs
+# 50 PODs first
 plot(max.mod6$X2, max.mod6$X4, xlab = '', ylab = '', type = 'n', xlim = c(1940,2008), ylim = c(0,70000), las = 1)
-lines(max.mod6$X2, max.mod6$X4, lwd = 1.8)
 mtext('Year', 1, 2.5, cex = 1.2)
 mtext(expression(italic('N'[e])), 2, 3.7, cex = 1.2)
 
@@ -129,11 +129,14 @@ for (l in 2:2) {
   lines(jitter(mod6pod.mod4fit.coord[,2,l], factor = 0.2), mod6pod.mod4fit.coord[,4,l], col = cols) # plots 2 lines: Model 4 fits to Model 6 PODs
 }
 for (l in 1:43) {
-  lines(jitter(mod6pod.mod6fit.coord[,2,l], factor = 0.2), mod6pod.mod6fit.coord[,4,l], col = cols) # plots 43 lines: Model 6 fits to Model 6 PODs
+  lines(jitter(mod6pod.mod6fit.coord[,2,l], factor = 0.2), jitter(mod6pod.mod6fit.coord[,4,l]), col = cols) # plots 43 lines: Model 6 fits to Model 6 PODs
 }
 for (l in 1:4){
   lines(jitter(mod6pod.mod7fit.coord[,2,l], factor = 0.2), mod6pod.mod7fit.coord[,4,l], col = cols) # plots 1 line: Model 7 fit to Model 6 POD
 }
+
+# True model on top
+lines(max.mod6$X2, max.mod6$X4, lwd = 1.8)
 
 dev.off()
 
