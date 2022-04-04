@@ -63,8 +63,6 @@ for (i in 1:50) {
 }
 
 # Separate data frame best-fit model to POD
-mod6_pods_mod1_fit <- mod6_pods_mlfits[which(mod6.ass == 1),-c(4:11)]
-colnames(mod6_pods_mod1_fit) <- c("NPOP08", "MaxEstLhood", "MaxObsLhood")
 mod6_pods_mod4_fit <-mod6_pods_mlfits[which(mod6.ass == 4),-c(10:11)]
 colnames(mod6_pods_mod4_fit) <- c("NPOP08", "NPREBOT", "NBOT", "TBOT", "TLEN", "NANC", "RANC", "MaxEstLhood", "MaxObsLhood")
 mod6_pods_mod6_fit <- mod6_pods_mlfits[which(mod6.ass == 6),-c(10:11)]
@@ -113,13 +111,10 @@ mtext('Year', 1, 2.5, cex = 1.2)
 mtext(expression(italic('N'[e])), 2, 3.7, cex = 1.2)
 
 cols <- adjustcolor('gray70', alpha.f = 0.5)
-for (l in 1:1) {
-  lines(jitter(mod6pod.mod1fit.coord[,2,l], factor = 0.2), mod6pod.mod1fit.coord[,4,l], col = cols) # plots 1 line: Model 1 fits to Model 6 PODs
-}
 for (l in 2:2) {
   lines(jitter(mod6pod.mod4fit.coord[,2,l], factor = 0.2), mod6pod.mod4fit.coord[,4,l], col = cols) # plots 2 lines: Model 4 fits to Model 6 PODs
 }
-for (l in 1:43) {
+for (l in 1:44) {
   lines(jitter(mod6pod.mod6fit.coord[,2,l], factor = 0.2), jitter(mod6pod.mod6fit.coord[,4,l]), col = cols) # plots 43 lines: Model 6 fits to Model 6 PODs
 }
 for (l in 1:4){
