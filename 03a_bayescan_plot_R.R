@@ -102,7 +102,7 @@ plot_bayescan<-function(res,FDR=0.05,size=1,pos=0.35,highlight=NULL,name_highlig
   return(list("outliers"=outliers,"nb_outliers"=length(outliers)))
 }
 
-#### Read in and plot BayeScan output for 278 fish and 1070 loci ####
+#### Read in and plot BayeScan output for 279 fish and 1068 loci ####
 setwd('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/demo_modeling/bayescan/')
 results <- plot_bayescan("Ne1068.podds10_fst.txt",FDR=0.05) # larger q-value range than corresponding prior odds of 100
 results2 <- plot_bayescan("Ne1068.podds100_fst.txt",FDR=0.05) # more conservative
