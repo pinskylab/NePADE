@@ -113,17 +113,19 @@ boot <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis
 max(mod6$MaxEstLhood)
 mod6_ml_parameters <- mod6[which(mod6$MaxEstLhood == max(mod6$MaxEstLhood)),]
 
-# 1988
-(mod6_ml_parameters$NPREBOT/2)/N_spawners_allages$V2[7] #calculate year by 2008 - (2*TBOT) - (2*TLEN)
-quantile(boot$NPREBOT/2, c(0.025, 0.975)) # diploid
-quantile(boot$NPREBOT/2, c(0.025, 0.975))[1]/N_spawners_allages$V2[7]
-quantile(boot$NPREBOT/2, c(0.025, 0.975))[2]/N_spawners_allages$V2[7]
+# 1980
+2008 - (2*mod6_ml_parameters$TBOT) - (2*mod6_ml_parameters$TLEN) # 1980, but no Nc for 1980 because trawl data starts in 1982
+# (mod6_ml_parameters$NPREBOT/2)/N_spawners_allages$V2[X] #calculate year by 2008 - (2*TBOT) - (2*TLEN)
+# quantile(boot$NPREBOT/2, c(0.025, 0.975)) # diploid
+# quantile(boot$NPREBOT/2, c(0.025, 0.975))[1]/N_spawners_allages$V2[X]
+# quantile(boot$NPREBOT/2, c(0.025, 0.975))[2]/N_spawners_allages$V2[X]
 
-# 1990
-(mod6_ml_parameters$NBOT/2)/N_spawners_allages$V2[9] #calculate year by 2008 - (2*TBOT)
+# 1984
+2008 - (2*mod6_ml_parameters$TBOT) #1984
+(mod6_ml_parameters$NBOT/2)/N_spawners_allages$V2[3] #calculate year by 2008 - (2*TBOT)
 quantile(boot$NBOT/2, c(0.025, 0.975)) # diploid
-quantile(boot$NBOT/2, c(0.025, 0.975))[1]/N_spawners_allages$V2[9]
-quantile(boot$NBOT/2, c(0.025, 0.975))[2]/N_spawners_allages$V2[9]
+quantile(boot$NBOT/2, c(0.025, 0.975))[1]/N_spawners_allages$V2[3]
+quantile(boot$NBOT/2, c(0.025, 0.975))[2]/N_spawners_allages$V2[3]
 
 # 2008
 (mod6_ml_parameters$NPOP08/2)/N_spawners_allages$V2[27]
