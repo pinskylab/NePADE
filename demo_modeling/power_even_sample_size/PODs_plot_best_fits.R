@@ -96,11 +96,11 @@ for (i in 1:nrow(mod6_pods_mod6_fit)) {
 }
 
 # Model 7
-mod6pod.mod7fit.coord <- array(numeric(), c(4,4,nrow(mod6_pods_mod7_fit)))
+mod6pod.mod7fit.coord <- array(numeric(), c(6,4,nrow(mod6_pods_mod7_fit)))
 for (i in 1:nrow(mod6_pods_mod7_fit)) {
-  mod6pod.mod7fit.coord[,1,i] <- c(mod6_pods_mod7_fit$TCAR[i]-mod6_pods_mod7_fit$TCAR[i], mod6_pods_mod7_fit$TCAR[i], (mod6_pods_mod7_fit$TCAR[i]+5), (mod6_pods_mod7_fit$TCAR[i]+1000)) #generations going back in time
+  mod6pod.mod7fit.coord[,1,i] <- c(mod6_pods_mod7_fit$TCAR[i]-mod6_pods_mod7_fit$TCAR[i], mod6_pods_mod7_fit$TCAR[i], (mod6_pods_mod7_fit$TCAR[i]+5), (mod6_pods_mod7_fit$TCAR[i]+20), (mod6_pods_mod7_fit$TCAR[i]+100), (mod6_pods_mod7_fit$TCAR[i]+1000)) #generations going back in time
   mod6pod.mod7fit.coord[,2,i] <- 2008 -2*mod6pod.mod7fit.coord[,1,i] #convert to years assuming summer flounder generation time is 2 years
-  mod6pod.mod7fit.coord[,3,i] <- c(mod6_pods_mod7_fit$NPOP08[i], mod6_pods_mod7_fit$NPOP08[i], (mod6_pods_mod7_fit$NANC[i]*exp(mod6_pods_mod7_fit$RANC[i] * 5)), (mod6_pods_mod7_fit$NANC[i]*exp(mod6_pods_mod7_fit$RANC[i] * 1000))) #haploid
+  mod6pod.mod7fit.coord[,3,i] <- c(mod6_pods_mod7_fit$NPOP08[i], mod6_pods_mod7_fit$NPOP08[i], (mod6_pods_mod7_fit$NPOP08[i]*exp(mod6_pods_mod7_fit$RANC[i] * (mod6_pods_mod7_fit$TCAR[i]+5))), (mod6_pods_mod7_fit$NPOP08[i]*exp(mod6_pods_mod7_fit$RANC[i] * (mod6_pods_mod7_fit$TCAR[i]+20))), (mod6_pods_mod7_fit$NPOP08[i]*exp(mod6_pods_mod7_fit$RANC[i] * (mod6_pods_mod7_fit$TCAR[i]+100))), (mod6_pods_mod7_fit$NPOP08[i]*exp(mod6_pods_mod7_fit$RANC[i] * (mod6_pods_mod7_fit$TCAR[i]+1000)))) #haploid
   mod6pod.mod7fit.coord[,4,i] <- mod6pod.mod7fit.coord[,3,i]/2 #diploid
 }
 
@@ -111,7 +111,7 @@ mtext('Year', 1, 2.5, cex = 1.2)
 mtext(expression(italic('N'[e])), 2, 3.7, cex = 1.2)
 
 cols <- adjustcolor('gray70', alpha.f = 0.5)
-for (l in 2:2) {
+for (l in 1:2) {
   lines(jitter(mod6pod.mod4fit.coord[,2,l], factor = 0.2), mod6pod.mod4fit.coord[,4,l], col = cols) # plots 2 lines: Model 4 fits to Model 6 PODs
 }
 for (l in 1:44) {
