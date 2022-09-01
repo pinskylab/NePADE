@@ -72,29 +72,34 @@ Contains output from Bayescan looking for temporal outlier loci in dataset used 
 ### **demo_modeling** directory
 This directory contains the input and output files from demographic modeling using the fastsimcoal2 program. Additional scripts used for data preparation and the script to submit the job to a slurm scheduler on a shared computing cluster are also provided.
 
-   • **Ne_boxplots.png** shows ML point estimates and CIs for the best model  
-   • **all_demo_scenarios.pdf** figure of tested demographic scenarios  
-   • **model6_lineplot_a_and_b.png** shows how point estimates and CIs of Ne from the fastsimcoal2 demographic modeling change over time for Model 6  
-   • **obs_sfs_polyonly.png** observed SFS for each larval cohort  
+   • **Ne_boxplots.png** shows ML point estimates and CIs for the best model (Figure S2) 
+   • **all_demo_scenarios.pdf** figure of tested demographic scenarios (Figure 2) 
+   • **model6_lineplot_a_and_b.png** shows how point estimates and CIs of Ne from the fastsimcoal2 demographic modeling change over time for Model 6 (Figure 3) 
+   • **obs_sfs_polyonly.png** observed SFS for each larval cohort using dataset of 1068 loci across 279 fish 
 
 ``` fsc_models/ ```
-Contains the .est and .tpl files necessary to run each of the demographic models for the main analyses in fastsimcoal2. The observed MSFS whose name must match the .est and .tpl file names when running fastsimcoal2 is in the ``` data/ ``` directory. Example slurm scripts for model selection and CI estimation, as well as helper scripts for concatenating fsc .bestlhoods files when fsc is run many times.
+Contains the .est and .tpl files necessary to run each of the seven demographic models (and associated sensitivity analyses) in fastsimcoal2. Models are based off of our observed dataset of 279 summer flounder larvae and 1068 loci. The observed MSFS whose name must match the .est and .tpl file names when running fastsimcoal2 is in the ``` data/ ``` directory. Example slurm scripts for model selection and CI estimation, as well as helper scripts for concatenating fsc .bestlhoods files when fsc is run many times. See below for details:
 
    • **cat_bestlhoods.sh** an example of how to concatenate fsc results for downstream model selection   
    • **cat_cis.sh** an example of how to concatenate fsc results when fsc is run on many simulated SFSs (this was done for CI estimation)  
    • **cat_max_summary.sh** an example of how to select the ML run from many simulated SFSs and concatenate for CI estimation   
    • **run_fsc_Ne_CI_singlethread.sh** an example slurm script for running a fsc job array on many simulated SFSs for CI estimation    
-   • **run_model_Ne279_1068loci.sh** example slurm script for submitting fsc jobs based on the 1068 loci across 279 dataset   
+   • **run_model_Ne279_1068loci.sh** example slurm script for submitting fsc jobs based on the 1068 loci across 279 larvae dataset   
    • **run_sbatch_Ne.sh** helper script to submit a script to SLURM many times
 
 ``` model_results/ ```
-Contains the fastsimcoal2 results for each model and the CIs for the best model resulting from the main demographic modeling analyses.
+Contains the fastsimcoal2 demographic modeling results for each of the seven models (plus any associated sensitivity analyses) and the CIs for the best-fit model.
 
 ``` power/ ```
-Contains a script to read in and plot the results of simulations using pseudo-observed datasets. Also contains the model fits for each of the PODs simulated using the ML parameters of each model. These simulations were based off of the dataset used in the main analyses.
+Contains a script to read in and plot the results of simulations using pseudo-observed datasets. Also contains the model fits for each of the PODs simulated using the ML parameters of each model. These simulations were based off of our observed dataset of 279 summer flounder larvae and 1068 loci. Model fits for each POD are housed within a directory where the model number is idenfified with an X: ``` modXpods ```. Additional details about files in ``` power/ ``` are described below:
 
+   • **PODs_fit.png** Ne estimates over time for each model described in Figure 2 and the inferred history of 10 PODs based on each model's ML parameter estimates (Figure S4)  
+   • **PODs_fits.R** This script plots the ML parameter estimates for each model over time, reads in the results from each ``` modXpods ``` directory, calculates the best-fit model for each POD, and plots these over time. The result is **PODs_fit.png**.   
+   • **model_confusion_matrix.png** Confusion matrix showing the number of times the inferred model corresponded with the known generating model (Figure S3)   
+   • **power.R** This script reads in and plots the results of fitting the seven demographic models to simulated SFSs based on the ML parameters of each model. The result is **model_confusion_matrix.png**.
+   
 ``` sim_sfs/ ```
-Contains a figure comparing the observed SFS to those of the best demographic models, with SFSs comparisons broken out by larval fish cohort. An example slurm script is also provided for generating parametric bootstrapped SFSs from the ML parameters of a model. Based off of the dataset used in the main analyses.
+Contains a figure comparing the observed SFS to those of the best demographic models, with SFSs comparisons broken out by larval fish cohort. An example slurm script is also provided for generating parametric bootstrapped SFSs from the ML parameters of a model. Based off of a dataset of 279 summer flounder larvae and 1068 loci.
 
 ## Manuscript Figures
 
