@@ -12,31 +12,31 @@ Contact: Jennifer Hoey [(jahoey13@gmail.com)](mailto:jahoey13@gmail.com)
 
 ### Within ``` data/ ```:
 
-• **Ne279_1068loci.arp**: Arlequin input file for dataset of 1068 loci across 279 summer flounder
+• [Ne279_1068loci.arp](https://github.com/pinskylab/NePADE/blob/master/data/Ne279_1068loci.arp): Arlequin input file for dataset of 1068 loci across 279 summer flounder
 
-• **Ne279_1068loci_MAFpop0.obs**: msfs for 2008 cohort
+• [Ne279_1068loci_MAFpop0.obs](https://github.com/pinskylab/NePADE/blob/master/data/Ne279_1068loci_MAFpop0.obs): observed mSFS for 2008 cohort
 
-• **Ne279_1068loci_MAFpop1.obs**: msfs for 1997 cohort
+• [Ne279_1068loci_MAFpop1.obs](https://github.com/pinskylab/NePADE/blob/master/data/Ne279_1068loci_MAFpop1.obs): observed mSFS for 1997 cohort
 
-• **Ne279_1068loci_MAFpop2.obs**: msfs for 1994 cohort
+• [Ne279_1068loci_MAFpop2.obs](https://github.com/pinskylab/NePADE/blob/master/data/Ne279_1068loci_MAFpop2.obs): observed mSFS for 1994 cohort
 
-• **Ne279_1068loci_MSFS.obs**: multi msfs used for demographic modeling in fastsimcoal2
+• [Ne279_1068loci_MSFS.obs](https://github.com/pinskylab/NePADE/blob/master/data/Ne279_1068loci_MSFS.obs): observed multi mSFS used for demographic modeling in fastsimcoal2
 
-• **Ne_279PADE_1068loci_complete.gen**: genepop file containing subset of full dataset with no missing data, 1068 SNPs across 279 larvae, used for demographic modeling
+• [Ne_279PADE_1068loci_complete.gen](https://github.com/pinskylab/NePADE/blob/master/data/Ne_279PADE_1068loci_complete.gen): genepop file containing subset of full dataset with no missing data, 1068 SNPs across 279 larvae, used for demographic modeling
 
-• **Ne_279PADE_1068loci_complete_correctnot.txt**: same as **Ne_279PADE_1068loci_complete.gen**, but as a text file, used to generate .arp file for Arlequin
+• [Ne_279PADE_1068loci_complete_correctnot.txt](https://github.com/pinskylab/NePADE/blob/master/data/Ne_279PADE_1068loci_complete_correctnot.txt): same as [Ne_279PADE_1068loci_complete.gen](https://github.com/pinskylab/NePADE/blob/master/data/Ne_279PADE_1068loci_complete.gen), but as a text file, used to generate .arp file for Arlequin
 
-• **Ne_279PADE_3749loci_missingallowed.gen**: genepop file after appling HW filter based on **Ne_HWP_test.txt**
+• [Ne_279PADE_3749loci_missingallowed.gen](https://github.com/pinskylab/NePADE/blob/master/data/Ne_279PADE_3749loci_missingallowed.gen): genepop file after appling HW filter based on [Ne_HWP_test.txt](https://github.com/pinskylab/NePADE/blob/master/data/Ne_HWP_test.txt)
 
-• **Ne_HWP_test.txt**: results of HW test in **02_additional_filters.R**
+• [Ne_HWP_test.txt](https://github.com/pinskylab/NePADE/blob/master/data/Ne_HWP_test.txt): results of HW test in [02_additional_filters.R](https://github.com/pinskylab/NePADE/blob/master/02_additional_filters.R)
 
-• **PADE_stock_assessment16.xlsx**: number of fish at age, estimated fishing mortality at age, natural mortality at age & proportion mature at age for 1982-2015
+• [PADE_stock_assessment16.xlsx](https://github.com/pinskylab/NePADE/blob/master/data/PADE_stock_assessment16.xlsx): number of fish at age, estimated fishing mortality at age, natural mortality at age & proportion mature at age for 1982-2015
 
 • **SNP.DP3g95nomafnomac.FIL.FIL.recode.140trimmed.284fish.vcf**: vcf file containing all available SNPs on a contig (3905 SNPs for 284 larvae)
 
 • **SNP.DP3g95nomafnomac.FIL.FIL.recode.140trimmed.284fish.firstsnp.vcf**: vcf file containing the first SNP on a contig
 
-• **SNP.DP3g95nomafnomac.FIL.FIL.recode.140trimmed.284fish.firstsnp.genepop.gen**: genepop file generated from SNP.DP3g95nomafnomac.FIL.FIL.recode.140trimmed.284fish.firstsnp.vcf. This genepop file was then used to evaluate individuals with high heterozygosity and loci not in HWP.
+• [SNP.DP3g95nomafnomac.FIL.FIL.recode.140trimmed.284fish.firstsnp.genepop.gen](https://github.com/pinskylab/NePADE/blob/master/data/SNP.DP3g95nomafnomac.FIL.FIL.recode.140trimmed.284fish.firstsnp.genepop.gen): genepop file generated from SNP.DP3g95nomafnomac.FIL.FIL.recode.140trimmed.284fish.firstsnp.vcf. This genepop file was then used to evaluate individuals with high heterozygosity and loci not in HWP.
 
 #### ``` bayescan_output/ ``` <br>
 
@@ -46,31 +46,29 @@ Contains output from Bayescan looking for temporal outlier loci in dataset used 
 ## Scripts & Results
 ### The numbered scripts indicate the order of their usage for the demographic analysis in fastsimcoal2
 
-• **00_Ne_genotyping_results.R**: script for calculating coverage statistics
+• [00_Ne_genotyping_results.R](https://github.com/pinskylab/NePADE/blob/master/00_Ne_genotyping_results.R): script for calculating coverage statistics
 
-• **01_keepfirstsnponly.R**: reads in full vcf and writes a new vcf containing only the first SNP on a contig
+• [01_keepfirstsnponly.R](https://github.com/pinskylab/NePADE/blob/master/01_keepfirstsnponly.R): reads in full vcf and writes a new vcf containing only the first SNP on a contig
 
-• **02_additional_filters.R**: removes several fish based on high individual heterozygosity. Then removes loci not in HWE.
+• [02_additional_filters.R](https://github.com/pinskylab/NePADE/blob/master/02_additional_filters.R): removes several fish based on high individual heterozygosity. Then removes loci not in HWE.
 
-• **02a_Ne_diversity_analyses.R**: script for plotting PCAs and calculating diversity statistics
+• [02a_Ne_diversity_analyses.R](https://github.com/pinskylab/NePADE/blob/master/02a_Ne_diversity_analyses.R): script for plotting PCAs and calculating diversity statistics
 
-• **03_prepNe_observedSFS.R**: additional filtering steps necessary for demographic modeling
+• [03_prepNe_observedSFS.R](https://github.com/pinskylab/NePADE/blob/master/03_prepNe_observedSFS.R): additional filtering steps necessary for demographic modeling
 
-• **03a_bayescan_plot_R.R**: plots output from Bayescan analysis looking for temporal outlier loci
+• [03a_bayescan_plot_R.R](https://github.com/pinskylab/NePADE/blob/master/03a_bayescan_plot_R.R): plots output from Bayescan analysis looking for temporal outlier loci
 
-• **03b_plot_observedSFS.R**: plots the observed msfs for each larval cohort
+• [03b_plot_observedSFS.R](https://github.com/pinskylab/NePADE/blob/master/03b_plot_observedSFS.R): plots the observed msfs for each larval cohort
 
-• **04_best_lhoods.R**: script for determining maximum-likelihood of each demographic scenario, calculating AIC and plotting demographic modeling results
+• [04_best_lhoods.R](https://github.com/pinskylab/NePADE/blob/master/04_best_lhoods.R): script for determining maximum-likelihood of each demographic scenario, calculating AIC and plotting demographic modeling results
 
-• **04a_plot_SFScomparisions.R**: script to plot the observed msfs for each larval cohort against the top three demographic models
+• [04a_plot_SFScomparisions.R](https://github.com/pinskylab/NePADE/blob/master/04a_plot_SFScomparisions.R): script to plot the observed msfs for each larval cohort against the top three demographic models
 
-• **04b_plot_SFScomparisions_temporal_test_240fish.R**: script to plot the expected msfs for each larval cohort under the best-fit model with equal sampling across larval cohorts
+• [04b_plot_SFScomparisions_temporal_test_240fish.R](https://github.com/pinskylab/NePADE/blob/master/04b_plot_SFScomparisions_temporal_test_240fish.R): script to plot the expected msfs for each larval cohort under the best-fit model with equal sampling across larval cohorts
 
-• **generation_length.R**: script calculates generation length for females and males over time using the 2016 stock assessment data, age-length relationships from Penttila et al. (1989) and age-fecundity curves from Morse (1981)
+• [generation_length.R](https://github.com/pinskylab/NePADE/blob/master/generation_length.R): script calculates generation length for females and males over time using the 2016 stock assessment data, age-length relationships from Penttila et al. (1989) and age-fecundity curves from Morse (1981)
 
-• **PADE_stock_assessment16.R**: script imports data from 2016 summer flounder stock assessment, calculates the number of potential breeders at each age and year and plots census and breeding abundance over time
-
-• **Ne.R**: script for figuring out which summer flounder to resequence
+• [PADE_stock_assessment16.R](https://github.com/pinskylab/NePADE/blob/master/PADE_stock_assessment16.R): script imports data from 2016 summer flounder stock assessment, calculates the number of potential breeders at each age and year and plots census and breeding abundance over time
 
 ### Within ``` demo_modeling/ ```: 
 This directory contains the input and output files from demographic modeling using the fastsimcoal2 program. Additional scripts used for data preparation and the script to submit the job to a slurm scheduler on a shared computing cluster are also provided.
