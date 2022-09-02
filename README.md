@@ -20,7 +20,7 @@ Contact: Jennifer Hoey [(jahoey13@gmail.com)](mailto:jahoey13@gmail.com)
 
 • **Ne279_1068loci_MAFpop2.obs**: msfs for 1994 cohort
 
-• **Ne279_1068loci_MSFS.obs**: multi msfs used for demographic modeling in fastsimcoal
+• **Ne279_1068loci_MSFS.obs**: multi msfs used for demographic modeling in fastsimcoal2
 
 • **Ne_279PADE_1068loci_complete.gen**: genepop file containing subset of full dataset with no missing data, 1068 SNPs across 279 larvae, used for demographic modeling
 
@@ -32,9 +32,11 @@ Contact: Jennifer Hoey [(jahoey13@gmail.com)](mailto:jahoey13@gmail.com)
 
 • **PADE_stock_assessment16.xlsx**: number of fish at age, estimated fishing mortality at age, natural mortality at age & proportion mature at age for 1982-2015
 
-• **SNP.DP3g95nomafnomac.FIL.FIL.recode.140trimmed.284fish.vcf**: vcf files containing all available SNPs on a contig
+• **SNP.DP3g95nomafnomac.FIL.FIL.recode.140trimmed.284fish.vcf**: vcf file containing all available SNPs on a contig (3905 SNPs for 284 larvae)
 
-• **SNP.DP3g95nomafnomac.FIL.FIL.recode.140trimmed.284fish.firstsnp.genepop.gen**: genepop file generated from SNP.DP3g95nomafnomac.FIL.FIL.recode.140trimmed.284fish.gen by retaining only first SNP on a contig, full datset is composed of 3905 SNPs for 284 larvae
+• **SNP.DP3g95nomafnomac.FIL.FIL.recode.140trimmed.284fish.firstsnp.vcf**: vcf file containing the first SNP on a contig
+
+• **SNP.DP3g95nomafnomac.FIL.FIL.recode.140trimmed.284fish.firstsnp.genepop.gen**: genepop file generated from SNP.DP3g95nomafnomac.FIL.FIL.recode.140trimmed.284fish.firstsnp.vcf. This genepop file was then used to evaluate individuals with high heterozygosity and loci not in HWP.
 
 #### ``` bayescan_output/ ``` <br>
 
