@@ -12,9 +12,6 @@ Contact: Jennifer Hoey [(jahoey13@gmail.com)](mailto:jahoey13@gmail.com)
 
 ### Within ``` data/ ```:
 
-``` bayescan_output/ ``` <br>
-Contains output from Bayescan looking for temporal outlier loci in dataset used for demographic modeling (1068 loci across 279 summer flounder)
-
 • **Ne279_1068loci.arp**: Arlequin input file for dataset of 1068 loci across 279 summer flounder
 
 • **Ne279_1068loci_MAFpop0.obs**: msfs for 2008 cohort
@@ -38,6 +35,10 @@ Contains output from Bayescan looking for temporal outlier loci in dataset used 
 • **SNP.DP3g95nomafnomac.FIL.FIL.recode.140trimmed.284fish.vcf**: vcf files containing all available SNPs on a contig
 
 • **SNP.DP3g95nomafnomac.FIL.FIL.recode.140trimmed.284fish.firstsnp.genepop.gen**: genepop file generated from SNP.DP3g95nomafnomac.FIL.FIL.recode.140trimmed.284fish.gen by retaining only first SNP on a contig, full datset is composed of 3905 SNPs for 284 larvae
+
+#### ``` bayescan_output/ ``` <br>
+
+Contains output from Bayescan looking for temporal outlier loci in dataset used for demographic modeling (1068 loci across 279 summer flounder)
 
 
 ## Scripts & Results
