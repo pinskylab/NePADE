@@ -10,7 +10,7 @@ data <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis
 vcf_firstsnps <- data[!duplicated(data[,1]),] # these are the first snps at each contig
 dim(vcf_firstsnps) # 3905 x 293 SNP.DP3g95nomafnomac.FIL.FIL.recode.140trimmed.284fish.vcf
 
-write.table(vcf_firstsnps, "~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/newref_alltrimmed140/SNP.DP3g95nomafmac.FIL.FIL.recode.140trimmed.284fish.firstsnp.vcf", sep="\t", col.names = FALSE, row.names = FALSE)
+write.table(vcf_firstsnps, "~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/NePADE/newref_alltrimmed140/SNP.DP3g95nomafnomac.FIL.FIL.recode.140trimmed.284fish.firstsnp.vcf", sep="\t", col.names = FALSE, row.names = FALSE)
 
 # Manually removed all the " and replaced with nothing. Add header columns back in too prior to converting to genepop format.
 
