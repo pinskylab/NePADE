@@ -40,14 +40,15 @@ Contact: Jennifer Hoey [(jahoey13@gmail.com)](mailto:jahoey13@gmail.com)
 
 #### ``` bayescan_output/ ``` <br>
 
-Contains output from Bayescan looking for temporal outlier loci in dataset used for demographic modeling (1068 loci across 279 summer flounder)
+Contains output from Bayescan looking for temporal outlier loci in dataset used for demographic modeling (1068 loci across 279 summer flounder). Bayescan was run on Rutgers School of Environmental & Biological Sciences Annotate server.
 
 ## Methods
 
 [Ne_bioinformatics.txt](https://github.com/pinskylab/NePADE/blob/master/Ne_bioinformatics.txt) contains bioinformatic steps taken to go from sequencing reads to SNP genotypes, as well as steps taken to produce filtered SNP genotypes in **SNP.DP3g95nomafnomac.FIL.FIL.recode.140trimmed.284fish.vcf**
 
 ## Scripts & Results
-### The numbered scripts indicate the order of their usage for the demographic analysis in fastsimcoal2
+### The numbered scripts indicate the order of their usage for the demographic analysis in fastsimcoal2.
+#### These R scripts were run using R v.4.0.3 (at least) on a MacBook Pro running OS Catalina (at least).
 
 • [00_Ne_genotyping_results.R](https://github.com/pinskylab/NePADE/blob/master/00_Ne_genotyping_results.R): script for calculating coverage statistics
 
