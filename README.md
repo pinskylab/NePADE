@@ -32,9 +32,9 @@ Contact: Jennifer Hoey [(jahoey13@gmail.com)](mailto:jahoey13@gmail.com)
 
 • [PADE_stock_assessment16.xlsx](https://github.com/pinskylab/NePADE/blob/master/data/PADE_stock_assessment16.xlsx): number of fish at age, estimated fishing mortality at age, natural mortality at age & proportion mature at age for 1982-2015
 
-• **SNP.DP3g95nomafnomac.FIL.FIL.recode.140trimmed.284fish.vcf**: vcf file containing all available SNPs on a contig (3905 SNPs for 284 larvae)
+• [SNP.DP3g95nomafnomac.FIL.FIL.recode.140trimmed.284fish.vcf](https://github.com/pinskylab/NePADE/releases/download/untagged-5adff74dfa32efd11309/SNP.DP3g95nomafnomac.FIL.FIL.recode.140trimmed.284fish.vcf): vcf file containing all available SNPs on a contig (3905 SNPs for 284 larvae)
 
-• **SNP.DP3g95nomafnomac.FIL.FIL.recode.140trimmed.284fish.firstsnp.vcf**: vcf file containing the first SNP on a contig
+• [SNP.DP3g95nomafnomac.FIL.FIL.recode.140trimmed.284fish.firstsnp.vcf](https://github.com/pinskylab/NePADE/releases/download/untagged-5adff74dfa32efd11309/SNP.DP3g95nomafnomac.FIL.FIL.recode.140trimmed.284fish.firstsnp.vcf): vcf file containing the first SNP on a contig
 
 • [SNP.DP3g95nomafnomac.FIL.FIL.recode.140trimmed.284fish.firstsnp.genepop.gen](https://github.com/pinskylab/NePADE/blob/master/data/SNP.DP3g95nomafnomac.FIL.FIL.recode.140trimmed.284fish.firstsnp.genepop.gen): genepop file generated from SNP.DP3g95nomafnomac.FIL.FIL.recode.140trimmed.284fish.firstsnp.vcf. This genepop file was then used to evaluate individuals with high heterozygosity and loci not in HWP.
 
