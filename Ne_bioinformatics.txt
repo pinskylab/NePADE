@@ -1,0 +1,55 @@
+#### Steps taken to go from raw sequence reads to filtered SNP genotypes used in “Genetic decline and recovery of a demographically rebuilt fishery species.” The first part describes how to get SNP genotypes from sequencing reads using dDocent v. 2.8.12 within a conda environment on the Rutgers School of Environmental & Biological Sciences Annotate server. Sequencing reads for individuals retained for analyses described in this manuscript are archived in the NCBI Sequence Read Archive (SRA) database (Acc. No. PRJNA750099). The second part describes the filtering steps used to achieve the final SNP genotypes (available at https://github.com/pinskylab/NePADE). ####
+
+# Part 1: Steps taken to go from raw sequencing reads to SNP genotypes
+
+1. I first created a de novo reference using dDocent v. 2.6.1. The reference assembly was built using a sequencing run containing 351 larval summer flounder. This sequencing run had the longest read length of all the runs included in this analysis. Reads were quality trimmed prior to assembly using Rainbow and CD-HIT with default parameters. The reference assembly is called 'reference.fasta.'
+
+2. Since I was using reads for larvae from multiple sequencing runs, I moved the raw reads for all the larvae I wanted to include in the analysis into a single directory (n = 331 larvae). I also placed the de novo reference from the previous step in the same directory.
+
+3a. If already in dDocent conda environment, run dDocent by typing:
+
+(ddocent_env) [jennh@annotate 02_Ne_ddocent_trimmed]$ dDocent
+
+3b. dDocent will output the version number (here, v. 2.8.12) and ask you to confirm the number of individuals, number of processors, and memory you wish to use.
+
+3c. dDocent will then ask you if you want to trim your reads, perform an assembly, map reads, and call SNPs. Here, I first quality trimmed the reads to the shortest common read length denominator across sequencing runs. I then mapped against the previously made de novo reference. When mapping, dDocent will ask if you would like to enter new -A -B and -O parameters. I said no and proceeded with default parameters. Finally, I called SNPs across all individuals.
+
+3d. dDocent will then ask you to input your email, and will email you when your job is complete. When the job successfully runs, TotalRawSNPs.vcf will be one of the output files.
+
+# Part 2: Filtering commands used to generate the final genotypes. The input is a vcf file of unfiltered SNPs resulting from the dDocent v. 2.8.12 pipeline (TotalRawSNPs.vcf).
+
+1. Keep SNPs genotyped in 50% of individuals and a minimum quality score of 30. Neither a minor allele frequency nor a minor allele count filter are applied:
+
+(ddocent_env) [jennh@annotate 02_Ne_ddocent_trimmed]$ vcftools --vcf TotalRawSNPs.vcf --max-missing 0.5 --minQ 30 --recode --recode-INFO-all --out raw.g50nomac
+
+2. Recode any genotypes with fewer than three reads as ‘missing’:
+
+(ddocent_env) [jennh@annotate 02_Ne_ddocent_trimmed]$ vcftools --vcf raw.g50nomac.recode.vcf --minDP 3 --recode --recode-INFO-all --out raw.g50nomacdp3
+
+3. Restrict data to individuals with less than 50% missing data:
+
+(ddocent_env) [jennh@annotate 02_Ne_ddocent_trimmed]$ vcftools --vcf raw.g50nomacdp3.recode.vcf --missing-indv # Creates a file with suffix '.imiss' that reports missingness on a per-individual basis.
+
+(ddocent_env) [jennh@annotate 02_Ne_ddocent_trimmed]$ mawk '!/IN/' out.imiss | cut -f5 > totalmissing # Creates a new file called 'totalmissing' that contains a vector of individual missingness. I used this file to plot a histogram of individual missingness.
+
+(ddocent_env) [jennh@annotate 02_Ne_ddocent_trimmed]$ mawk '$5 > 0.5' out.imiss | cut -f1 > lowDP.indv # Creates a file called 'lowDP.indv' containing sample names of individuals with 50% or more missing data.
+
+(ddocent_env) [jennh@annotate 02_Ne_ddocent_trimmed]$ vcftools --vcf raw.g50nomacdp3.recode.vcf --remove lowDP.indv --recode --recode-INFO-all --out raw.g50nomacdp3lm # Removes individuals in the 'lowDP.indv' file.
+
+4. Keep SNPs occurring in 95% of individuals and a minimum mean depth of 20:
+
+(ddocent_env) [jennh@annotate 02_Ne_ddocent_trimmed]$ vcftools --vcf raw.g50nomacdp3lm.recode.vcf --max-missing 0.95 --recode --recode-INFO-all --out DP3g95nomafnomac --min-meanDP 20
+
+5. Begin filtering with filtering script (dDocent_filters) distributed with dDocent and default settings:
+
+(ddocent_env) [jennh@annotate 02_Ne_ddocent_trimmed]$ dDocent_filters DP3g95nomafnomac.recode.vcf DP3g95nomafnomac.FIL
+
+6. Convert file to SNPs only and indicate SNPs and indels:
+
+(ddocent_env) [jennh@annotate 02_Ne_ddocent_trimmed]$ vcfallelicprimitives DP3g95nomafnomac.FIL.FIL.recode.vcf --keep-info --keep-geno > DP3g95nomafnomac.FIL.FIL.prim.vcf
+
+7. Remove indels:
+
+(ddocent_env) [jennh@annotate 02_Ne_ddocent_trimmed]$ vcftools --vcf DP3g95nomafnomac.FIL.FIL.prim.vcf --remove-indels --recode --recode-INFO-all --out SNP.DP3g95nomafnomac.FIL.FIL
+
+#### This should result in a vcf file (SNP.DP3g95nomafnomac.FIL.FIL.recode.140trimmed.284fish.vcf) containing 41235 SNPs across 284 larvae. After applying the 01_keepfirstsnponly.R script, 3905 SNPs across 284 larvae should remain ####
