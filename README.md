@@ -2,7 +2,7 @@ This repository contains data, scripts and figures for the analyses in "Genetic 
 
 *These data, methods and scripts are provided in the interests of open science. If you have questions or find errors, please let me know.*
 
-Citable as
+Citable as [![DOI](https://zenodo.org/badge/152597084.svg)](https://zenodo.org/badge/latestdoi/152597084)
 
 Contact: Jennifer Hoey [(jahoey13@gmail.com)](mailto:jahoey13@gmail.com)
 
