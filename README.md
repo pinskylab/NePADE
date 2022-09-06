@@ -44,7 +44,7 @@ Contains output from Bayescan looking for temporal outlier loci in dataset used 
 
 ## Methods
 
-Ne_bioinformatics.txt contains bioinformatic steps taken to go from sequencing reads to SNP genotypes, as well as steps taken to produce filtered SNP genotypes in **SNP.DP3g95nomafnomac.FIL.FIL.recode.140trimmed.284fish.vcf**
+[Ne_bioinformatics.txt](https://github.com/pinskylab/NePADE/blob/master/Ne_bioinformatics.txt) contains bioinformatic steps taken to go from sequencing reads to SNP genotypes, as well as steps taken to produce filtered SNP genotypes in **SNP.DP3g95nomafnomac.FIL.FIL.recode.140trimmed.284fish.vcf**
 
 ## Scripts & Results
 ### The numbered scripts indicate the order of their usage for the demographic analysis in fastsimcoal2
